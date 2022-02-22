@@ -1,0 +1,43 @@
+@font-face {
+    font-family: Prompt;
+    src: local(Prompt-Light),
+      url('~assets/fonts/Prompt/Prompt-Light.ttf') format("truetype");
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+  }
+  @font-face {
+    font-family: Prompt;
+    src: local(Prompt-Medium),
+      url('~assets/fonts/Prompt/Prompt-Medium.ttf') format("truetype");
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+  }
+  @font-face {
+    font-family: Prompt;
+    src: local(Prompt-Regular),
+      url('~assets/fonts/Prompt/Prompt-Regular.ttf') format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+  }
+  @font-face {
+    font-family: Prompt;
+    src: local(Prompt-Bold),
+      url('~assets/fonts/Prompt/Prompt-Bold.ttf') format("truetype");
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+  }
+  .v-application {
+    font-family: Prompt !important;
+  }
+
+  .swal2-popup {
+    font-family: Prompt !important;
+  }
+
+  .pointer {
+    cursor: pointer;
+  }
