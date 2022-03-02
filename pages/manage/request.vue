@@ -47,6 +47,9 @@ export default {
     }
   },
   async fetch() {
+    if (this.$auth.user.group_id != '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
+      this.$router.push('/')
+    }
     await this.fetchData()
   },
   methods: {

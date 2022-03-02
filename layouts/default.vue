@@ -100,7 +100,34 @@ export default {
       clipped: false,
       drawer: false,
       fixed: false,
-      items: [
+      items_user: [
+        {
+          icon: 'mdi-file-table',
+          title: 'คำร้องขอ',
+          to: '/manage',
+        },
+        {
+          icon: 'mdi-map-marker',
+          title: 'แผนที่',
+          to: '/manage/map',
+        },
+        {
+          icon: 'mdi-handshake',
+          title: 'ขอความช่วย',
+          to: '/manage/request',
+        },
+        {
+          icon: 'mdi-note-edit',
+          title: 'อัพเดทอาการเบื้องต้น',
+          to: '/manage/update',
+        },
+        {
+          icon: 'mdi-clipboard-check',
+          title: 'ทำเรื่่องหายป่วย',
+          to: '/manage/upcovid',
+        },
+      ],
+      items_admin: [
         {
           icon: 'mdi-file-table',
           title: 'คำร้องขอ',
@@ -134,17 +161,62 @@ export default {
         {
           icon: 'mdi-folder-account-outline',
           title: 'ผู้ป่วยที่อยู่ในการดูแล',
-          to: '/volunteen/helpvolunteer',
+          to: '/volunteen/takecareuser',
         },
         {
-          icon: 'mdi-cloud-upload-outline',
+          icon: 'mdi-archive-edit-outline',
           title: 'อัพเดพสถานนะผู้ป่วย',
-          to: '/volunteen/updatestat',
+          to: '/volunteen/updatestatus',
+        },
+        {
+          icon: 'mdi-account-arrow-up-outline',
+          title: 'ผู้ป่วยที่ขอความช่วยเหลือ',
+          to: '/volunteen/userhelp',
+        },
+      ],
+      items_volunteen: [
+        {
+          icon: 'mdi-map-marker',
+          title: 'แผนที่',
+          to: '/manage/map',
+        },
+        {
+          icon: 'mdi-bell-circle',
+          title: 'รายงาน',
+          to: '/volunteen/report',
+        },
+        {
+          icon: 'mdi-folder-account-outline',
+          title: 'ผู้ป่วยที่อยู่ในการดูแล',
+          to: '/volunteen/takecareuser',
+        },
+        {
+          icon: 'mdi-archive-edit-outline',
+          title: 'อัพเดพสถานนะผู้ป่วย',
+          to: '/volunteen/updatestatus',
+        },
+        {
+          icon: 'mdi-account-arrow-up-outline',
+          title: 'ผู้ป่วยที่ขอความช่วยเหลือ',
+          to: '/volunteen/userhelp',
         },
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
+      items: [],
+    }
+  },
+  fetch() {
+    console.log('this.$auth.user.profile_id : ', this.$auth.user.group_id)
+    if (this.$auth.user.group_id === '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
+      this.items = this.items_user
+    } else if (
+      this.$auth.user.group_id === '87191711-d7ff-4664-b648-8e9bceaab5ea'
+    ) {
+      this.items = this.items_volunteen
+    } else {
+      this.items = this.items_admin
     }
   },
   methods: {

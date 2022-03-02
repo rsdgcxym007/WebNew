@@ -24,7 +24,6 @@
             target="#dropdown-example-3"
           ></v-overflow-btn>
           <br />
-          <v-btn color="error" class="mr-4" @click="black"> ย้อนกลับ</v-btn>
           <v-btn
             :disabled="!valid"
             color="success"
@@ -73,9 +72,6 @@ export default {
     },
     reset() {
       this.$refs.form.reset()
-    },
-    black() {
-      this.$refs.form.black()
     },
   },
 }

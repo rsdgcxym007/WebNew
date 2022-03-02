@@ -16,7 +16,7 @@ export default {
   methods: {
     async fetchData() {
       const { result: tasks, headers } = await this.$axios.$post(
-        '/api/manage/taskall',
+        '/api/manage/taskallbyuserid',
         { userId: this.$auth.user.id }
       )
       this.details = tasks

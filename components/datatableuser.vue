@@ -37,20 +37,6 @@ export default {
       search: '',
     }
   },
-  methods: {
-    // request() {
-    //   this.$router.push({ path: '/manage/request' })
-    // },
-    // upcovid() {
-    //   this.$router.push({ path: '/manage/upcovid' })
-    // },
-    // update() {
-    //   this.$router.push({ path : '/manage/update'})
-    // },
-    // async logout() {
-    //   await this.$auth.logout()
-    //   this.$router.push('/')
-    // },
-  },
+  methods: {},
 }
 </script>

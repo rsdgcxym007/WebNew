@@ -207,10 +207,6 @@ export default {
         })
       }
     },
-    // async loginfacebook() {
-    //   await this.$auth.loginWith('facebook')
-    //   this.$router.push({ path: '/user/profile' })
-    // },
     async onSubmit() {
       const { data } = await this.$auth.loginWith('local', {
         data: { email: this.email, password: this.password },
@@ -225,7 +221,13 @@ export default {
         confirmButtonText: 'ตกลง',
         // text: `${message}`,
       })
-      this.$router.push({ path: '/manage' })
+      if (this.$auth.user.group_id === '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
+        this.$router.push({ path: '/manage' })
+      } else if (
+        this.$auth.user.group_id === '87191711-d7ff-4664-b648-8e9bceaab5ea'
+      ) {
+        this.$router.push({ path: '/volunteen/userhelp' })
+      }
     },
     async register() {
       const user = {
