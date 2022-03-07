@@ -152,6 +152,13 @@ export default {
       }
 
       await this.$axios.$post('/api/upload2', { data })
+      this.$swal.fire({
+        type: 'success',
+        title: 'บันทึกข้อมูลสำเร็จ',
+        showConfirmButton: false,
+        timer: 1500,
+      })
+      this.$router.push({ path: '/manage' })
 
       // axios
       //   .post('http://127.0.0.1:8081/upload', { image })
