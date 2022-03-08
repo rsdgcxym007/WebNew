@@ -26,7 +26,9 @@
             </v-list-item-avatar>
           </v-list-item>
           <v-card-actions>
-            <v-btn outlined color="success"> หายป่วย </v-btn>
+            <v-btn color="success" @click="helper(item)"
+              >ยืนยันการหายป่วย</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-col>
@@ -47,6 +49,29 @@ export default {
     async fetchData() {
       const { result } = await this.$axios.$get('/api/manage/report')
       this.lists = result
+    },
+    async helper(item) {
+      const id = item.id
+      const { result, message } = await this.$axios.$post(
+        '/api/volunteen/updatereport',
+        { id }
+      )
+
+      await this.fetchData()
+      console.log('result : ', result)
+
+      if (!result) {
+        this.$swal({
+          type: 'warning',
+          title: message,
+        })
+      } else {
+        this.$swal({
+          type: 'success',
+          title: message,
+        })
+        this.$router.push({ path: '/volunteen/userhelp' })
+      }
     },
   },
 }

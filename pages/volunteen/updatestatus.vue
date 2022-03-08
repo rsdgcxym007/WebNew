@@ -7,7 +7,13 @@
           <br />
           <h2 align="center">อัพเดทสถานะผู้ป่วย</h2>
           <br />
-
+          <v-autocomplete
+            v-model="task"
+            :items="tasks"
+            dense
+            filled
+            label="คำร้องขอ"
+          ></v-autocomplete>
           <v-overflow-btn
             class="my-2"
             :items="dropdown_icon"
@@ -40,6 +46,29 @@
 </template>
 <script>
 export default {
+  middleware: 'auth',
+  data() {
+    return {
+      task: '',
+      tasks: [],
+      menu: false,
+      valid: true,
+      user_id: this.$auth.user.id,
+    }
+  },
+  async fetch() {
+    await this.fetchData()
+  },
+  methods: {
+    async fetchData() {
+      const { result: tasks } = await this.$axios.$post(
+        '/api/volunteen/getbyuser',
+        { user_id: this.user_id }
+      )
+
+      this.tasks = tasks
+    },
+  },
   data: () => ({
     dropdown_icon: [
       { text: 'ขอความช่วยเหลือ', callback: () => console.log('helpme') },

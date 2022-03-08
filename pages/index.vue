@@ -227,6 +227,10 @@ export default {
         this.$auth.user.group_id === '87191711-d7ff-4664-b648-8e9bceaab5ea'
       ) {
         this.$router.push({ path: '/volunteen/userhelp' })
+      } else if (
+        this.$auth.user.group_id === '4e095238-1b60-4303-a207-8927d9c992d5'
+      ) {
+        this.$router.push({ path: '/admin/banuser' })
       }
     },
     async register() {

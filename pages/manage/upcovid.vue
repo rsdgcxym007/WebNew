@@ -15,6 +15,8 @@
           v-model="hospital"
           prepend-icon="mdi-map-marker"
           label="ชือโรงพยาบาล"
+          :rules="hospitalrules"
+          required
         ></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" md="12">
@@ -96,8 +98,19 @@ export default {
       image1: '',
       image2: '',
       remoteUrl: '',
-      hospital: '',
       user_id: this.$auth.user.id,
+      hospitalrules: [(v) => !!v || 'required'],
+    }
+  },
+  uploadImage() {
+    if (this.$refs.form1.validate() === true) {
+      this.onSubmit()
+    } else {
+      this.$swal({
+        icon: 'warning',
+        title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+        timer: 3000,
+      })
     }
   },
   async fetch() {
