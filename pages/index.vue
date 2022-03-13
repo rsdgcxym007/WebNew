@@ -261,7 +261,7 @@ export default {
 
 <style lang="scss" scoped>
 .area {
-  background: #4e54c8;
+  background: #6200ea;
   background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8);
   width: 100%;
   height: 100vh;

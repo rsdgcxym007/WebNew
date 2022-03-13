@@ -1,87 +1,92 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col cols="12" sm="6" md="12">
-        <v-autocomplete
-          v-model="task"
-          :items="tasks"
-          dense
-          filled
-          label="คำร้องขอ"
-        ></v-autocomplete>
-      </v-col>
-      <v-col cols="12" sm="6" md="12">
-        <v-text-field
-          v-model="hospital"
-          prepend-icon="mdi-map-marker"
-          label="ชือโรงพยาบาล"
-          :rules="hospitalrules"
-          required
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="6" md="12">
-        <v-menu
-          ref="menu"
-          v-model="menu"
-          :close-on-content-click="false"
-          :return-value.sync="date"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="date"
-              label="Picker in menu"
-              prepend-icon="mdi-calendar"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-date-picker v-model="date" no-title scrollable>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
-            <v-btn text color="primary" @click="$refs.menu.save(date)">
-              OK
-            </v-btn>
-          </v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col cols="12">
-        <div>
-          <label>ผลตรวจเชื้อแบบ RT-PCR</label>
-        </div>
-        <div v-if="image1">
-          <img :src="image1" width="300" height="100%" />
-        </div>
-        <div>
-          <input @change="handleImage" type="file" accept="image/*" />
-        </div>
-      </v-col>
-      <v-col cols="12">
-        <div>
-          <label>ใบรับรองแพทย์</label>
-        </div>
-        <div v-if="image2">
-          <img :src="image2" width="300" height="100%" />
-        </div>
-        <div>
-          <input @change="handleImage2" type="file" accept="image/*" />
-        </div>
-      </v-col>
-      <v-col cols="12">
-        <v-btn color="error" class="mr-4" @click="black"> ย้อนกลับ</v-btn>
-        <v-btn
-          :disabled="!valid"
-          color="success"
-          class="mr-4"
-          @click="uploadImage"
-        >
-          บันทึกข้อมูล
-        </v-btn>
-      </v-col>
-    </v-row>
+    <v-card elevation="8" class="mx-4 pa-4">
+      <v-card-title>
+        ทำเรื่องหายป่วย
+      </v-card-title>
+      <v-row class="px-4">
+        <v-col cols="12" sm="6" md="12">
+          <v-autocomplete
+            v-model="task"
+            :items="tasks"
+            dense
+            filled
+            label="คำร้องขอ"
+            outlined
+          ></v-autocomplete>
+        </v-col>
+        <v-col cols="12" sm="6" md="12">
+          <v-text-field
+            v-model="hospital"
+            label="ชือโรงพยาบาล"
+            :rules="hospitalrules"
+            required
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" sm="6" md="12">
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :return-value.sync="date"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="date"
+                label="Picker in menu"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                outlined
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="date" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
+              <v-btn text color="primary" @click="$refs.menu.save(date)">
+                OK
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-col>
+        <v-col cols="12">
+          <div>
+            <label>ผลตรวจเชื้อแบบ RT-PCR</label>
+          </div>
+          <div v-if="image1">
+            <img :src="image1" width="300" height="100%" />
+          </div>
+          <div>
+            <input @change="handleImage" type="file" accept="image/*" />
+          </div>
+        </v-col>
+        <v-col cols="12">
+          <div>
+            <label>ใบรับรองแพทย์</label>
+          </div>
+          <div v-if="image2">
+            <img :src="image2" width="300" height="100%" />
+          </div>
+          <div>
+            <input @change="handleImage2" type="file" accept="image/*" />
+          </div>
+        </v-col>
+        <v-col cols="12" style="text-align: end">
+          <v-btn color="error" class="mr-4" @click="black"> ย้อนกลับ</v-btn>
+          <v-btn
+            :disabled="!valid"
+            color="success"
+            @click="uploadImage"
+          >
+            บันทึกข้อมูล
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-card>
   </v-container>
 </template>
 <script>

@@ -1,30 +1,38 @@
 <template>
   <div>
     <v-container>
-      <v-form ref="form1" lazy-validation>
-        <v-row>
-          <v-col cols="12" sm="6" md="12">
-            <v-autocomplete
-              v-model="body.type"
-              :items="types"
-              dense
-              filled
-              label="ประเภท"
-            ></v-autocomplete>
-          </v-col>
+      <v-card elevation="8" class="mx-4 pa-4">
+        <v-card-title>
+          ขอความช่วยเหลือ
+          <v-spacer></v-spacer>
+        </v-card-title>
+        <v-form ref="form1" lazy-validation class="px-4">
+          <v-row>
+            <v-col cols="12" sm="6" md="12">
+              <v-autocomplete
+                v-model="body.type"
+                :items="types"
+                dense
+                filled
+                outlined
+                label="ประเภท"
+              ></v-autocomplete>
+            </v-col>
 
-          <v-col cols="12">
-            <v-textarea
-              v-model="body.remark"
-              label="คำอธิบายอาการเบื้องต้น"
-              required
-            ></v-textarea>
-          </v-col>
-          <v-col cols="12">
-            <v-btn color="success" @click="request()">Request</v-btn>
-          </v-col>
-        </v-row>
-      </v-form>
+            <v-col cols="12">
+              <v-textarea
+                v-model="body.remark"
+                label="คำอธิบายอาการเบื้องต้น"
+                outlined
+                required
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12" style="text-align: end">
+              <v-btn color="success" @click="request()">Request</v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card>
     </v-container>
   </div>
 </template>

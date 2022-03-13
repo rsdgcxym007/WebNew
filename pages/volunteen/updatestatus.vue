@@ -1,47 +1,47 @@
 <template>
-  <v-container class="my-16" id="dropdown-example-2" fluid>
-    <v-row align="center" justify="center">
-      <v-col cols="20" sm="20" md="10" lg="5">
-        <v-row align="center"> </v-row>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <br />
-          <h2 align="center">อัพเดทสถานะผู้ป่วย</h2>
-          <br />
-          <v-autocomplete
-            v-model="task"
-            :items="tasks"
-            dense
-            filled
-            label="คำร้องขอ"
-          ></v-autocomplete>
-          <v-overflow-btn
-            class="my-2"
-            :items="dropdown_icon"
-            label="เลือกสถานะ"
-            segmented
-            target="#dropdown-example-2"
-          ></v-overflow-btn>
-          <br />
-          <v-overflow-btn
-            class="my-2"
-            :items="dropdown_icon1"
-            label="เลือกระดับอาการ"
-            segmented
-            target="#dropdown-example-3"
-          ></v-overflow-btn>
-          <br />
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            class="mr-4"
-            @click="validate"
-          >
-            บันทึกข้อมูล
-          </v-btn>
-          <v-btn color="error" class="mr-4" @click="reset"> Reset Form </v-btn>
-        </v-form>
-      </v-col>
-    </v-row>
+  <v-container id="dropdown-example-2">
+    <v-card elevation="8" class="mx-4 pa-4">
+      <v-card-title>
+        อัพเดทอาการปัจจุบัน
+      </v-card-title>
+      <v-form ref="form" v-model="valid" lazy-validation>
+        <br />
+        <h2 align="center">อัพเดทสถานะผู้ป่วย</h2>
+        <br />
+        <v-autocomplete
+          v-model="task"
+          :items="tasks"
+          dense
+          filled
+          label="คำร้องขอ"
+        ></v-autocomplete>
+        <v-overflow-btn
+          class="my-2"
+          :items="dropdown_icon"
+          label="เลือกสถานะ"
+          segmented
+          target="#dropdown-example-2"
+        ></v-overflow-btn>
+        <br />
+        <v-overflow-btn
+          class="my-2"
+          :items="dropdown_icon1"
+          label="เลือกระดับอาการ"
+          segmented
+          target="#dropdown-example-3"
+        ></v-overflow-btn>
+        <br />
+        <v-btn
+          :disabled="!valid"
+          color="success"
+          class="mr-4"
+          @click="validate"
+        >
+          บันทึกข้อมูล
+        </v-btn>
+        <v-btn color="error" class="mr-4" @click="reset"> Reset Form </v-btn>
+      </v-form>
+    </v-card>
   </v-container>
 </template>
 <script>

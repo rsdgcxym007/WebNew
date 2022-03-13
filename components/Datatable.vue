@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container>
-      <v-card>
+      <v-card elevation="8" class="mx-4">
         <v-card-title>
           รายการคำร้องขอ
           <v-spacer></v-spacer>
@@ -16,7 +16,8 @@
           :items="details"
           :items-per-page="5"
           :search="search"
-          class="elevation-1"
+          class="elevation-1 px-2"
+          @click:row="editItem"
         >
           <template v-slot:[`item.status_name`]="{ item }">
             <v-chip :color="item.color">
@@ -37,6 +38,10 @@ export default {
       search: '',
     }
   },
-  methods: {},
+  methods: {
+    editItem(data) {
+      this.$router.push('/manage/update?id=' + data.id)
+    },
+  },
 }
 </script>

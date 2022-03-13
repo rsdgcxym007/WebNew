@@ -1,51 +1,64 @@
 <template>
-  <v-container class="my-16" fluid>
-    <v-row align="center" justify="center">
-      <v-col cols="20" sm="20" md="10" lg="5">
-        <v-row align="center"> </v-row>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <br />
-          <h2 align="center">อัพเดทอาการปัจจุบัน</h2>
-          <br />
-          <v-textarea
-            v-model="body.remark"
-            counter
-            label="อัพเดทอาการปัจจุบัน"
-            :rules="remarkRules"
-            required
-          ></v-textarea>
-          <v-col cols="12">
-            <v-btn color="success" @click="request()">Request</v-btn>
-            <v-btn color="error" class="mr-4" @click="black"> ย้อนกลับ</v-btn>
-          </v-col>
-        </v-form>
-      </v-col>
-    </v-row>
+  <v-container>
+    <v-card elevation="8" class="mx-4 pa-4">
+      <v-card-title>
+        อัพเดทอาการปัจจุบัน
+        <v-spacer></v-spacer>
+      </v-card-title>
+      <v-form ref="form" v-model="valid" lazy-validation class="px-4">
+        <v-textarea
+          v-model="taskData.remark"
+          counter
+          label="อัพเดทอาการปัจจุบัน"
+          outlined
+          required
+        ></v-textarea>
+        <v-col cols="12" class="px-0" style="text-align: end">
+          <v-btn class="mr-2" color="success" @click="request()">ยืนยัน</v-btn>
+          <v-btn color="error" @click="black"> ย้อนกลับ</v-btn>
+        </v-col>
+      </v-form>
+    </v-card>
   </v-container>
 </template>
+
 <script>
 export default {
   middleware: 'auth',
+  async fetch() {
+    await this.fetchData()
+  },
   data() {
     return {
       valid: '',
       remarkRules: [(v) => !!v || 'is required'],
-      body: {
+      // body: {
+      //   remark: '',
+      //   user_id: this.$auth.user.id,
+      //   // status_id: 'กำลังช่วยเหลือ',
+      // },
+      taskData: {
         remark: '',
-        user_id: this.$auth.user.id,
-        // status_id: 'กำลังช่วยเหลือ',
+        user_id: '',
+        id: ''
       },
     }
   },
   methods: {
+    async fetchData() {
+      const { result: tasks } = await this.$axios.$post(
+        '/api/tasks/getbyId',
+        { id: this.$route.query.id }
+      )
+      this.taskData = tasks
+    },
     async request() {
       this.$refs.form.validate()
       if (this.$refs.form.validate() === true) {
         const { result, message } = await this.$axios.$post(
           '/api/manage/update',
-          this.body
+          this.taskData
         )
-
         if (!result) {
           console.log('error : ', message)
         } else {
