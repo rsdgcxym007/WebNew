@@ -179,8 +179,8 @@ export default {
       items_admin: [
         {
           icon: 'mdi-map-marker',
-          title: 'แผนที่',
-          to: '/admin/banuser',
+          title: 'หน้าแรก',
+          to: '/admin/indexadmin',
         },
       ],
       items_volunteen: [
@@ -263,7 +263,7 @@ export default {
   box-shadow: 0 16px 38px -12px rgb(0 0 0 / 56%), 0 4px 25px 0 rgb(0 0 0 / 12%),
     0 8px 10px -5px rgb(0 0 0 / 20%) !important;
 }
-.bg-purple{
+.bg-purple {
   background: #ddcfff;
 }
 </style>

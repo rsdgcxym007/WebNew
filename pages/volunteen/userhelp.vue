@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <pre>{{ this.$auth.user }}</pre> -->
+    <pre>{{ this.$auth.user }}</pre>
     <v-container>
       <v-card>
         <v-card-title>
@@ -64,7 +64,7 @@ export default {
       const id = item.id
       const { result, message } = await this.$axios.$post(
         '/api/volunteen/updatestatus',
-        { id }
+        { id,user_id_va : this.$auth.user.id }
       )
 
       await this.fetchData()
