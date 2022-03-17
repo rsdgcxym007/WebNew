@@ -230,7 +230,7 @@ export default {
       } else if (
         this.$auth.user.group_id === '4e095238-1b60-4303-a207-8927d9c992d5'
       ) {
-        this.$router.push({ path: '/admin/banuser' })
+        this.$router.push({ path: '/admin/indexadmin' })
       }
     },
     async register() {

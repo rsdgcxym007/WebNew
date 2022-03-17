@@ -29,6 +29,9 @@
             <v-btn color="success" @click="helper(item)"
               >ยืนยันการหายป่วย</v-btn
             >
+            <v-btn color="notsuccess" @click="nothelper(item)"
+              >ยกเลิกการหายป่วย</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-col>

@@ -183,8 +183,8 @@ export default {
       items_admin: [
         {
           icon: 'mdi-map-marker',
-          title: 'แผนที่',
-          to: '/admin/banuser',
+          title: 'หน้าแรก',
+          to: '/admin/indexadmin',
         },
       ],
       items_volunteen: [
