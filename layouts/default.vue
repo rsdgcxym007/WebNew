@@ -95,6 +95,7 @@
         <template v-slot:activator="{ attrs, on }">
           <v-btn class="ml-2" min-width="0" text v-bind="attrs" v-on="on">
             <v-icon>mdi-account</v-icon>
+            <v-card-text>{{ $auth.user.first_name }}</v-card-text>
           </v-btn>
         </template>
 
@@ -105,7 +106,9 @@
                 <v-icon :dark="hover">mdi-account-edit</v-icon>
               </v-list-item-icon> -->
             <v-list-item-content>
-              <v-list-item-title>แก้ไขข้อมูลส่วนตัว</v-list-item-title>
+              <v-list-item-title @click="goToUserpage"
+                >แก้ไขข้อมูลส่วนตัว</v-list-item-title
+              >
             </v-list-item-content>
           </v-list-item>
           <!-- </v-hover> -->
@@ -146,6 +149,7 @@
 export default {
   data() {
     return {
+      user_login: { id: '', first_name: '' },
       clipped: false,
       drawer: true,
       fixed: false,
@@ -235,6 +239,9 @@ export default {
     }
   },
   methods: {
+    goToUserpage() {
+      this.$router.push('/users')
+    },
     async logout() {
       await this.$auth.logout()
       this.$router.push('/')
@@ -263,7 +270,7 @@ export default {
   box-shadow: 0 16px 38px -12px rgb(0 0 0 / 56%), 0 4px 25px 0 rgb(0 0 0 / 12%),
     0 8px 10px -5px rgb(0 0 0 / 20%) !important;
 }
-.bg-purple{
+.bg-purple {
   background: #ddcfff;
 }
 </style>

@@ -39,7 +39,6 @@ export default {
       // },
       taskData: {
         remark: '',
-        user_id: '',
         id: ''
       },
     }

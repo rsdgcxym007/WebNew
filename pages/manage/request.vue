@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container>
+    <v-container fluid>
       <v-card elevation="8" class="mx-4 pa-4">
         <v-card-title>
           ขอความช่วยเหลือ
