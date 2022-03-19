@@ -160,7 +160,7 @@ export default {
       last_name: 'aaa',
       address: 'aaaaa',
       tel: '0875554422',
-      email: 'testuser1@dpu.ac.th',
+      email: 'testuser11@dpu.ac.th',
       show1: false,
       emailRules: [
         (v) => !!v || 'E-mail is required',

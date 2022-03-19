@@ -17,11 +17,15 @@
           :items-per-page="5"
           :search="search"
           class="elevation-1"
+          @click:row="editItem"
         >
           <template v-slot:[`item.status_name`]="{ item }">
             <v-chip :color="item.color">
               {{ item.status_name }}
             </v-chip>
+          </template>
+          <template v-slot:[`item.level_name`]="{ item }">
+            {{ item.level_name || ' - ' }}
           </template>
         </v-data-table>
       </v-card>
@@ -37,6 +41,10 @@ export default {
       search: '',
     }
   },
-  methods: {},
+  methods: {
+    editItem(data) {
+      this.$router.push('/volunteen/updatestatus?id=' + data.id)
+    },
+  },
 }
 </script>

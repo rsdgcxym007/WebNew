@@ -46,7 +46,11 @@ export default {
     await this.fetchData()
   },
   data() {
-    return { lists: [] }
+    return {
+      lists: [],
+      item: [],
+      status: 'ยืนยันการหายป่วย',
+    }
   },
   methods: {
     async fetchData() {
@@ -54,14 +58,12 @@ export default {
       this.lists = result
     },
     async helper(item) {
-      const id = item.id
-      const { result, message } = await this.$axios.$post(
+      const result = item
+      console.log('result', result)
+      const { message } = await this.$axios.$post(
         '/api/volunteen/updatereport',
-        { id }
+        { id: result.id, status_id: '05ad26ab-e04d-422e-bb3e-485c927b6bb5' }
       )
-
-      await this.fetchData()
-      console.log('result : ', result)
 
       if (!result) {
         this.$swal({
@@ -73,8 +75,8 @@ export default {
           type: 'success',
           title: message,
         })
-        this.$router.push({ path: '/volunteen/userhelp' })
       }
+      this.$router.push({ path: '/volunteen/report' })
     },
   },
 }
