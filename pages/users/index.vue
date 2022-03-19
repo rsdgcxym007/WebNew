@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card elevation="8" width="auto" class="mx-16 my-6 pa-16">
+    <v-card elevation="8" width="auto" class="mx-12 my-1 pa-4">
       <v-card-title>ข้อมูลส่วนตัว </v-card-title>
       <v-container>
         <v-form ref="form" v-model="valid" lazy-validation>
@@ -20,6 +20,7 @@
                 :counter="20"
                 :rules="FnameRules"
                 label="ชื่อ"
+                outlined
                 required
               ></v-text-field>
             </v-col>
@@ -29,6 +30,7 @@
                 :counter="20"
                 :rules="LnameRules"
                 label="นามสกุล"
+                outlined
                 required
               ></v-text-field>
             </v-col>
@@ -37,6 +39,8 @@
                 v-model="users.address"
                 :rules="addressRules"
                 label="ที่อยู่"
+                rows="3"
+                no-resize
                 outlined
                 required
               ></v-textarea>
@@ -46,16 +50,18 @@
                 v-model="users.tel"
                 :rules="TelRules"
                 label="โทรศัพท์"
+                outlined
                 required
               ></v-text-field>
             </v-col>
           </v-row>
           <v-row>
             <v-col style="text-align: end">
-              <v-btn color="error" class="mr-4" @click="fetchData">
-                ล้างข้อมูล
+              <v-btn :disabled="isReset" color="error" class="mr-4" @click="fetchData">
+                คืนค่า
               </v-btn>
-              <v-btn :disabled="!valid" color="success" @click="updatedata">
+              <!-- <v-btn :disabled="!valid" color="success" @click="updatedata"> -->
+              <v-btn :disabled="isDisabled" color="success" @click="updatedata">
                 บันทึกข้อมูล
               </v-btn>
             </v-col>
@@ -71,8 +77,8 @@ export default {
   middleware: 'auth',
   data() {
     return {
-      users: { first_name: '', last_name: '', email: '', tel: '', address: '' },
-      valid: true,
+      users: {id:'', first_name: '', last_name: '', email: '', tel: '', address: '' },
+      valid: '',
       FnameRules: [
         (v) => !!v || 'กรุณากรอก ชื่อ',
         (v) => (v && v.length <= 20) || 'กรุณากรอกชื่อไม่เกิน 20 ตัวอักษร',
@@ -97,18 +103,14 @@ export default {
   },
   methods: {
     async fetchData() {
-      // const { result: tasks, headers } = await this.$axios.$post(
-      //   '/api/manage/taskallbyuserid',
-      //   { userId: this.$auth.user.id }
-      // )
-      // console.log(tasks)
-      // this.test_task = tasks
       console.log('User ID : ' + this.$auth.user.id)
-      const { result } = await this.$axios.$post('/api/user/getbyID', {
-        id: this.$auth.user.id,
-      })
-      this.users = result
-      console.log(this.users)
+
+      this.users.first_name = this.$store.state.userInfo.first_name
+      this.users.last_name = this.$store.state.userInfo.last_name
+      this.users.email = this.$store.state.userInfo.email
+      this.users.address = this.$store.state.userInfo.address
+      this.users.tel = this.$store.state.userInfo.tel
+      this.users.id = this.$auth.user.id
     },
     async updatedata() {
       this.$refs.form.validate()
@@ -120,12 +122,41 @@ export default {
         if (!result) {
           console.log('error : ', message)
         } else {
+          this.$store.commit('SET_userInfo', {
+            userInfo: {
+              first_name: this.users.first_name,
+              last_name: this.users.last_name,
+              email: this.users.email,
+              tel: this.users.tel,
+              address: this.users.address,
+            },
+          })
           this.$swal({
             type: 'success',
             title: message,
           })
         }
-      } this.$router.go() //refresh page
+      } //this.$router.go() //refresh page
+    },
+  },
+  computed: {
+    isDisabled() {
+      return (
+        (this.users.first_name === this.$store.state.userInfo.first_name &&
+          this.users.last_name === this.$store.state.userInfo.last_name &&
+          this.users.email === this.$store.state.userInfo.email &&
+          this.users.address === this.$store.state.userInfo.address &&
+          this.users.tel === this.$store.state.userInfo.tel) || !this.valid
+      )
+    },
+    isReset() {
+      return (
+        (this.users.first_name === this.$store.state.userInfo.first_name &&
+          this.users.last_name === this.$store.state.userInfo.last_name &&
+          this.users.email === this.$store.state.userInfo.email &&
+          this.users.address === this.$store.state.userInfo.address &&
+          this.users.tel === this.$store.state.userInfo.tel)
+      )
     },
   },
 }

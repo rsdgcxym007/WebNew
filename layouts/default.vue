@@ -95,7 +95,8 @@
         <template v-slot:activator="{ attrs, on }">
           <v-btn class="ml-2" min-width="0" text v-bind="attrs" v-on="on">
             <v-icon>mdi-account</v-icon>
-            <v-card-text>{{ $auth.user.first_name }}</v-card-text>
+            <v-card-text>{{ $store.state.userInfo.first_name }} </v-card-text>
+            <!-- <v-card-text>{{$auth.user.first_name }} </v-card-text> -->
           </v-btn>
         </template>
 
@@ -147,6 +148,7 @@
 
 <script>
 export default {
+  name: 'default',
   data() {
     return {
       user_login: { id: '', first_name: '' },
@@ -224,7 +226,7 @@ export default {
       ],
     }
   },
-  fetch() {
+  async fetch() {
     console.log('this.$auth.user.profile_id : ', this.$auth.user.group_id)
     if (this.$auth.user.group_id === '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
       this.items = this.items_user
@@ -237,6 +239,8 @@ export default {
     ) {
       this.items = this.items_admin
     }
+    await this.setUserStore()
+    console.log('ddd', this.$store.state.userInfo)
   },
   methods: {
     goToUserpage() {
@@ -245,6 +249,20 @@ export default {
     async logout() {
       await this.$auth.logout()
       this.$router.push('/')
+    },
+    async setUserStore() {
+      const { result } = await this.$axios.$post('/api/user/getbyID', {
+        id: this.$auth.user.id,
+      })
+      this.$store.commit('SET_userInfo', {
+        userInfo: {
+          first_name: result.first_name,
+          last_name: result.last_name,
+          email: result.email,
+          tel: result.tel,
+          address: result.address,
+        },
+      })
     },
   },
 }
