@@ -205,11 +205,11 @@ export default {
           title: 'ผู้ป่วยที่อยู่ในการดูแล',
           to: '/volunteen/takecareuser',
         },
-        {
-          icon: 'mdi-archive-edit-outline',
-          title: 'อัพเดพสถานนะผู้ป่วย',
-          to: '/volunteen/updatestatus',
-        },
+        // {
+        //   icon: 'mdi-archive-edit-outline',
+        //   title: 'อัพเดพสถานนะผู้ป่วย',
+        //   to: '/volunteen/updatestatus',
+        // },
         {
           icon: 'mdi-account-arrow-up-outline',
           title: 'ผู้ป่วยที่ขอความช่วยเหลือ',

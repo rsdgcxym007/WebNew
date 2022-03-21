@@ -56,6 +56,7 @@ export default {
       valid: true,
       user_id: this.$auth.user.id,
       requests: [],
+      status_id: 'เขียว' || 'เหลือง' || 'แดง',
       dropdown_icon: [
         { text: 'ดำเนินเสร็จสิ้น', id: '95757608-7aec-426b-a4eb-286e1e44ecdd' },
         {

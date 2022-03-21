@@ -59,7 +59,7 @@ export default {
     },
     async helper(item) {
       const result = item
-      console.log('result', result)
+      // console.log('result', result)
       const { message } = await this.$axios.$post(
         '/api/volunteen/updatereport',
         { id: result.id, status_id: '05ad26ab-e04d-422e-bb3e-485c927b6bb5' }
@@ -76,7 +76,28 @@ export default {
           title: message,
         })
       }
-      this.$router.push({ path: '/volunteen/report' })
+      this.$router.push({ path: '/volunteen/updatereport' })
+    },
+    async nothelper(item) {
+      const result = item
+      console.log(result)
+      const { message } = await this.$axios.$post(
+        '/api/volunteen/notupdatereport',
+        { id: result.id, status_id: '8be0290d-f29d-4d73-bc1a-d5f437551b91' }
+      )
+
+      if (!result) {
+        this.$swal({
+          type: 'warning',
+          title: message,
+        })
+      } else {
+        this.$swal({
+          type: 'success',
+          title: message,
+        })
+      }
+      this.$router.push({ path: '/volunteen/updatereport' })
     },
   },
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pre>{{ this.$auth.user }}</pre>
+    <!-- <pre>{{ this.$auth.user }}</pre> -->
     <v-container>
       <v-card>
         <v-card-title>
