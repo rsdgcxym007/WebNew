@@ -136,7 +136,6 @@ export default {
             title: message,
           })
         }
-<<<<<<< HEAD
       } //this.$router.go() //refresh page
     },
   },
@@ -158,10 +157,6 @@ export default {
           this.users.address === this.$store.state.userInfo.address &&
           this.users.tel === this.$store.state.userInfo.tel)
       )
-=======
-      }
-      this.$router.push({ path: '/users' }) //refresh page
->>>>>>> c56f15b (dashboard)
     },
   },
 }
