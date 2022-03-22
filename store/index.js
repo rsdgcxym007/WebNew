@@ -6,6 +6,9 @@ export const state = () => ({
         tel: '',
         address: ''
 
+    },
+    taskInfo: {
+        remark:''
     }
 })
 
@@ -17,6 +20,11 @@ export const mutations = {
             email: userInfo.email,
             tel: userInfo.tel,
             address: userInfo.address,
+        }
+    },
+    SET_taskInfo(state, { taskInfo = state.userInfo, }) {
+        state.taskInfo = {
+            remark: taskInfo.remark,
         }
     }
 }
