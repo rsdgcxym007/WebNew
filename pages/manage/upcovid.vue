@@ -108,6 +108,7 @@ export default {
     }
   },
   uploadImage() {
+    console.log('aaaaaaaaa')
     if (this.$refs.form1.validate() === true) {
       this.onSubmit()
     } else {
@@ -158,7 +159,6 @@ export default {
     },
     async uploadImage() {
       const { image1, image2, hospital, date, user_id, task } = this
-
       const data = {
         image_rtpcr: image1,
         image_medical: image2,
@@ -168,7 +168,8 @@ export default {
         task,
         status: 'หายป่วยแล้ว',
       }
-
+      console.log('data b send:',)
+      
       await this.$axios.$post('/api/upload2', { data })
       this.$swal.fire({
         type: 'success',

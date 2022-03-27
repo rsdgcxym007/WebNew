@@ -227,7 +227,7 @@ export default {
     }
   },
   async fetch() {
-    console.log('this.$auth.user.profile_id : ', this.$auth.user.group_id)
+    console.log('this profile_id : ', this.$auth.user.group_id)
     if (this.$auth.user.group_id === '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
       this.items = this.items_user
     } else if (
@@ -240,7 +240,6 @@ export default {
       this.items = this.items_admin
     }
     await this.setUserStore()
-    console.log('ddd', this.$store.state.userInfo)
   },
   methods: {
     goToUserpage() {

@@ -8,7 +8,9 @@ export const state = () => ({
 
     },
     taskInfo: {
-        remark:''
+        remark: '',
+        status_id: '',
+        canceldetail:''
     }
 })
 
@@ -25,6 +27,8 @@ export const mutations = {
     SET_taskInfo(state, { taskInfo = state.userInfo, }) {
         state.taskInfo = {
             remark: taskInfo.remark,
+            status_id: taskInfo.status_id,
+            canceldetail:taskInfo.cancledetail
         }
     }
 }
