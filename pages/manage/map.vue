@@ -16,9 +16,17 @@
 
     <Gmap-Map
       style="width: 600px; height: 300px"
-      :zoom="14"
+      :zoom="7"
       :center="{ lat: currentLocation.lat, lng: currentLocation.lng }"
-      :options="{ disableDefaultUI: true }"
+      :options="{
+        zoomControl: true,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: true,
+        rotateControl: false,
+        fullscreenControl: true,
+        disableDefaultUi: false,
+      }"
     >
       <Gmap-Marker
         v-for="(marker, index) in markers"
@@ -43,7 +51,7 @@ export default {
     return {
       markers: [],
       place: null,
-      currentLocation: { lat: 0, lng: 0 },
+      currentLocation: { lat: 13, lng: 100 },
       lat: 0,
       lng: 0,
     }
