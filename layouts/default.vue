@@ -176,11 +176,11 @@ export default {
         //   title: 'อัพเดทอาการเบื้องต้น',
         //   to: '/manage/update',
         // },
-        {
-          icon: 'mdi-clipboard-check',
-          title: 'ทำเรื่่องหายป่วย',
-          to: '/manage/upcovid',
-        },
+        // {
+        //   icon: 'mdi-clipboard-check',
+        //   title: 'ทำเรื่่องหายป่วย',
+        //   to: '/manage/upcovid',
+        // },
       ],
       items_admin: [
         {

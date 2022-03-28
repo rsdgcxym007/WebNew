@@ -144,6 +144,7 @@
   </div>
 </template>
 <script>
+import saltedMd5 from 'salted-md5'
 export default {
   layout: 'emplty',
   //   middleware: 'logged',
@@ -176,7 +177,7 @@ export default {
   methods: {
     async fetchData() {
       const { result: groups } = await this.$axios.$get('/api/master/group')
-
+      console.log(saltedMd5('test', 'SUPER-S@LT!'))
       this.groups = groups
     },
     reset1() {
@@ -207,11 +208,13 @@ export default {
         })
       }
     },
-    async onSubmit() {
-      const { data } = await this.$auth.loginWith('local', {
-        data: { email: this.email, password: this.password },
-      })
 
+    async onSubmit() {
+       const mdpassword = saltedMd5(this.password, 'SUPER-S@LT!')
+      const { data } = await this.$auth.loginWith('local', {
+        data: { email: this.email, password: mdpassword },
+      })
+      
       const { result, message } = data
 
       this.$swal.fire({
@@ -234,9 +237,10 @@ export default {
       }
     },
     async register() {
+       const mdpassword = saltedMd5(this.password, 'SUPER-S@LT!')
       const user = {
         email: this.email,
-        password: this.password,
+        password: mdpassword,
         first_name: this.first_name,
         last_name: this.last_name,
         tel: this.tel,

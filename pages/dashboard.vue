@@ -40,7 +40,6 @@
               <div class="text-overline mb-4">
                 จำนวนผู้หายป่วยทั้งหมด :
                 {{ Number(item.total_recovered).toLocaleString() }}
-
               </div>
             </v-list-item-content>
           </v-list-item>

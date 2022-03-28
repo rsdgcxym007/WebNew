@@ -63,7 +63,7 @@ export default {
     async helper(item) {
       const id = item.id
       const { result, message } = await this.$axios.$post(
-        '/api/volunteen/updatestatus',
+        '/api/volunteen/updatestatususerhelp',
         { id,user_id_va : this.$auth.user.id }
       )
 
