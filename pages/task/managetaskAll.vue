@@ -5,18 +5,29 @@
         รายละเอียดการขอความช่วยเหลือ
         <v-spacer></v-spacer>
       </v-card-title>
-      <v-form ref="form_remark" v-model="valid" lazy-validation class="px-4">
+      <v-form ref="form_remark" lazy-validation class="px-4">
         <v-stepper v-model="e1">
           <v-stepper-header>
             <v-stepper-step :complete="e1 > 1" :step="1" editable>
               ขอความช่วยเหลือ
             </v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step :complete="e1 > 2" :step="2" editable>
+            <v-stepper-step
+              :complete="e1 > 2"
+              :step="2"
+              :editable="
+                taskData.status_id == $constants.DATA.HELPING_STATUS ||
+                taskData.status_id == $constants.DATA.HELP_DONE_STATUS
+              "
+            >
               กำลังช่วยเหลือ
             </v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step :complete="e1 > 3" :step="3" editable>
+            <v-stepper-step
+              :complete="e1 > 3"
+              :step="3"
+              :editable="taskData.status_id == $constants.DATA.HELP_DONE_STATUS"
+            >
               ช่วยเหลือเสร็จสิ้น
             </v-stepper-step>
           </v-stepper-header>
@@ -69,21 +80,62 @@
                     label="รายละเอียดที่อยู่"
                     outlined
                     required
+                    v-model="users.address"
+                    :disabled="
+                      this.$auth.user.group_id ==
+                      $constants.DATA.VOLUNTEER_GROUP
+                    "
                   ></v-textarea> </v-col
                 ><v-col cols="12" class="pt-0">
                   <v-card-title class="pa-0">ข้อมูลผู้ป่วย</v-card-title>
                 </v-col>
                 <v-col cols="12" lg="6">
-                  <v-text-field label="ขื่อ" outlined> </v-text-field>
+                  <v-text-field
+                    v-model="users.first_name"
+                    label="ขื่อ"
+                    outlined
+                    disabled
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12" lg="6">
-                  <v-text-field label="นามสกุล" outlined> </v-text-field>
+                  <v-text-field
+                    v-model="users.last_name"
+                    label="นามสกุล"
+                    outlined
+                    disabled
+                  >
+                  </v-text-field>
                 </v-col>
                 <v-col cols="12" lg="6">
-                  <v-text-field label="เบอร์โทร" outlined> </v-text-field>
+                  <v-text-field
+                    v-model="users.tel"
+                    label="เบอร์โทร"
+                    outlined
+                    disabled
+                  >
+                  </v-text-field>
                 </v-col>
-                <v-col cols="12" lg="6">
-                  <v-text-field label="วันเดือนปีเกิด" outlined> </v-text-field>
+                <v-col cols="12" lg="6" class="pb-0">
+                  <v-text-field label="วันเดือนปีเกิด" outlined disabled>
+                  </v-text-field>
+                </v-col>
+                <v-col
+                  v-if="
+                    $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
+                    taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
+                  "
+                  cols="12"
+                  class="pt-0"
+                  align="end"
+                >
+                  <nuxt-link to="/users" class="nav-link"
+                    >แก้ไขข้อมูลส่วนตัว</nuxt-link
+                  >
+                </v-col>
+                <v-col cols="12" class="pt-0">
+                  <v-card-title class="pa-0"
+                    >รายละเอียดการขอความช่วยเหลือ</v-card-title
+                  >
                 </v-col>
                 <v-col cols="12">
                   <v-select
@@ -92,6 +144,10 @@
                     label="ประเภทของความช่วยเหลือที่ต้องการ"
                     multiple
                     outlined
+                    :disabled="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                      taskData.status_id !== $constants.DATA.ASK_FOR_HELP_STATUS
+                    "
                   >
                     <template v-slot:prepend-item>
                       <v-list-item ripple @mousedown.prevent @click="toggle">
@@ -112,11 +168,49 @@
                     </template>
                   </v-select>
                 </v-col>
+                <v-col
+                  ><v-textarea
+                    v-model="taskData.remark"
+                    rows="3"
+                    no-resize
+                    label="หมายเหตุ"
+                    outlined
+                    required
+                    :disabled="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                      taskData.status_id !== $constants.DATA.ASK_FOR_HELP_STATUS
+                    "
+                  ></v-textarea
+                ></v-col>
                 <v-col cols="12" class="mb-4" style="text-align: end">
-                  <v-btn color="error" class="mr-3">
+                  <v-btn
+                    v-if="
+                      $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
+                      taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
+                    "
+                    color="primary"
+                    class="mr-3"
+                  >
+                    แก้ไขข้อมูล
+                  </v-btn>
+                  <v-btn
+                    v-if="
+                      $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
+                      taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
+                    "
+                    color="error"
+                    class="mr-3"
+                  >
                     ยกเลิกขอความช่วยเหลือ
                   </v-btn>
-                  <v-btn color="primary" @click="nextStep(1)">
+                  <v-btn
+                    v-if="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
+                      taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
+                    "
+                    color="primary"
+                    @click="updateData()"
+                  >
                     เข้าช่วยเหลือ
                   </v-btn>
                 </v-col>
@@ -130,13 +224,44 @@
                   >
                 </v-col>
                 <v-col cols="12" lg="6">
-                  <v-text-field label="ขื่อ" outlined> </v-text-field>
+                  <v-text-field
+                    label="ขื่อ"
+                    v-model="taskData.volunteer_firstname"
+                    outlined
+                    disabled
+                  >
+                  </v-text-field>
                 </v-col>
                 <v-col cols="12" lg="6">
-                  <v-text-field label="นามสกุล" outlined> </v-text-field>
+                  <v-text-field
+                    label="นามสกุล"
+                    v-model="taskData.volunteer_lastname"
+                    outlined
+                    disabled
+                  >
+                  </v-text-field>
                 </v-col>
                 <v-col cols="12" lg="6">
-                  <v-text-field label="เบอร์โทร" outlined> </v-text-field>
+                  <v-text-field
+                    label="เบอร์โทร"
+                    v-model="taskData.volunteer_tel"
+                    outlined
+                    disabled
+                  >
+                  </v-text-field>
+                </v-col>
+                <v-col
+                  v-if="
+                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
+                    taskData.status_id == $constants.DATA.HELPING_STATUS
+                  "
+                  cols="12"
+                  class="pt-0"
+                  align="end"
+                >
+                  <nuxt-link to="/users" class="nav-link"
+                    >แก้ไขข้อมูลส่วนตัว</nuxt-link
+                  >
                 </v-col>
                 <v-col cols="12">
                   <v-card-title class="pa-0"
@@ -230,12 +355,42 @@
                     outlined
                     required
                   ></v-textarea > -->
+                  <!-- <v-divider class="mt-2"></v-divider> -->
+                </v-col>
+                <v-col
+                  v-if="
+                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
+                    taskData.status_id == $constants.DATA.HELPING_STATUS
+                  "
+                  cols="12"
+                  class="pt-0"
+                  align="end"
+                >
+                  <nuxt-link to="/users" class="nav-link"
+                    >บันทึกรายละเอียดการช่วยเหลือ</nuxt-link
+                  >
                   <v-divider class="mt-2"></v-divider>
                 </v-col>
 
                 <v-col cols="12" class="mb-4" style="text-align: end">
-                  <!-- <v-btn color="warning" class="mr-3"> บันทึกข้อมูล </v-btn> -->
-                  <v-btn color="primary" @click="nextStep(2)">
+                  <!-- <v-btn
+                    v-if="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
+                      taskData.status_id == $constants.DATA.HELPING_STATUS
+                    "
+                    color="warning"
+                    class="mr-3"
+                  >
+                    บันทึกข้อมูล
+                  </v-btn> -->
+                  <v-btn
+                    v-if="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
+                      taskData.status_id == $constants.DATA.HELPING_STATUS
+                    "
+                    color="primary"
+                    @click="updateData()"
+                  >
                     ช่วยเหลือเสร็จสิ้น
                   </v-btn>
                 </v-col>
@@ -256,9 +411,7 @@
                   ></v-textarea
                 ></v-col>
                 <v-col cols="12" class="mb-4" style="text-align: end">
-                  <v-btn color="primary" @click="nextStep(3)">
-                    เสร็จสิ้น
-                  </v-btn>
+                  <v-btn color="primary"> เสร็จสิ้น </v-btn>
                 </v-col>
               </v-row>
             </v-stepper-content>
@@ -270,6 +423,7 @@
 </template>
 <script>
 export default {
+  middleware: 'auth',
   data() {
     return {
       e1: 1,
@@ -278,7 +432,20 @@ export default {
         remark: '',
         id: '',
         status_id: '',
-        canceldetail: 'fs',
+        canceldetail: '',
+        volunteer_id: '',
+        volunteer_firstname: '',
+        volunteer_lastname: '',
+        volunteer_tel: '',
+      },
+      users: {
+        id: '',
+        first_name: '',
+        last_name: '',
+        email: '',
+        tel: '',
+        address: '',
+        position: null,
       },
       image1: '',
       image2: '',
@@ -304,6 +471,11 @@ export default {
     }
   },
 
+  async mounted() {
+    this.geolocation()
+    await this.fetchData()
+  },
+
   computed: {
     likesAllFruit() {
       return this.selectedTypes.length === this.types.length
@@ -327,6 +499,47 @@ export default {
   },
 
   methods: {
+    async fetchData() {
+      const { result: tasks } = await this.$axios.$post('/api/tasks/getbyId', {
+        id: this.$route.query.id,
+      })
+      this.taskData = tasks
+      if (this.taskData.volunteer_id) {
+        const { result } = await this.$axios.$post('/api/user/getbyID', {
+          id: this.taskData.volunteer_id,
+        })
+        if (result) {
+          this.taskData.volunteer_firstname = result.first_name
+          this.taskData.volunteer_lastname = result.last_name
+          this.taskData.volunteer_tel = result.tel
+        }
+      }
+
+      if (this.taskData.status_id == this.$constants.DATA.ASK_FOR_HELP_STATUS) {
+        this.e1 = 1
+      } else if (
+        this.taskData.status_id == this.$constants.DATA.HELPING_STATUS
+      ) {
+        this.e1 = 2
+      } else if (
+        this.taskData.status_id == this.$constants.DATA.HELP_DONE_STATUS
+      ) {
+        this.e1 = 3
+      }
+
+      this.users.first_name = this.$store.state.userInfo.first_name
+      this.users.last_name = this.$store.state.userInfo.last_name
+      this.users.email = this.$store.state.userInfo.email
+      this.users.address = this.$store.state.userInfo.address
+      this.users.tel = this.$store.state.userInfo.tel
+      this.$store.commit('SET_taskInfo', {
+        taskInfo: {
+          remark: this.taskData.remark,
+          status_id: this.taskData.status_id,
+          cancel_detail: this.taskData.canceldetail,
+        },
+      })
+    },
     toggle() {
       this.$nextTick(() => {
         if (this.likesAllFruit) {
@@ -336,11 +549,54 @@ export default {
         }
       })
     },
-    nextStep(n) {
-      if (n === this.steps) {
-        this.e1 = 1
+    // nextStep(n) {
+    //   if (n === this.steps) {
+    //     this.e1 = 1
+    //   } else {
+    //     this.e1 = n + 1
+    //   }
+    // },
+    async updateData() {
+      if (
+        this.taskData.status_id === this.$constants.DATA.ASK_FOR_HELP_STATUS
+      ) {
+        await this.updateHelping()
+      } else if (
+        this.taskData.status_id === this.$constants.DATA.HELPING_STATUS
+      ) {
+        await this.updateHelpDone()
+      }
+      // else if (
+      //   this.taskData.status_id === '7c2f1759-f664-40d2-8184-c20f2e76c229' ||
+      //   this.taskData.status_id === '490089af-cb09-476d-9568-a0896a50143a'
+      // ) {
+      //   //if just update remark
+      //   await this.updateRemark()
+      // } else {
+      //   await this.uploadImage()
+      // }
+    },
+    async updateHelping() {
+      const { result, message } = await this.$axios.$post('/api/task/update', {
+        id: this.taskData.id,
+        status_id: this.$constants.DATA.HELPING_STATUS,
+        volunteer_id: this.$auth.user.id,
+      })
+      if (!result) {
+        console.log('error : ', message)
       } else {
-        this.e1 = n + 1
+        await this.fetchData()
+      }
+    },
+    async updateHelpDone() {
+      const { result, message } = await this.$axios.$post('/api/task/update', {
+        id: this.taskData.id,
+        status_id: this.$constants.DATA.HELP_DONE_STATUS,
+      })
+      if (!result) {
+        console.log('error : ', message)
+      } else {
+        await this.fetchData()
       }
     },
     geolocation: function () {
@@ -380,9 +636,6 @@ export default {
     removeItem: function (index) {
       this.items.splice(index, 1)
     },
-  },
-  mounted: function () {
-    this.geolocation()
   },
 }
 </script>

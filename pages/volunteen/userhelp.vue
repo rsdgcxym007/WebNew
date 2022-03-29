@@ -18,18 +18,16 @@
           :items-per-page="5"
           :search="search"
           class="elevation-1"
+          @click:row="editItem"
         >
           <template v-slot:[`item.status_name`]="{ item }">
             <v-chip :color="item.color">
               {{ item.status_name }}
             </v-chip>
           </template>
-          <template v-slot:[`item.actions`]="{ item }">
-            <!-- <v-icon small class="mr-2" @click="editItem(item)">
-              mdi-pencil
-            </v-icon> -->
+          <!-- <template v-slot:[`item.actions`]="{ item }">
             <v-btn color="success" @click="helper(item)">ช่วยเหลือ</v-btn>
-          </template>
+          </template> -->
         </v-data-table>
       </v-card>
     </v-container>
@@ -60,27 +58,30 @@ export default {
       this.details = tasks
       this.headers = headers
     },
-    async helper(item) {
-      const id = item.id
-      const { result, message } = await this.$axios.$post(
-        '/api/volunteen/updatestatususerhelp',
-        { id,user_id_va : this.$auth.user.id }
-      )
+    // async helper(item) {
+    //   const id = item.id
+    //   const { result, message } = await this.$axios.$post(
+    //     '/api/volunteen/updatestatususerhelp',
+    //     { id, user_id_va: this.$auth.user.id }
+    //   )
 
-      await this.fetchData()
-      console.log('result : ', result)
+    //   await this.fetchData()
+    //   console.log('result : ', result)
 
-      if (!result) {
-        this.$swal({
-          type: 'warning',
-          title: message,
-        })
-      } else {
-        this.$swal({
-          type: 'success',
-          title: message,
-        })
-      }
+    //   if (!result) {
+    //     this.$swal({
+    //       type: 'warning',
+    //       title: message,
+    //     })
+    //   } else {
+    //     this.$swal({
+    //       type: 'success',
+    //       title: message,
+    //     })
+    //   }
+    // },
+    editItem(data) {
+      this.$router.push('/task/managetaskAll?id=' + data.id)
     },
   },
 }

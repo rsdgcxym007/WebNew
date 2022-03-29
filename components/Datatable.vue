@@ -40,7 +40,8 @@ export default {
   },
   methods: {
     editItem(data) {
-      this.$router.push('/manage/update?id=' + data.id)
+      this.$router.push('/task/managetaskAll?id=' + data.id)
+      // this.$router.push('/manage/update?id=' + data.id)
     },
   },
 }

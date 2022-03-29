@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     editItem(data) {
-      this.$router.push('/volunteen/updatestatus?id=' + data.id)
+      this.$router.push('/task/managetaskAll?id=' + data.id)
     },
   },
 }

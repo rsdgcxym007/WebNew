@@ -22,13 +22,6 @@ export default {
       this.details = tasks
       this.headers = headers
     },
-    request() {
-      this.$router.push({ path: '/manage/request' })
-    },
-    async logout() {
-      await this.$auth.logout()
-      this.$router.push('/')
-    },
   },
 }
 </script>
