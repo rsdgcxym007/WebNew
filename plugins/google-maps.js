@@ -5,7 +5,7 @@ Vue.use(VueGoogleMaps, {
   load: {
     key: "AIzaSyCOeFXWFa4nLSuKKo5-pBNCrB-JkP6MrWk",
     libraries: ["places", "geometry"],
-    // region: 'TH',
-    // language: 'TH'
+    region: 'TH',
+    language: 'TH'
   }
 });

@@ -4,7 +4,9 @@ export const state = () => ({
         last_name: '',
         email: '',
         tel: '',
-        address: ''
+        position: '',
+        description: '',
+        place :''
 
     },
     taskInfo: {
@@ -21,7 +23,9 @@ export const mutations = {
             last_name: userInfo.last_name,
             email: userInfo.email,
             tel: userInfo.tel,
-            address: userInfo.address,
+            position: userInfo.position,
+            description: userInfo.description,
+            place: userInfo.place
         }
     },
     SET_taskInfo(state, { taskInfo = state.userInfo, }) {

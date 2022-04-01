@@ -171,7 +171,7 @@
 <script>
 export default {
   middleware: 'auth',
-  async mounted() {
+  async fetch() {
     await this.fetchData()
   },
   data() {
@@ -202,63 +202,70 @@ export default {
     }
   },
   methods: {
+
     async fetchData() {
-      const { result: tasks } = await this.$axios.$post('/api/tasks/getbyId', {
-        id: this.$route.query.id,
-      })
-      this.taskData = tasks
-      this.$store.commit('SET_taskInfo', {
-        taskInfo: {
-          remark: this.taskData.remark,
-          status_id: this.taskData.status_id,
-        },
-      })
-      if (
-        this.$store.state.taskInfo.status_id ==
-        'ef9e2e70-d55b-4250-8967-965b7cb0cbc7'
-      ) {
-        const { result } = await this.$axios.$post('/api/tasks/getImage', {
-          id: this.taskData.img_id,
-        })
-        console.log('data form Image: ', result)
-        this.hospital = result.hospital
-        this.date = result.day_of_visit
-        this.imageRTPCR = result.image_rtpcr
-        this.image_medicalcert = result.image_medical
-      }
-      if (this.taskData.status_id === '7c2f1759-f664-40d2-8184-c20f2e76c229') {
-        this.dropdown_icon = [
-          {
-            text: 'ยกเลิก',
-            id: '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee',
-          },
-          {
-            text: 'ขอความช่วยเหลือ',
-            id: '7c2f1759-f664-40d2-8184-c20f2e76c229',
-          },
-        ]
-      } else if (
-        this.taskData.status_id === '490089af-cb09-476d-9568-a0896a50143a'
-      ) {
-        this.dropdown_icon = [
-          {
-            // '490089af-cb09-476d-9568-a0896a50143a' = กำลังช่วยเหลือ ใน DB
-            text: 'กำลังได้รับการช่วยเหลือ',
-            id: '490089af-cb09-476d-9568-a0896a50143a',
-          },
-          { text: 'หายป่วยแล้ว', id: 'ef9e2e70-d55b-4250-8967-965b7cb0cbc7' },
-        ]
-      } else if (
-        this.taskData.status_id === '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee'
-      ) {
-        this.dropdown_icon = [
-          {
-            text: 'ยกเลิก',
-            id: '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee',
-          },
-        ]
-      }
+      const result = await this.$axios.$get(
+        'https://api.longdo.com/map/services/address?lon=100.53726&lat=13.72427&noelevation=1&key=19a82191e775c0fc9435aa5910727a3e'
+      )
+      console.log('result1:', result)
     },
+    // async fetchData() {
+    //   const { result: tasks } = await this.$axios.$post('/api/tasks/getbyId', {
+    //     id: this.$route.query.id,
+    //   })
+    //   this.taskData = tasks
+    //   this.$store.commit('SET_taskInfo', {
+    //     taskInfo: {
+    //       remark: this.taskData.remark,
+    //       status_id: this.taskData.status_id,
+    //     },
+    //   })
+    //   if (
+    //     this.$store.state.taskInfo.status_id ==
+    //     'ef9e2e70-d55b-4250-8967-965b7cb0cbc7'
+    //   ) {
+    //     const { result } = await this.$axios.$post('/api/tasks/getImage', {
+    //       id: this.taskData.img_id,
+    //     })
+    //     console.log('data form Image: ', result)
+    //     this.hospital = result.hospital
+    //     this.date = result.day_of_visit
+    //     this.imageRTPCR = result.image_rtpcr
+    //     this.image_medicalcert = result.image_medical
+    //   }
+    //   if (this.taskData.status_id === '7c2f1759-f664-40d2-8184-c20f2e76c229') {
+    //     this.dropdown_icon = [
+    //       {
+    //         text: 'ยกเลิก',
+    //         id: '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee',
+    //       },
+    //       {
+    //         text: 'ขอความช่วยเหลือ',
+    //         id: '7c2f1759-f664-40d2-8184-c20f2e76c229',
+    //       },
+    //     ]
+    //   } else if (
+    //     this.taskData.status_id === '490089af-cb09-476d-9568-a0896a50143a'
+    //   ) {
+    //     this.dropdown_icon = [
+    //       {
+    //         // '490089af-cb09-476d-9568-a0896a50143a' = กำลังช่วยเหลือ ใน DB
+    //         text: 'กำลังได้รับการช่วยเหลือ',
+    //         id: '490089af-cb09-476d-9568-a0896a50143a',
+    //       },
+    //       { text: 'หายป่วยแล้ว', id: 'ef9e2e70-d55b-4250-8967-965b7cb0cbc7' },
+    //     ]
+    //   } else if (
+    //     this.taskData.status_id === '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee'
+    //   ) {
+    //     this.dropdown_icon = [
+    //       {
+    //         text: 'ยกเลิก',
+    //         id: '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee',
+    //       },
+    //     ]
+    //   }
+    // },
     resetForm() {
       this.taskData.status_id = this.$store.state.taskInfo.status_id
       this.taskData.remark = this.$store.state.taskInfo.remark

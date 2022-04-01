@@ -3,7 +3,7 @@
     <v-card elevation="8" width="auto" class="mx-12 my-1 pa-4">
       <v-card-title>ข้อมูลส่วนตัว </v-card-title>
       <v-container>
-        <v-form ref="form" v-model="valid" lazy-validation>
+        <v-form ref="form_user" v-model="valid" lazy-validation>
           <v-row>
             <v-col cols="12" lg="6">
               <v-text-field
@@ -38,6 +38,7 @@
                 v-model="users.tel"
                 :rules="TelRules"
                 label="โทรศัพท์"
+                :counter="10"
                 outlined
                 required
               ></v-text-field>
@@ -45,7 +46,8 @@
           </v-row>
           <v-row>
             <v-col cols="12">ที่อยู่</v-col>
-            <v-col cols="10">
+            <!-- <v-col cols="10"> -->
+              <v-col cols="8 col-lg-11" >
               <gmap-autocomplete
                 placeholder="ค้นหาที่อยู่"
                 @place_changed="setPlace"
@@ -53,13 +55,14 @@
               >
               </gmap-autocomplete>
             </v-col>
-            <v-col cols="2" align-self="center">
+            <!-- <v-col cols="2" align-self="center"> -->
+              <v-col cols="3 col-lg-1" align-self="center" class=" py-0 pl-0 pr-3 ma-0">
               <v-btn
                 block
                 color="primary"
                 @click="usePlace()"
                 :disabled="isDisabledSearch"
-                >เพิ่ม</v-btn
+                >ค้นหา</v-btn
               >
             </v-col>
             <v-col cols="12">
@@ -87,11 +90,21 @@
                 />
               </GmapMap>
             </v-col>
-            <v-col cols="12">
+            <v-col>
               <v-textarea
                 v-model="users.address"
-                :rules="addressRules"
                 label="รายละเอียดที่อยู่"
+                rows="3"
+                no-resize
+                outlined
+                required
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="users.description"
+                :rules="addressRules"
+                label="รายละเอียดเพิ่มเติม"
                 rows="3"
                 no-resize
                 outlined
@@ -110,7 +123,11 @@
                 คืนค่า
               </v-btn>
               <!-- <v-btn :disabled="!valid" color="success" @click="updatedata"> -->
-              <v-btn :disabled="isDisabled" color="success" @click="updatedata">
+              <v-btn
+                :disabled="isDisabled"
+                color="success"
+                @click="updateDataUser"
+              >
                 บันทึกข้อมูล
               </v-btn>
             </v-col>
@@ -131,8 +148,9 @@ export default {
         last_name: '',
         email: '',
         tel: '',
-        address: '',
+        description: '',
         position: null,
+        address: '',
       },
       valid: '',
       FnameRules: [
@@ -155,6 +173,7 @@ export default {
       place: null,
       zoom: 7,
       center: { lat: 13.736717, lng: 100.523186 },
+      address: '',
     }
   },
   async mounted() {
@@ -171,31 +190,44 @@ export default {
       })
     },
     async fetchData() {
-      console.log('User ID : ' + this.$auth.user.id)
+      const userInfo = this.$store.state.userInfo
 
-      this.users.first_name = this.$store.state.userInfo.first_name
-      this.users.last_name = this.$store.state.userInfo.last_name
-      this.users.email = this.$store.state.userInfo.email
-      this.users.address = this.$store.state.userInfo.address
-      this.users.tel = this.$store.state.userInfo.tel
+      this.users.first_name = userInfo.first_name
+      this.users.last_name = userInfo.last_name
+      this.users.email = userInfo.email
+      this.users.description = userInfo.description
+      this.users.position = userInfo.position
+      this.center = userInfo.position
+      this.users.tel = userInfo.tel
       this.users.id = this.$auth.user.id
+      this.zoom = 16
     },
-    async updatedata() {
-      this.$refs.form.validate()
-      if (this.$refs.form.validate() === true) {
+    async updateDataUser() {
+      if (this.$refs.form_user.validate() === true) {
+        const data = {
+          user_id: this.users.id,
+          first_name: this.users.first_name,
+          last_name: this.users.last_name,
+          tel: this.users.tel,
+          position: this.users.position,
+          description: this.users.description,
+          address: this.users.address,
+        }
         const { result, message } = await this.$axios.$post(
           '/api/user/update',
-          this.users
+          { data }
         )
         if (!result) {
-          console.log('error : ', message)
+          console.log('error: ', message)
         } else {
-          this.$store.commit('SET_userInfo', {
+          await this.$store.commit('SET_userInfo', {
             userInfo: {
               first_name: this.users.first_name,
               last_name: this.users.last_name,
               email: this.users.email,
               tel: this.users.tel,
+              description: this.users.description,
+              position: this.users.position,
               address: this.users.address,
             },
           })
@@ -208,6 +240,7 @@ export default {
     },
     setPlace(place) {
       this.place = place
+      console.log('current place', this.place)
     },
     usePlace() {
       if (this.place) {
@@ -215,16 +248,36 @@ export default {
           lat: this.place.geometry.location.lat(),
           lng: this.place.geometry.location.lng(),
         }
+        this.users.address = this.place.formatted_address
         this.zoom = 18
         this.center = this.users.position
         this.place = null
+        console.log('address: ', this.address)
       }
     },
+
     updatePosition(location) {
+      console.log('location after update: ', location)
       this.users.position = {
         lat: location.latLng.lat(),
         lng: location.latLng.lng(),
       }
+      console.log('location: ', this.users.position)
+      this.getAddressDetail(this.users.position.lat, this.users.position.lng)
+    },
+
+    async getAddressDetail(lat, lng) {
+      const geocoder = new google.maps.Geocoder()
+      const latlng = { lat, lng }
+
+      await geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === 'OK') {
+          console.log('result from getTown', results[0])
+          this.users.address = results[0].formatted_address
+        } else {
+          console.log('No results found')
+        }
+      })
     },
   },
   computed: {
@@ -232,9 +285,9 @@ export default {
       return (
         (this.users.first_name === this.$store.state.userInfo.first_name &&
           this.users.last_name === this.$store.state.userInfo.last_name &&
-          this.users.email === this.$store.state.userInfo.email &&
-          this.users.address === this.$store.state.userInfo.address &&
-          this.users.tel === this.$store.state.userInfo.tel) ||
+          this.users.description === this.$store.state.userInfo.description &&
+          this.users.tel === this.$store.state.userInfo.tel &&
+          this.users.position === this.$store.state.userInfo.position) ||
         !this.valid
       )
     },
@@ -243,12 +296,16 @@ export default {
         this.users.first_name === this.$store.state.userInfo.first_name &&
         this.users.last_name === this.$store.state.userInfo.last_name &&
         this.users.email === this.$store.state.userInfo.email &&
-        this.users.address === this.$store.state.userInfo.address &&
-        this.users.tel === this.$store.state.userInfo.tel
+        this.users.description === this.$store.state.userInfo.description &&
+        this.users.tel === this.$store.state.userInfo.tel &&
+        this.users.position === this.$store.state.userInfo.position
       )
     },
     isDisabledSearch() {
       return !this.place
+    },
+    isHideAddress() {
+      return !this.users.address
     },
   },
 }

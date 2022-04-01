@@ -253,13 +253,16 @@ export default {
       const { result } = await this.$axios.$post('/api/user/getbyID', {
         id: this.$auth.user.id,
       })
+      console.log('result for set: ' , result)
       this.$store.commit('SET_userInfo', {
         userInfo: {
           first_name: result.first_name,
           last_name: result.last_name,
           email: result.email,
           tel: result.tel,
-          address: result.address,
+          position: result.position,
+          description: result.description,
+          place : result.place
         },
       })
     },
