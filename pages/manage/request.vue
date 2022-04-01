@@ -8,27 +8,183 @@
         </v-card-title>
         <v-form ref="form1" lazy-validation class="px-4">
           <v-row>
-            <v-col cols="12" sm="6" md="12">
-              <v-autocomplete
-                v-model="body.type"
-                :items="types"
-                dense
-                filled
-                outlined
-                label="ประเภท"
-              ></v-autocomplete>
+            <v-col cols="12"
+              ><div style="font-weight: 500">ที่อยู่</div>
+              <v-switch
+                v-model="isOldAddress"
+                inset
+                label="ที่อยู่เดิม"
+              ></v-switch
+            ></v-col>
+            <v-col cols="12">ที่อยู่</v-col>
+            <v-col cols="8 col-lg-11">
+              <gmap-autocomplete
+                placeholder="ค้นหาที่อยู่"
+                @place_changed="setPlace"
+                class="gsearch"
+              >
+              </gmap-autocomplete>
             </v-col>
-
+            <v-col
+              cols="3 col-lg-1"
+              align-self="center"
+              class="py-0 pl-0 pr-3 ma-0"
+            >
+              <v-btn
+                block
+                color="primary"
+                @click="usePlace()"
+                :disabled="isDisabledSearch"
+                >ค้นหา</v-btn
+              >
+            </v-col>
+            <v-col cols="12">
+              <GmapMap
+                :center="center"
+                :zoom="zoom"
+                map-type-id="terrain"
+                style="width: 100%; height: 300px"
+                :options="{
+                  zoomControl: true,
+                  mapTypeControl: false,
+                  scaleControl: false,
+                  streetViewControl: true,
+                  rotateControl: false,
+                  fullscreenControl: true,
+                  disableDefaultUi: false,
+                }"
+              >
+                <GmapMarker
+                  :position="position"
+                  :clickable="true"
+                  :draggable="true"
+                  @click="center = position"
+                  @dragend="updatePosition"
+                />
+              </GmapMap>
+            </v-col>
+            <v-col>
+              <v-textarea
+                v-model="address"
+                label="รายละเอียดที่อยู่จากหมุด"
+                rows="3"
+                no-resize
+                outlined
+                required
+                disabled
+              ></v-textarea>
+            </v-col>
             <v-col cols="12">
               <v-textarea
-                v-model="body.remark"
-                label="คำอธิบายอาการเบื้องต้น"
+                v-model="description"
+                label="รายละเอียดที่อยู่เพิ่มเติม"
+                rows="3"
+                no-resize
                 outlined
                 required
               ></v-textarea>
+              <v-divider></v-divider>
+            </v-col>
+            <v-col cols="12">
+              <div style="font-weight: 500">อาการ</div>
+              <v-textarea
+                v-model="remark"
+                label="คำอธิบายอาการเบื้องต้น"
+                outlined
+                rows="3"
+                required
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="remark"
+                label="โรคประจำตัว"
+                outlined
+                rows="2"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12">
+              <div style="font-weight: 500">ประเมินระดับอาการเบื้องต้น</div>
+              <v-radio-group
+                v-model="patient_group"
+                v-on:change="changePatientGroup"
+              >
+                <v-radio
+                  label="กลุ่มสีเขียว (กลุ่มที่มีอาการเบาคล้ายไข้หวัด หรือไม่มีอาการเลย เช่น มีไข้ ไม่รับรส ไม่รับกลิ่น ไอ มีน้ำมูก เจ็บคอ ตาแดง มีผื่น และถ่ายเหลว)"
+                  value="green"
+                ></v-radio>
+                <div v-if="patient_group == 'green'" class="pl-8">
+                  <div style="color: rgba(0, 0, 0, 0.6); font-weight: 500">
+                    สถานที่รักษาที่ต้องการ
+                  </div>
+                  <v-radio-group v-model="isolation" class="mt-0">
+                    <v-radio
+                      label="Home Isolation : การรักษาด้วยการกักตัวอยู่ที่บ้าน โดยจะได้รับการดูแลพร้อมอุปกรณ์ขั้นพื้นฐาน"
+                      value="home"
+                    ></v-radio>
+                    <v-radio
+                      label="Hospitel : ต้องใช้ใบยืนยันผลการตรวจแบบ RT-PCR"
+                      value="hospitel"
+                    ></v-radio
+                  ></v-radio-group>
+                </div>
+                <v-radio
+                  class="mt-4"
+                  label="กลุ่มสีเหลือง (กลุ่มที่มีอาการเสี่ยงรุนแรง หรือมีโรคร่วม เช่น เวียนหัว อ่อนเพลีย ไอแล้วมีอาการเหนื่อย แน่นหน้าอก หายใจลำบาก ขับถ่ายเหลว 3 ครั้งต่อวันขึ้นไป อ่อนเพลีย ปอดอักเสบ)"
+                  value="yellow"
+                ></v-radio>
+                <div v-if="patient_group == 'yellow'" class="pl-8">
+                  <div style="color: rgba(0, 0, 0, 0.6); font-weight: 500">
+                    สถานที่รักษาที่ต้องการ
+                  </div>
+                  <v-radio-group v-model="isolation" class="mt-0">
+                    <v-radio label="โรงพยาบาล" value="hospital"></v-radio
+                  ></v-radio-group>
+                </div>
+                <v-radio
+                  class="mt-4"
+                  label="กลุ่มสีแดง (กลุ่มที่มีอาการรุนแรงต้องรีบเข้ารับการรักษาตัวโดยเร็ว เช่น ระบบหายใจมีปัญหารุนแรงทำให้หายใจลำบาก หอบเหนื่อย หากเอกซเรย์จะพบปอดอักเสบรุนแรง แน่นหน้าอกตลอดเวลา และหายใจเจ็บหน้าอก ตอบสนองช้า หรือไม่รู้สึกตัว)"
+                  value="red"
+                ></v-radio>
+                <div v-if="patient_group == 'red'" class="pl-8">
+                  <div style="color: rgba(0, 0, 0, 0.6); font-weight: 500">
+                    สถานที่รักษาที่ต้องการ
+                  </div>
+                  <v-radio-group v-model="isolation" class="mt-0">
+                    <v-radio label="โรงพยาบาล" value="hospital"></v-radio
+                  ></v-radio-group>
+                </div>
+              </v-radio-group>
+            </v-col>
+            <v-col cols="12">
+              <v-select
+                v-model="selectedTypes"
+                :items="requirement"
+                label="ประเภทของความช่วยเหลือที่ต้องการ"
+                multiple
+                outlined
+              >
+                <template v-slot:prepend-item>
+                  <v-list-item ripple @mousedown.prevent @click="toggle">
+                    <v-list-item-action>
+                      <v-icon
+                        :color="
+                          selectedTypes.length > 0 ? 'indigo darken-4' : ''
+                        "
+                      >
+                        {{ icon }}
+                      </v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title> เลือกทั้งหมด </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider class="mt-2"></v-divider>
+                </template>
+              </v-select>
             </v-col>
             <v-col cols="12" style="text-align: end">
-              <v-btn color="success" @click="request()">Request</v-btn>
+              <v-btn color="success" @click="request()">ขอความช่วยเหลือ</v-btn>
             </v-col>
           </v-row>
         </v-form>
@@ -42,36 +198,56 @@ export default {
   middleware: 'auth',
   data() {
     return {
-      types: [],
-      // remarkRules: [(v) => !!v || 'Password is required'],
-
-      body: {
-        type: 'ป่วย',
-        remark: '',
-        user_id: this.$auth.user.id,
-        // user_id: 1,
-        status_id: 'ขอความช่วยเหลือ',
-      },
+      isOldAddress: true,
+      selectedTypes: [],
+      requirement: ['สถานที่รักษา', 'อาหาร / ยา / ของใช้', 'รถรับส่ง'],
+      remark: '',
+      patient_group: '',
+      isolation: '',
+      user_id: this.$auth.user.id,
+      description: '',
+      position: null,
+      address: '',
+      place: null,
+      zoom: 7,
+      center: { lat: 13.736717, lng: 100.523186 },
+      address: '',
     }
   },
   async fetch() {
     if (this.$auth.user.group_id != '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
       this.$router.push('/')
     }
-    await this.fetchData()
+  },
+  computed: {
+    likesAllFruit() {
+      return this.selectedTypes.length === this.requirement.length
+    },
+    likesSomeFruit() {
+      return this.selectedTypes.length > 0 && !this.likesAllFruit
+    },
+    icon() {
+      if (this.likesAllFruit) return 'mdi-close-box'
+      if (this.likesSomeFruit) return 'mdi-minus-box'
+      return 'mdi-checkbox-blank-outline'
+    },
+    isDisabledSearch() {
+      return !this.place
+    },
   },
   methods: {
-    async fetchData() {
-      const { result: types } = await this.$axios.$get('/api/master/type')
-
-      this.types = types
-    },
     async request() {
       this.$refs.form1.validate()
       if (this.$refs.form1.validate() === true) {
+        const body = {
+          type: 'ป่วย',
+          remark: '',
+          user_id: this.user_id,
+          status_id: 'ขอความช่วยเหลือ',
+        }
         const { result, message } = await this.$axios.$post(
           '/api/manage/request',
-          this.body
+          body
         )
 
         if (!result) {
@@ -85,6 +261,76 @@ export default {
         }
       }
     },
+    changePatientGroup() {
+      if (this.patient_group == 'green') {
+        this.isolation = 'home'
+      } else {
+        this.isolation = 'hospital'
+      }
+    },
+    toggle() {
+      this.$nextTick(() => {
+        if (this.likesAllFruit) {
+          this.selectedTypes = []
+        } else {
+          this.selectedTypes = this.requirement.slice()
+        }
+      })
+    },
+    setPlace(place) {
+      this.place = place
+      console.log('current place', this.place)
+    },
+    usePlace() {
+      if (this.place) {
+        this.position = {
+          lat: this.place.geometry.location.lat(),
+          lng: this.place.geometry.location.lng(),
+        }
+        this.address = this.place.formatted_address
+        this.zoom = 18
+        this.center = this.position
+        this.place = null
+        console.log('address: ', this.address)
+      }
+    },
+
+    updatePosition(location) {
+      console.log('location after update: ', location)
+      this.position = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng(),
+      }
+      console.log('location: ', this.position)
+      this.getAddressDetail(this.position.lat, this.position.lng)
+    },
+
+    async getAddressDetail(lat, lng) {
+      const geocoder = new google.maps.Geocoder()
+      const latlng = { lat, lng }
+
+      await geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === 'OK') {
+          console.log('result from getTown', results[0])
+          this.address = results[0].formatted_address
+        } else {
+          console.log('No results found')
+        }
+      })
+    },
   },
 }
 </script>
+<style scoped>
+.gsearch {
+  border: 1px solid rgba(0, 0, 0, 0.42);
+  border-radius: 4px;
+  max-height: 56px;
+  flex: 1 1 auto;
+  line-height: 20px;
+  padding: 16px 8px;
+  max-width: 100%;
+  min-width: 0px;
+  width: 100%;
+}
+</style>
