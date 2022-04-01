@@ -64,7 +64,12 @@
                     </v-card>
                   </v-tab-item>
                   <v-tab-item :value="'mobile-tabs-5-2'">
-                    <v-card flat class="mb-4">
+                    <v-card
+                      flat
+                      class="mb-4"
+                      max-height="700"
+                      style="overflow: auto"
+                    >
                       <v-card-text>
                         <v-form ref="form2" lazy-validation>
                           <v-text-field
@@ -81,14 +86,6 @@
                             prepend-icon="mdi-account"
                             type="text"
                             :rules="last_nameRules"
-                            required
-                          ></v-text-field>
-                          <v-text-field
-                            v-model="address"
-                            label="ที่อยู่"
-                            prepend-icon="mdi-clipboard-account"
-                            type="text"
-                            :rules="addressRules"
                             required
                           ></v-text-field>
 
@@ -121,7 +118,80 @@
                               dense
                               filled
                               label="ประเภท"
+                              hide-details
                             ></v-autocomplete>
+                          </v-col>
+                          <v-col cols="12">ที่อยู่</v-col>
+                          <v-row class="px-4">
+                            <v-col cols="9">
+                              <gmap-autocomplete
+                                placeholder="ค้นหาที่อยู่"
+                                @place_changed="setPlace"
+                                class="gsearch"
+                              >
+                              </gmap-autocomplete>
+                            </v-col>
+                            <v-col
+                              cols="3"
+                              align-self="center"
+                              class="py-0 pl-0 pr-3 ma-0"
+                            >
+                              <v-btn
+                                block
+                                color="primary"
+                                @click="usePlace()"
+                                :disabled="isDisabledSearch"
+                                >ค้นหา</v-btn
+                              >
+                            </v-col>
+                          </v-row>
+
+                          <v-col cols="12">
+                            <GmapMap
+                              :center="center"
+                              :zoom="zoom"
+                              map-type-id="terrain"
+                              style="width: 100%; height: 300px"
+                              :options="{
+                                zoomControl: true,
+                                mapTypeControl: false,
+                                scaleControl: false,
+                                streetViewControl: true,
+                                rotateControl: false,
+                                fullscreenControl: true,
+                                disableDefaultUi: false,
+                              }"
+                            >
+                              <GmapMarker
+                                :position="position"
+                                :clickable="true"
+                                :draggable="true"
+                                @click="center = position"
+                                @dragend="updatePosition"
+                              />
+                            </GmapMap>
+                          </v-col>
+                          <v-col class="pb-0">
+                            <v-textarea
+                              v-model="address"
+                              label="รายละเอียดที่อยู่จากหมุด"
+                              rows="3"
+                              no-resize
+                              outlined
+                              required
+                              disabled
+                            ></v-textarea>
+                          </v-col>
+                          <v-col class="py-0" cols="12">
+                            <v-textarea
+                              v-model="description"
+                              :rules="addressRules"
+                              label="รายละเอียดที่อยู่เพิ่มเติม"
+                              rows="3"
+                              no-resize
+                              outlined
+                              required
+                            ></v-textarea>
                           </v-col>
                         </v-form>
                       </v-card-text>
@@ -153,13 +223,19 @@ export default {
   },
   data() {
     return {
+      description: '',
+      position: null,
+      address: '',
+      place: null,
+      zoom: 7,
+      center: { lat: 13.736717, lng: 100.523186 },
+      address: '',
       group: 'ผู้ป่วย',
       groups: [],
       tabs: null,
       password: '123456789',
       first_name: 'aaa',
       last_name: 'aaa',
-      address: 'aaaaa',
       tel: '0875554422',
       email: 'testuser11@dpu.ac.th',
       show1: false,
@@ -173,6 +249,11 @@ export default {
       addressRules: [(v) => !!v || 'Position is required'],
       telRules: [(v) => !!v || 'Tel is required'],
     }
+  },
+  computed: {
+    isDisabledSearch() {
+      return !this.place
+    },
   },
   methods: {
     async fetchData() {
@@ -210,11 +291,11 @@ export default {
     },
 
     async onSubmit() {
-       const mdpassword = saltedMd5(this.password, 'SUPER-S@LT!')
+      const mdpassword = saltedMd5(this.password, 'SUPER-S@LT!')
       const { data } = await this.$auth.loginWith('local', {
         data: { email: this.email, password: mdpassword },
       })
-      
+
       const { result, message } = data
 
       this.$swal.fire({
@@ -237,7 +318,7 @@ export default {
       }
     },
     async register() {
-       const mdpassword = saltedMd5(this.password, 'SUPER-S@LT!')
+      const mdpassword = saltedMd5(this.password, 'SUPER-S@LT!')
       const user = {
         email: this.email,
         password: mdpassword,
@@ -246,6 +327,9 @@ export default {
         tel: this.tel,
         address: this.address,
         group: this.group,
+        position: this.position,
+        address: this.address,
+        description: this.description,
       }
 
       const { result, message } = await this.$axios.$post(
@@ -257,6 +341,47 @@ export default {
         type: result ? 'success' : 'warning',
         title: 'register',
         text: `${message}`,
+      })
+    },
+    setPlace(place) {
+      this.place = place
+      console.log('current place', this.place)
+    },
+    usePlace() {
+      if (this.place) {
+        this.position = {
+          lat: this.place.geometry.location.lat(),
+          lng: this.place.geometry.location.lng(),
+        }
+        this.address = this.place.formatted_address
+        this.zoom = 18
+        this.center = this.position
+        this.place = null
+        console.log('address: ', this.address)
+      }
+    },
+
+    updatePosition(location) {
+      console.log('location after update: ', location)
+      this.position = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng(),
+      }
+      console.log('location: ', this.position)
+      this.getAddressDetail(this.position.lat, this.position.lng)
+    },
+
+    async getAddressDetail(lat, lng) {
+      const geocoder = new google.maps.Geocoder()
+      const latlng = { lat, lng }
+
+      await geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === 'OK') {
+          console.log('result from getTown', results[0])
+          this.address = results[0].formatted_address
+        } else {
+          console.log('No results found')
+        }
       })
     },
   },
@@ -378,5 +503,22 @@ export default {
     opacity: 0;
     border-radius: 50%;
   }
+}
+@media only screen and (max-width: 600px) {
+  v-card.cardRespond {
+    padding: 2px;
+    margin-left: 10px;
+  }
+}
+.gsearch {
+  border: 1px solid rgba(0, 0, 0, 0.42);
+  border-radius: 4px;
+  max-height: 56px;
+  flex: 1 1 auto;
+  line-height: 20px;
+  padding: 16px 8px;
+  max-width: 100%;
+  min-width: 0px;
+  width: 100%;
 }
 </style>
