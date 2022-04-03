@@ -1,71 +1,79 @@
 <template>
   <div>
     <!-- <pre>{{ lists }}</pre> -->
+    <br />
+    <div class="black--text text-left text-h3">
+      สถานการณ์ผู้ติดเชื้อไวรัส COVID-19
+    </div>
+    <div class="black--text text-left text-h5">
+      วันที่ : {{ lists.txn_date}} อัพเดทวันที่ : {{ lists.update_date }}
+    </div>
     <v-row class="mt-5">
-      <v-col cols="10" v-for="(item, i) in lists" :key="i">
-        <v-card class="mx-auto" max-width="400" outlined>
-          <v-list-item three-line style="background: wheat">
-            <v-list-item-content>
-              <h2 style="color: crimson">สถานการณ์ผู้ติดเชื้อไวรัส covid19</h2>
-              <div class="text-overline mb-4">
-                <v-btn text color="primary accent-5">
-                  ของวันที่ : {{ item.txn_date }}
-                </v-btn>
-              </div>
-              <div class="text-overline mb-4">
-                จำนานผู้ป่วยใหม่ : {{ Number(item.new_case).toLocaleString() }}
-              </div>
-              <div class="text-overline mb-4">
-                จำนวนผู้ป่วยทั้งหมด :
-                {{ Number(item.total_case).toLocaleString() }}
-              </div>
-            </v-list-item-content>
-          </v-list-item>
+      <v-col cols="4">
+        <v-card class="mx-auto pa-3" color="warning" max-width="400">
+          <div class="white--text text-center">ผู้ติดเชื้อสะสม</div>
+          <div class="white--text text-center text-h5">
+            {{ Number(lists.total_case).toLocaleString() }}
+          </div>
+          <v-divider class="my-2"></v-divider>
+          <div class="white--text text-center">
+            เพิ่ม {{ Number(lists.new_case).toLocaleString() }} ราย
+          </div>
         </v-card>
       </v-col>
-      <v-col cols="10" v-for="(item, i) in lists" :key="i">
-        <v-card class="mx-auto" max-width="400" outlined>
-          <v-list-item three-line style="background: skyblue">
-            <v-list-item-content style="color: firebrick">
-              <h2 style="color: green">จำนวนผู้หายป่วย covid19</h2>
-              <div class="text-overline mb-4">
-                <v-btn text color="primary accent-5">
-                  ของวันที่ :{{ item.txn_date }}
-                </v-btn>
-              </div>
-              <div class="text-overline mb-4">
-                ผู้ป่วยที่หายป่วย :
-                {{ Number(item.new_recovered).toLocaleString() }}
-              </div>
-              <div class="text-overline mb-4">
-                จำนวนผู้หายป่วยทั้งหมด :
-                {{ Number(item.total_recovered).toLocaleString() }}
-              </div>
-            </v-list-item-content>
-          </v-list-item>
+      <v-col cols="4">
+        <v-card class="mx-auto pa-3" color="success" max-width="400">
+          <div class="white--text text-center">ผู้หายป่วยสะสม</div>
+          <div class="white--text text-center text-h5">
+            {{ Number(lists.total_recovered).toLocaleString() }}
+          </div>
+          <v-divider class="my-2"></v-divider>
+          <div class="white--text text-center">
+            เพิ่ม {{ Number(lists.new_recovered).toLocaleString() }} ราย
+          </div>
         </v-card>
       </v-col>
-      <v-col cols="10" v-for="(item, i) in lists" :key="i">
-        <v-card class="mx-auto" max-width="400" outlined>
-          <v-list-item three-line style="background: pink">
-            <v-list-item-content style="color: black">
-              <h2 style="color: black">จำนวนผู้เสียชีวิต covid19</h2>
-              <div class="text-overline mb-4">
-                <v-btn text color="primary accent-5">
-                  ของวันที่ : {{ item.txn_date }}
-                </v-btn>
-              </div>
-              <div class="text-overline mb-4">
-                ผู้เสียชีวิต : {{ Number(item.new_death).toLocaleString() }}
-              </div>
-              <div class="text-overline mb-4">
-                จำนวนผู้เสียชีวิตทั้งหมด :
-                {{ Number(item.total_death).toLocaleString() }}
-              </div>
-              <!-- {{ Number(num).toLocaleString() }} -->
-            </v-list-item-content>
-          </v-list-item>
+      <v-col cols="4">
+        <v-card class="mx-auto pa-3" color="error" max-width="400">
+          <div class="white--text text-center">ผู้เสียชีวิต</div>
+          <div class="white--text text-center text-h5">
+            {{ Number(lists.total_death).toLocaleString() }}
+          </div>
+          <v-divider class="my-2"></v-divider>
+          <div class="white--text text-center">
+            เพิ่ม {{ Number(lists.new_death).toLocaleString() }} ราย
+          </div>
         </v-card>
+      </v-col>
+      <v-col cols="12">
+        <Gmap-Map
+          style="width: 100%; height: 400px"
+          :zoom="7"
+          :center="{ lat: currentLocation.lat, lng: currentLocation.lng }"
+          :options="{
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: false,
+            streetViewControl: true,
+            rotateControl: false,
+            fullscreenControl: true,
+            disableDefaultUi: false,
+          }"
+        >
+          <Gmap-Marker
+            v-for="(marker, index) in markers"
+            :key="index"
+            :position="marker.position"
+          ></Gmap-Marker>
+          <Gmap-Marker
+            v-if="this.place"
+            label="&#x2605;"
+            :position="{
+              lat: this.place.geometry.location.lat(),
+              lng: this.place.geometry.location.lng(),
+            }"
+          ></Gmap-Marker>
+        </Gmap-Map>
       </v-col>
     </v-row>
   </div>
@@ -77,14 +85,53 @@ export default {
     await this.fetchData()
   },
   data() {
-    return { lists: [] }
+    return {
+      lists: [],
+      markers: [],
+      place: null,
+      currentLocation: { lat: 13, lng: 100 },
+      lat: 0,
+      lng: 0,
+    }
+  },
+  mounted: function () {
+    this.geolocation()
   },
   methods: {
     async fetchData() {
       const result = await this.$axios.$get(
         'https://covid19.ddc.moph.go.th/api/Cases/today-cases-all'
       )
-      this.lists = result
+      this.lists = result[0]
+      console.log(this.lists)
+    },
+    geolocation: function () {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.currentLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        }
+      })
+    },
+    setDescription(description) {
+      this.description = description
+    },
+    setPlace(place) {
+      this.place = place
+
+      this.lat = this.place.geometry.location.lat()
+      this.lng = this.place.geometry.location.lng()
+    },
+    usePlace(place) {
+      if (this.place) {
+        this.markers.push({
+          position: {
+            lat: this.place.geometry.location.lat(),
+            lng: this.place.geometry.location.lng(),
+          },
+        })
+        this.place = null
+      }
     },
   },
 }
@@ -92,5 +139,9 @@ export default {
 <style>
 element.style {
   color: brown;
+}
+.card-color {
+  background: #f12711; /* fallback for old browsers */
+  background: linear-gradient(#f12711, #f5af19);
 }
 </style>

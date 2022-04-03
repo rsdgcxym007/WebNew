@@ -45,7 +45,6 @@
                             label="รหัสผ่าน"
                             prepend-icon="mdi-lock"
                             autocomplete="off"
-                            :type="show1 ? 'text' : 'password'"
                             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                             @click:append="show1 = !show1"
                           ></v-text-field>
@@ -233,11 +232,11 @@ export default {
       group: 'ผู้ป่วย',
       groups: [],
       tabs: null,
-      password: '123456789',
-      first_name: 'aaa',
-      last_name: 'aaa',
-      tel: '0875554422',
-      email: 'testuser11@dpu.ac.th',
+      password: '',
+      first_name: '',
+      last_name: '',
+      tel: '',
+      email: '',
       show1: false,
       emailRules: [
         (v) => !!v || 'E-mail is required',
@@ -258,7 +257,7 @@ export default {
   methods: {
     async fetchData() {
       const { result: groups } = await this.$axios.$get('/api/master/group')
-      console.log(saltedMd5('test', 'SUPER-S@LT!'))
+      // console.log(saltedMd5('test', 'SUPER-S@LT!'))
       this.groups = groups
     },
     reset1() {
@@ -342,6 +341,13 @@ export default {
         title: 'register',
         text: `${message}`,
       })
+      this.first_name = ''
+      this.last_name = ''
+      this.tel = ''
+      this.address = ''
+      this.position = ''
+      this.address = ''
+      this.description = ''
     },
     setPlace(place) {
       this.place = place
