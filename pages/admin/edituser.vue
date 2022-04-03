@@ -18,6 +18,7 @@
           :items-per-page="5"
           :search="search"
           class="elevation-1"
+          @click:row="editItem"
         >
           <template v-slot:[`item.status_name`]="{ item }">
             <v-chip :color="item.color">
@@ -42,9 +43,13 @@ export default {
     return { details: [], headers: [], search: '' }
   },
   methods: {
+    editItem(data) {
+      this.$router.push('/admin/editbanuser?id=' + data.id)
+      // this.$router.push('/manage/update?id=' + data.id)
+    },
     async fetchData() {
       const { result: users, headers } = await this.$axios.$post(
-        '/api/admin/alluser'
+        '/api/user/getAll'
         // { userId: this.$auth.user.group_id }
       )
       console.log('users', users)
