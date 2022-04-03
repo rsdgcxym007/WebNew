@@ -172,7 +172,7 @@
                           </v-col>
                           <v-col class="pb-0">
                             <v-textarea
-                              v-model="address"
+                              v-model="address_from_gmap"
                               label="รายละเอียดที่อยู่จากหมุด"
                               rows="3"
                               no-resize
@@ -183,13 +183,12 @@
                           </v-col>
                           <v-col class="py-0" cols="12">
                             <v-textarea
-                              v-model="description"
+                              v-model="address_from_user"
                               :rules="addressRules"
                               label="รายละเอียดที่อยู่เพิ่มเติม"
                               rows="3"
                               no-resize
                               outlined
-                              required
                             ></v-textarea>
                           </v-col>
                         </v-form>
@@ -222,13 +221,12 @@ export default {
   },
   data() {
     return {
-      description: '',
+      address_from_user: '',
       position: null,
-      address: '',
       place: null,
       zoom: 7,
       center: { lat: 13.736717, lng: 100.523186 },
-      address: '',
+      address_from_gmap: '',
       group: 'ผู้ป่วย',
       groups: [],
       tabs: null,
@@ -324,11 +322,10 @@ export default {
         first_name: this.first_name,
         last_name: this.last_name,
         tel: this.tel,
-        address: this.address,
         group: this.group,
         position: this.position,
-        address: this.address,
-        description: this.description,
+        address_from_gmap: this.address_from_gmap,
+        address_from_user: this.address_from_user,
       }
 
       const { result, message } = await this.$axios.$post(
@@ -346,8 +343,8 @@ export default {
       this.tel = ''
       this.address = ''
       this.position = ''
-      this.address = ''
-      this.description = ''
+      this.address_from_gmap = ''
+      this.address_from_user = ''
     },
     setPlace(place) {
       this.place = place
@@ -359,7 +356,7 @@ export default {
           lat: this.place.geometry.location.lat(),
           lng: this.place.geometry.location.lng(),
         }
-        this.address = this.place.formatted_address
+        this.address_from_gmap = this.place.formatted_address
         this.zoom = 18
         this.center = this.position
         this.place = null
