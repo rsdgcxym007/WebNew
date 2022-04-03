@@ -128,7 +128,7 @@
           >
             <v-form ref="form_cancelDetail">
               <v-textarea
-                v-model="taskData.canceldetail"
+                v-model="taskData.cancel_detail"
                 :rules="remarkRules"
                 :disabled="checkStatus"
                 rows="2"
@@ -182,7 +182,7 @@ export default {
         remark: '',
         id: '',
         status_id: '',
-        canceldetail: 'fs',
+        cancel_detail: 'fs',
       },
       status: '',
       dropdown_icon: [
@@ -269,7 +269,7 @@ export default {
     resetForm() {
       this.taskData.status_id = this.$store.state.taskInfo.status_id
       this.taskData.remark = this.$store.state.taskInfo.remark
-      this.taskData.canceldetail = ''
+      this.taskData.cancel_detail = ''
       this.hospital = ''
       this.date = ''
       this.imageRTPCR = ''
@@ -441,7 +441,7 @@ export default {
     isReset() {
       return (
         this.taskData.remark == this.$store.state.taskInfo.remark &&
-        !this.taskData.canceldetail &&
+        !this.taskData.cancel_detail &&
         !this.hospital &&
         !this.date &&
         !this.imageRTPCR &&

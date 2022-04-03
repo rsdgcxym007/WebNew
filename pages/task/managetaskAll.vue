@@ -432,7 +432,7 @@ export default {
         remark: '',
         id: '',
         status_id: '',
-        canceldetail: '',
+        cancel_detail: '',
         volunteer_id: '',
         volunteer_firstname: '',
         volunteer_lastname: '',
@@ -536,7 +536,7 @@ export default {
         taskInfo: {
           remark: this.taskData.remark,
           status_id: this.taskData.status_id,
-          cancel_detail: this.taskData.canceldetail,
+          cancel_detail: this.taskData.cancel_detail,
         },
       })
     },

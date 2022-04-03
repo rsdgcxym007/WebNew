@@ -47,7 +47,7 @@
           <v-row>
             <v-col cols="12">ที่อยู่</v-col>
             <!-- <v-col cols="10"> -->
-              <v-col cols="8 col-lg-11" >
+              <v-col cols="9 " class="col-lg-11" >
               <gmap-autocomplete
                 placeholder="ค้นหาที่อยู่"
                 @place_changed="setPlace"
@@ -56,7 +56,7 @@
               </gmap-autocomplete>
             </v-col>
             <!-- <v-col cols="2" align-self="center"> -->
-              <v-col cols="3 col-lg-1" align-self="center" class=" py-0 pl-0 pr-3 ma-0">
+              <v-col cols="3" align-self="center" class="col-lg-1 py-0 pl-0 pr-3 ma-0">
               <v-btn
                 block
                 color="primary"
@@ -92,20 +92,20 @@
             </v-col>
             <v-col>
               <v-textarea
-                v-model="users.address"
-                label="รายละเอียดที่อยู่"
-                rows="3"
+                v-model="users.address_from_gmap"
+                label="รายละเอียดที่อยู่จากหมุด"
+                rows="2"
                 no-resize
                 outlined
                 required
+                disabled
               ></v-textarea>
             </v-col>
             <v-col cols="12">
               <v-textarea
-                v-model="users.description"
-                :rules="addressRules"
-                label="รายละเอียดเพิ่มเติม"
-                rows="3"
+                v-model="users.address_from_user"
+                label="รายละเอียดที่อยู่เพิ่มเติม"
+                rows="2"
                 no-resize
                 outlined
                 required
@@ -148,9 +148,9 @@ export default {
         last_name: '',
         email: '',
         tel: '',
-        description: '',
         position: null,
-        address: '',
+        address_from_user: '',
+        address_from_gmap:''
       },
       valid: '',
       FnameRules: [
@@ -195,11 +195,12 @@ export default {
       this.users.first_name = userInfo.first_name
       this.users.last_name = userInfo.last_name
       this.users.email = userInfo.email
-      this.users.description = userInfo.description
-      this.users.position = userInfo.position
-      this.center = userInfo.position
       this.users.tel = userInfo.tel
       this.users.id = this.$auth.user.id
+      this.users.position = userInfo.position
+      this.users.address_from_gmap = userInfo.address_from_gmap
+      this.users.address_from_user = userInfo.address_from_user
+      this.center = userInfo.position
       this.zoom = 16
     },
     async updateDataUser() {
@@ -210,8 +211,9 @@ export default {
           last_name: this.users.last_name,
           tel: this.users.tel,
           position: this.users.position,
-          description: this.users.description,
-          address: this.users.address,
+          address_from_gmap: this.users.address_from_gmap,
+          address_from_user: this.users.address_from_user,
+          address_id: this.$store.state.userInfo.address_id
         }
         const { result, message } = await this.$axios.$post(
           '/api/user/update',
@@ -224,11 +226,10 @@ export default {
             userInfo: {
               first_name: this.users.first_name,
               last_name: this.users.last_name,
-              email: this.users.email,
               tel: this.users.tel,
-              description: this.users.description,
               position: this.users.position,
-              address: this.users.address,
+              address_from_gmap: this.users.address_from_gmap,
+              address_from_user: this.users.address_from_user
             },
           })
           this.$swal({
@@ -248,7 +249,7 @@ export default {
           lat: this.place.geometry.location.lat(),
           lng: this.place.geometry.location.lng(),
         }
-        this.users.address = this.place.formatted_address
+        this.users.address_from_gmap = this.place.formatted_address
         this.zoom = 18
         this.center = this.users.position
         this.place = null
@@ -273,7 +274,7 @@ export default {
       await geocoder.geocode({ location: latlng }, (results, status) => {
         if (status === 'OK') {
           console.log('result from getTown', results[0])
-          this.users.address = results[0].formatted_address
+          this.users.address_from_gmap = results[0].formatted_address
         } else {
           console.log('No results found')
         }
@@ -285,7 +286,7 @@ export default {
       return (
         (this.users.first_name === this.$store.state.userInfo.first_name &&
           this.users.last_name === this.$store.state.userInfo.last_name &&
-          this.users.description === this.$store.state.userInfo.description &&
+          this.users.address_from_user === this.$store.state.userInfo.address_from_user &&
           this.users.tel === this.$store.state.userInfo.tel &&
           this.users.position === this.$store.state.userInfo.position) ||
         !this.valid
@@ -296,9 +297,9 @@ export default {
         this.users.first_name === this.$store.state.userInfo.first_name &&
         this.users.last_name === this.$store.state.userInfo.last_name &&
         this.users.email === this.$store.state.userInfo.email &&
-        this.users.description === this.$store.state.userInfo.description &&
+        this.users.address_from_user === this.$store.state.userInfo.address_from_user &&
         this.users.tel === this.$store.state.userInfo.tel &&
-        this.users.position === this.$store.state.userInfo.position
+        this.users.position === this.$store.state.userInfo.position 
       )
     },
     isDisabledSearch() {

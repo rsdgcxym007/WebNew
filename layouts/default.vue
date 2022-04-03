@@ -252,8 +252,9 @@ export default {
     async setUserStore() {
       const { result } = await this.$axios.$post('/api/user/getbyID', {
         id: this.$auth.user.id,
+        group_id: this.$auth.user.group_id,
       })
-      console.log('result for set: ' , result)
+      console.log('result for set: ', result)
       this.$store.commit('SET_userInfo', {
         userInfo: {
           first_name: result.first_name,
@@ -261,8 +262,9 @@ export default {
           email: result.email,
           tel: result.tel,
           position: result.position,
-          description: result.description,
-          place : result.place
+          address_from_gmap: result.address_from_gmap,
+          address_from_user: result.address_from_user,
+          address_id:result.address_id
         },
       })
     },

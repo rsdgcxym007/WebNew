@@ -5,14 +5,14 @@ export const state = () => ({
         email: '',
         tel: '',
         position: '',
-        description: '',
-        place :''
-
+        address_from_gmap: '',
+        address_from_user: '',
+        address_id: ''
     },
     taskInfo: {
         remark: '',
         status_id: '',
-        canceldetail:''
+        cancel_detail:''
     }
 })
 
@@ -24,15 +24,16 @@ export const mutations = {
             email: userInfo.email,
             tel: userInfo.tel,
             position: userInfo.position,
-            description: userInfo.description,
-            place: userInfo.place
+            address_from_gmap: userInfo.address_from_gmap,
+            address_from_user: userInfo.address_from_user,
+            address_id: userInfo.address_id
         }
     },
     SET_taskInfo(state, { taskInfo = state.userInfo, }) {
         state.taskInfo = {
             remark: taskInfo.remark,
             status_id: taskInfo.status_id,
-            canceldetail:taskInfo.cancledetail
+            cancel_detail:taskInfo.cancel_detail
         }
     }
 }
