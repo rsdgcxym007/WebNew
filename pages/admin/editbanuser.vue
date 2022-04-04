@@ -1,7 +1,12 @@
 <template>
   <div>
     <v-card elevation="8" width="auto" class="mx-12 my-1 pa-4">
-      <v-card-title>ข้อมูลส่วนตัว </v-card-title>
+      <v-card-title v-if="users.group_id == $constants.DATA.PATIENT_GROUP"
+        >ข้อมูลผู้ใช้งาน (ผู้ป่วย)
+      </v-card-title>
+      <v-card-title v-if="users.group_id == $constants.DATA.VOLUNTEER_GROUP"
+        >ข้อมูลผู้ใช้งาน (อาสา)
+      </v-card-title>
       <v-container>
         <v-form ref="form_user" v-model="valid" lazy-validation>
           <v-row>
@@ -194,18 +199,11 @@ export default {
       })
     },
     async fetchData() {
-      const userInfo = this.$store.state.userInfo
-
-      this.users.first_name = userInfo.first_name
-      this.users.last_name = userInfo.last_name
-      this.users.email = userInfo.email
-      this.users.tel = userInfo.tel
-      this.users.id = this.$auth.user.id
-      this.users.position = userInfo.position
-      this.users.address_from_gmap = userInfo.address_from_gmap
-      this.users.address_from_user = userInfo.address_from_user
-      this.center = userInfo.position
-      this.zoom = 16
+      const { result } = await this.$axios.$post('/api/user/getbyID', {
+        id: this.$route.query.id,
+      })
+      console.log('editban', result)
+      ;(this.users = result), (this.zoom = 16)
     },
     async updateDataUser() {
       if (this.$refs.form_user.validate() === true) {
@@ -227,7 +225,7 @@ export default {
           console.log('error: ', message)
         } else {
           await this.$store.commit('SET_userInfo', {
-            userInfo: {
+            users: {
               first_name: this.users.first_name,
               last_name: this.users.last_name,
               tel: this.users.tel,

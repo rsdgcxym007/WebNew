@@ -47,7 +47,7 @@
           <v-row>
             <v-col cols="12">ที่อยู่</v-col>
             <!-- <v-col cols="10"> -->
-              <v-col cols="9 " class="col-lg-11" >
+            <v-col cols="9 " class="col-lg-11">
               <gmap-autocomplete
                 placeholder="ค้นหาที่อยู่"
                 @place_changed="setPlace"
@@ -56,7 +56,11 @@
               </gmap-autocomplete>
             </v-col>
             <!-- <v-col cols="2" align-self="center"> -->
-              <v-col cols="3" align-self="center" class="col-lg-1 py-0 pl-0 pr-3 ma-0">
+            <v-col
+              cols="3"
+              align-self="center"
+              class="col-lg-1 py-0 pl-0 pr-3 ma-0"
+            >
               <v-btn
                 block
                 color="primary"
@@ -150,7 +154,7 @@ export default {
         tel: '',
         position: null,
         address_from_user: '',
-        address_from_gmap:''
+        address_from_gmap: '',
       },
       valid: '',
       FnameRules: [
@@ -213,7 +217,7 @@ export default {
           position: this.users.position,
           address_from_gmap: this.users.address_from_gmap,
           address_from_user: this.users.address_from_user,
-          address_id: this.$store.state.userInfo.address_id
+          address_id: this.$store.state.userInfo.address_id,
         }
         const { result, message } = await this.$axios.$post(
           '/api/user/update',
@@ -229,7 +233,7 @@ export default {
               tel: this.users.tel,
               position: this.users.position,
               address_from_gmap: this.users.address_from_gmap,
-              address_from_user: this.users.address_from_user
+              address_from_user: this.users.address_from_user,
             },
           })
           this.$swal({
@@ -286,7 +290,8 @@ export default {
       return (
         (this.users.first_name === this.$store.state.userInfo.first_name &&
           this.users.last_name === this.$store.state.userInfo.last_name &&
-          this.users.address_from_user === this.$store.state.userInfo.address_from_user &&
+          this.users.address_from_user ===
+            this.$store.state.userInfo.address_from_user &&
           this.users.tel === this.$store.state.userInfo.tel &&
           this.users.position === this.$store.state.userInfo.position) ||
         !this.valid
@@ -297,9 +302,10 @@ export default {
         this.users.first_name === this.$store.state.userInfo.first_name &&
         this.users.last_name === this.$store.state.userInfo.last_name &&
         this.users.email === this.$store.state.userInfo.email &&
-        this.users.address_from_user === this.$store.state.userInfo.address_from_user &&
+        this.users.address_from_user ===
+          this.$store.state.userInfo.address_from_user &&
         this.users.tel === this.$store.state.userInfo.tel &&
-        this.users.position === this.$store.state.userInfo.position 
+        this.users.position === this.$store.state.userInfo.position
       )
     },
     isDisabledSearch() {

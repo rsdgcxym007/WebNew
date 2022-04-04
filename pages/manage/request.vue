@@ -91,6 +91,7 @@
               <div style="font-weight: 500">อาการ</div>
               <v-textarea
                 v-model="remark"
+                :rules="remarkRules"
                 label="คำอธิบายอาการเบื้องต้น"
                 outlined
                 rows="3"
@@ -103,6 +104,7 @@
                 label="โรคประจำตัว"
                 outlined
                 rows="2"
+                required
               ></v-textarea>
             </v-col>
             <!-- <v-col cols="12">
@@ -212,9 +214,11 @@ export default {
       address_from_gmap: '',
       address_from_user: '',
       address_id: '',
+      valid: '',
       place: null,
       zoom: 7,
       center: { lat: 13.736717, lng: 100.523186 },
+      remarkRules: [(v) => !!v || 'กรุณาใส่ คำอธิบาย อาการเบื้องต้น'],
     }
   },
   async fetch() {
@@ -302,7 +306,7 @@ export default {
     async request() {
       if (this.$refs.form1.validate() === true) {
         const data = {
-          status : 'ขอความช่วยเหลือ',
+          status: 'ขอความช่วยเหลือ',
           user_id: this.user_id,
           position: this.position,
           address_from_gmap: this.address_from_gmap,
@@ -325,7 +329,7 @@ export default {
             title: message,
             timer: 1500,
           })
-          this.$router.push({path:'/manage'})
+          this.$router.push({ path: '/manage' })
         }
       } else {
         this.$swal({

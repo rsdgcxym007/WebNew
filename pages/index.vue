@@ -338,6 +338,8 @@ export default {
         title: 'register',
         text: `${message}`,
       })
+      this.mdpassword = ''
+      this.email = ''
       this.first_name = ''
       this.last_name = ''
       this.tel = ''

@@ -6,7 +6,7 @@
       สถานการณ์ผู้ติดเชื้อไวรัส COVID-19
     </div>
     <div class="black--text text-left text-h5">
-      วันที่ : {{ lists.txn_date}} อัพเดทวันที่ : {{ lists.update_date }}
+      วันที่ : {{  lists.txn_date }} อัพเดทวันที่ : {{ lists.update_date }}
     </div>
     <v-row class="mt-5">
       <v-col cols="4">
@@ -92,6 +92,9 @@ export default {
       currentLocation: { lat: 13, lng: 100 },
       lat: 0,
       lng: 0,
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
     }
   },
   mounted: function () {

@@ -18,6 +18,7 @@ export default {
       const { result: tasks, headers } = await this.$axios.$post(
         '/api/manage/taskallbyuserid',
         { userId: this.$auth.user.id }
+        
       )
       this.details = tasks
       this.headers = headers

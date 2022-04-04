@@ -43,18 +43,18 @@ export default {
     return { details: [], headers: [], search: '' }
   },
   methods: {
-    editItem(data) {
-      this.$router.push('/admin/editbanuser?id=' + data.id)
-      // this.$router.push('/manage/update?id=' + data.id)
-    },
     async fetchData() {
       const { result: users, headers } = await this.$axios.$post(
         '/api/user/getAll'
-        // { userId: this.$auth.user.group_id }
+        // { userId: this.$auth.user.id }
       )
       console.log('users', users)
       this.details = users
       this.headers = headers
+    },
+    editItem(data) {
+      this.$router.push('/admin/editbanuser?id=' + data.id)
+      // this.$router.push('/manage/update?id=' + data.id)
     },
   },
 }
