@@ -183,6 +183,19 @@
                   >
                 </v-col>
                 <v-col cols="12">
+                  <v-textarea
+                    v-model="taskData.congenital_disease"
+                    :disabled="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP
+                    "
+                    label="โรคประจำตัว"
+                    no-resize
+                    outlined
+                    rows="2"
+                    required
+                  ></v-textarea>
+                </v-col>
+                <v-col cols="12">
                   <v-select
                     v-model="selectedTypes"
                     :items="types"
@@ -227,39 +240,115 @@
                     "
                   ></v-textarea
                 ></v-col>
+                <v-col
+                  cols="12"
+                  v-if="
+                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                    taskData.status_id !== $constants.DATA.ASK_FOR_HELP_STATUS
+                  "
+                >
+                  <div style="font-weight: 500">ประเมินระดับอาการเบื้องต้น</div>
+                  <v-radio-group
+                    v-model="patient_group"
+                    v-on:change="changePatientGroup"
+                  >
+                    <v-radio
+                      label="กลุ่มสีเขียว (กลุ่มที่มีอาการเบาคล้ายไข้หวัด หรือไม่มีอาการเลย เช่น มีไข้ ไม่รับรส ไม่รับกลิ่น ไอ มีน้ำมูก เจ็บคอ ตาแดง มีผื่น และถ่ายเหลว)"
+                      value="green"
+                    ></v-radio>
+                    <div v-if="patient_group == 'green'" class="pl-8">
+                      <div style="color: rgba(0, 0, 0, 0.6); font-weight: 500">
+                        สถานที่รักษา
+                      </div>
+                      <v-radio-group v-model="isolation" class="mt-0">
+                        <v-radio
+                          label="Home Isolation : การรักษาด้วยการกักตัวอยู่ที่บ้าน โดยจะได้รับการดูแลพร้อมอุปกรณ์ขั้นพื้นฐาน"
+                          value="home"
+                        ></v-radio>
+                        <v-radio
+                          label="Hospitel : ต้องใช้ใบยืนยันผลการตรวจแบบ RT-PCR"
+                          value="hospitel"
+                        ></v-radio
+                      ></v-radio-group>
+                    </div>
+                    <v-radio
+                      class="mt-4"
+                      label="กลุ่มสีเหลือง (กลุ่มที่มีอาการเสี่ยงรุนแรง หรือมีโรคร่วม เช่น เวียนหัว อ่อนเพลีย ไอแล้วมีอาการเหนื่อย แน่นหน้าอก หายใจลำบาก ขับถ่ายเหลว 3 ครั้งต่อวันขึ้นไป อ่อนเพลีย ปอดอักเสบ)"
+                      value="yellow"
+                    ></v-radio>
+                    <div v-if="patient_group == 'yellow'" class="pl-8">
+                      <div style="color: rgba(0, 0, 0, 0.6); font-weight: 500">
+                        สถานที่รักษาที่ต้องการ
+                      </div>
+                      <v-radio-group v-model="isolation" class="mt-0">
+                        <v-radio label="โรงพยาบาล" value="hospital"></v-radio
+                      ></v-radio-group>
+                    </div>
+                    <v-radio
+                      class="mt-4"
+                      label="กลุ่มสีแดง (กลุ่มที่มีอาการรุนแรงต้องรีบเข้ารับการรักษาตัวโดยเร็ว เช่น ระบบหายใจมีปัญหารุนแรงทำให้หายใจลำบาก หอบเหนื่อย หากเอกซเรย์จะพบปอดอักเสบรุนแรง แน่นหน้าอกตลอดเวลา และหายใจเจ็บหน้าอก ตอบสนองช้า หรือไม่รู้สึกตัว)"
+                      value="red"
+                    ></v-radio>
+                    <div v-if="patient_group == 'red'" class="pl-8">
+                      <div style="color: rgba(0, 0, 0, 0.6); font-weight: 500">
+                        สถานที่รักษาที่ต้องการ
+                      </div>
+                      <v-radio-group v-model="isolation" class="mt-0">
+                        <v-radio label="โรงพยาบาล" value="hospital"></v-radio
+                      ></v-radio-group>
+                    </div>
+                  </v-radio-group>
+                </v-col>
                 <v-col cols="12" class="mb-4" style="text-align: end">
-                  <v-btn
-                    v-if="
-                      $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
-                      taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
-                    "
-                    :disabled="isReset"
-                    color="warning"
-                    class="mr-4"
-                    @click="resetForm"
-                  >
-                    คืนค่า
-                  </v-btn>
-                  <v-btn
-                    v-if="
-                      $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
-                      taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
-                    "
-                    color="success"
-                    class="mr-3"
-                  >
-                    บันทึกการแก้ไข
-                  </v-btn>
-                  <v-btn
-                    v-if="
-                      $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
-                      taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
-                    "
-                    color="error"
-                    class="mr-3"
-                  >
-                    ยกเลิกขอความช่วยเหลือ
-                  </v-btn>
+                  <v-row>
+                    <v-col cols="12" class="ma-0 pr-0" style="text-align: end">
+                      <v-btn
+                        v-if="
+                          $auth.user.group_id ==
+                            $constants.DATA.PATIENT_GROUP &&
+                          taskData.status_id ==
+                            $constants.DATA.ASK_FOR_HELP_STATUS
+                        "
+                        :disabled="isReset"
+                        color="warning"
+                        class="mr-4"
+                        @click="resetForm"
+                      >
+                        คืนค่า
+                      </v-btn>
+                      <v-btn
+                        v-if="
+                          $auth.user.group_id ==
+                            $constants.DATA.PATIENT_GROUP &&
+                          taskData.status_id ==
+                            $constants.DATA.ASK_FOR_HELP_STATUS
+                        "
+                        color="success"
+                        class="mr-3"
+                        @click="saveEdit"
+                        :disabled="isSaveEdit"
+                      >
+                        บันทึกการแก้ไข
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" class="ma-0 pr-0" style="text-align: end">
+                      <v-btn
+                        v-if="
+                          $auth.user.group_id ==
+                            $constants.DATA.PATIENT_GROUP &&
+                          taskData.status_id ==
+                            $constants.DATA.ASK_FOR_HELP_STATUS
+                        "
+                        color="error"
+                        class="mr-3"
+                      >
+                        ยกเลิกขอความช่วยเหลือ
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+
                   <v-btn
                     v-if="
                       $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
@@ -320,12 +409,12 @@
                     >แก้ไขข้อมูลส่วนตัว</nuxt-link
                   >
                 </v-col>
-                <v-col cols="12">
+                <!-- <v-col cols="12">
                   <v-card-title class="pa-0"
                     >รายละเอียดการช่วยเหลือ</v-card-title
                   >
-                </v-col>
-                <v-col cols="12">
+                </v-col> -->
+                <!-- <v-col cols="12">
                   <table class="table" style="width: 100%">
                     <thead>
                       <tr>
@@ -359,12 +448,6 @@
                               @input="menu2 = false"
                             ></v-date-picker>
                           </v-menu>
-                          <!-- <v-text-field
-                            v-model="item.title"
-                            label="นามสกุล"
-                            outlined
-                          >
-                          </v-text-field> -->
                         </td>
                         <td>
                           <v-text-field
@@ -405,16 +488,8 @@
                       </tr>
                     </tbody>
                   </table>
-                  <!-- <v-textarea
-                    rows="3"
-                    no-resize
-                    label="รายละเอียดการช่วยเหลือ"
-                    outlined
-                    required
-                  ></v-textarea > -->
-                  <!-- <v-divider class="mt-2"></v-divider> -->
-                </v-col>
-                <v-col
+                </v-col> -->
+                <!-- <v-col
                   v-if="
                     $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
                     taskData.status_id == $constants.DATA.HELPING_STATUS
@@ -427,7 +502,7 @@
                     >บันทึกรายละเอียดการช่วยเหลือ</nuxt-link
                   >
                   <v-divider class="mt-2"></v-divider>
-                </v-col>
+                </v-col> -->
 
                 <v-col cols="12" class="mb-4" style="text-align: end">
                   <!-- <v-btn
@@ -502,6 +577,7 @@ export default {
         address_from_gmap: '',
         address_id: '',
         requirement: [],
+        congenital_disease: '',
       },
       // users: {
       //   id: '',
@@ -515,6 +591,8 @@ export default {
       //   address_from_gmap: '',
       // },
       isOldAddress: true,
+      patient_group: '',
+      isolation: '',
       zoom: 12,
       center: { lat: 13.736717, lng: 100.523186 },
       image1: '',
@@ -566,13 +644,19 @@ export default {
     isDisabledSearch() {
       return !this.place
     },
-    isSaveEdit() {},
+    isSaveEdit() {
+      return (
+        this.taskData.remark === this.$store.state.taskInfo.remark &&
+        this.taskData.position === this.$store.state.taskInfo.position &&
+        this.taskData.remark === this.$store.state.taskInfo.remark
+      )
+    },
     isReset() {},
   },
 
   watch: {
     steps(val) {
-      console.log('value Steps: ',val)
+      console.log('value Steps: ', val)
       if (this.e1 > val) {
         this.e1 = val
       }
@@ -592,7 +676,6 @@ export default {
         this.taskData.position = null
         this.taskData.address_from_gmap = ''
         this.taskData.address_from_user = ''
-        this.taskData.address_id = ''
         this.center = { lat: 13.736717, lng: 100.523186 }
         this.zoom = 10
       }
@@ -630,19 +713,6 @@ export default {
         this.e1 = 3
       }
 
-      // this.users.first_name = this.$store.state.userInfo.first_name
-      // this.users.last_name = this.$store.state.userInfo.last_name
-      // this.users.email = this.$store.state.userInfo.email
-      // this.users.address = this.$store.state.userInfo.address
-      // this.users.tel = this.$store.state.userInfo.tel
-      // this.$store.commit('SET_taskInfo', {
-      //   taskInfo: {
-      //     remark: this.taskData.remark,
-      //     status_id: this.taskData.status_id,
-      //     cancel_detail: this.taskData.cancel_detail,
-      //   },
-      // })
-
       this.$store.commit('SET_taskInfo', {
         taskInfo: {
           remark: this.taskData.remark,
@@ -653,9 +723,13 @@ export default {
           address_from_user: this.taskData.address_from_user,
           address_id: this.taskData.address_id,
           requirement: this.taskData.requirement,
+          patient_group: this.taskData.level,
+          isolation: this.taskData.treatment_location,
         },
       })
       this.selectedTypes = this.$store.state.taskInfo.requirement
+      this.patient_group = this.taskData.level
+      this.isolation = this.taskData.treatment_location
     },
     toggle() {
       this.$nextTick(() => {
@@ -665,6 +739,13 @@ export default {
           this.selectedTypes = this.types.slice()
         }
       })
+    },
+    changePatientGroup() {
+      if (this.patient_group == 'green') {
+        this.isolation = 'home'
+      } else {
+        this.isolation = 'hospital'
+      }
     },
     // nextStep(n) {
     //   if (n === this.steps) {
@@ -678,6 +759,50 @@ export default {
 
       this.selectedTypes = taskInfo.requirement
       this.taskData.remark = taskInfo.remark
+    },
+    async saveEdit() {
+      if (this.taskData.position === this.$store.state.taskInfo.position) {
+        console.log('save with out update address')
+        const { result, message } = await this.$axios.$post(
+          '/api/task/update',
+          {
+            id: this.taskData.id,
+            remark: this.taskData.remark,
+            requirement: this.selectedTypes,
+            congenital_disease: this.taskData.congenital_disease,
+          }
+        )
+        if (!result) {
+          console.log('error : ', message)
+        } else {
+          await this.fetchData()
+        }
+      } else {
+        console.log('save with update address')
+        const { result, message } = await this.$axios.$post(
+          '/api/task/update',
+          {
+            id: this.taskData.id,
+            address_id: this.taskData.address_id,
+            position: this.taskData.position,
+            address_from_user: this.taskData.address_from_user,
+            address_from_gmap: this.taskData.address_from_gmap,
+            remark: this.taskData.remark,
+            requirement: this.selectedTypes,
+          }
+        )
+        if (!result) {
+          console.log('error : ', message)
+        } else {
+          this.$swal({
+            type: 'success',
+            title: message,
+            timer: 1500,
+          })
+
+          await this.fetchData()
+        }
+      }
     },
     async updateData() {
       if (
@@ -700,10 +825,19 @@ export default {
       // }
     },
     async updateHelping() {
+      if (!this.patient_group || !this.isolation) {
+        this.$swal({
+          type: 'warning',
+          title: 'กรุณาประเมินอาการผู้ป่วย',
+        })
+        return false
+      }
       const { result, message } = await this.$axios.$post('/api/task/update', {
         id: this.taskData.id,
         status_id: this.$constants.DATA.HELPING_STATUS,
         volunteer_id: this.$auth.user.id,
+        level: this.patient_group,
+        treatment_location: this.isolation,
       })
       if (!result) {
         console.log('error : ', message)
