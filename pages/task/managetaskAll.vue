@@ -34,19 +34,45 @@
           <v-stepper-items>
             <v-stepper-content step="1">
               <v-row class="px-4">
-                <v-col cols="12"
-                  ><v-card-title class="pa-0"
-                    >ตำแหน่งที่อยู่</v-card-title
-                  ></v-col
+                <v-col cols="12">
+                  <v-card-title class="pa-0">ตำแหน่งที่อยู่</v-card-title>
+                  <v-switch
+                    v-if="
+                      $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
+                      taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
+                    "
+                    v-model="isOldAddress"
+                    inset
+                    label="ใช้ที่อยู่เดิม"
+                  ></v-switch>
+                </v-col>
+                <v-col v-if="!isOldAddress" cols="9 " class="col-lg-11">
+                  <gmap-autocomplete
+                    placeholder="ค้นหาที่อยู่"
+                    @place_changed="setPlace"
+                    class="gsearch"
+                  >
+                  </gmap-autocomplete>
+                </v-col>
+                <v-col
+                  v-if="!isOldAddress"
+                  cols="3"
+                  align-self="center"
+                  class="col-lg-1 py-0 pl-0 pr-3 ma-0"
                 >
+                  <v-btn
+                    block
+                    color="primary"
+                    @click="usePlace"
+                    :disabled="isDisabledSearch"
+                    >ค้นหา</v-btn
+                  >
+                </v-col>
                 <v-col cols="12">
                   <Gmap-Map
                     style="width: 100%; height: 300px; margin: auto"
-                    :zoom="7"
-                    :center="{
-                      lat: currentLocation.lat,
-                      lng: currentLocation.lng,
-                    }"
+                    :zoom="zoom"
+                    :center="center"
                     :options="{
                       zoomControl: true,
                       mapTypeControl: false,
@@ -57,41 +83,60 @@
                       disableDefaultUi: false,
                     }"
                   >
-                    <Gmap-Marker
+                    <!-- <Gmap-Marker
                       v-for="(marker, index) in markers"
                       :key="index"
                       :position="marker.position"
-                    ></Gmap-Marker>
-                    <Gmap-Marker
+                    ></Gmap-Marker> -->
+                    <!-- <Gmap-Marker
                       v-if="this.place"
                       label="&#x2605;"
                       :position="{
                         lat: this.place.geometry.location.lat(),
                         lng: this.place.geometry.location.lng(),
                       }"
+                    ></Gmap-Marker> -->
+                    <Gmap-Marker
+                      v-if="taskData.position"
+                      :position="taskData.position"
+                      :clickable="true"
+                      :draggable="!isOldAddress"
+                      @click="center = position"
+                      @dragend="updatePosition"
                     ></Gmap-Marker>
                   </Gmap-Map>
                 </v-col>
                 <br />
                 <v-col cols="12">
                   <v-textarea
+                    v-model="taskData.address_from_gmap"
+                    label="รายละเอียดที่อยู่จากหมุด"
                     rows="3"
                     no-resize
-                    label="รายละเอียดที่อยู่"
                     outlined
                     required
-                    v-model="users.address"
-                    :disabled="
-                      this.$auth.user.group_id ==
-                      $constants.DATA.VOLUNTEER_GROUP
-                    "
-                  ></v-textarea> </v-col
-                ><v-col cols="12" class="pt-0">
+                    disabled
+                  ></v-textarea>
+                </v-col>
+                <v-col cols="12">
+                  <v-textarea
+                    v-model="taskData.address_from_user"
+                    label="รายละเอียดที่อยู่เพิ่มเติม"
+                    rows="3"
+                    no-resize
+                    outlined
+                    required
+                    :disabled="isOldAddress"
+                  ></v-textarea>
+                  <v-divider></v-divider>
+                </v-col>
+
+                <v-col cols="12" class="pt-0">
                   <v-card-title class="pa-0">ข้อมูลผู้ป่วย</v-card-title>
                 </v-col>
                 <v-col cols="12" lg="6">
                   <v-text-field
-                    v-model="users.first_name"
+                    v-model="taskData.user_firstname"
                     label="ขื่อ"
                     outlined
                     disabled
@@ -99,7 +144,7 @@
                 </v-col>
                 <v-col cols="12" lg="6">
                   <v-text-field
-                    v-model="users.last_name"
+                    v-model="taskData.user_lastname"
                     label="นามสกุล"
                     outlined
                     disabled
@@ -108,17 +153,17 @@
                 </v-col>
                 <v-col cols="12" lg="6">
                   <v-text-field
-                    v-model="users.tel"
+                    v-model="taskData.user_tel"
                     label="เบอร์โทร"
                     outlined
                     disabled
                   >
                   </v-text-field>
                 </v-col>
-                <v-col cols="12" lg="6" class="pb-0">
+                <!-- <v-col cols="12" lg="6" class="pb-0">
                   <v-text-field label="วันเดือนปีเกิด" outlined disabled>
                   </v-text-field>
-                </v-col>
+                </v-col> -->
                 <v-col
                   v-if="
                     $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
@@ -188,10 +233,22 @@
                       $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
                       taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
                     "
-                    color="primary"
+                    :disabled="isReset"
+                    color="warning"
+                    class="mr-4"
+                    @click="resetForm"
+                  >
+                    คืนค่า
+                  </v-btn>
+                  <v-btn
+                    v-if="
+                      $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
+                      taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
+                    "
+                    color="success"
                     class="mr-3"
                   >
-                    แก้ไขข้อมูล
+                    บันทึกการแก้ไข
                   </v-btn>
                   <v-btn
                     v-if="
@@ -437,16 +494,29 @@ export default {
         volunteer_firstname: '',
         volunteer_lastname: '',
         volunteer_tel: '',
-      },
-      users: {
-        id: '',
-        first_name: '',
-        last_name: '',
-        email: '',
-        tel: '',
-        address: '',
+        user_firstname: '',
+        user_lastname: '',
+        user_tel: '',
         position: null,
+        address_from_user: '',
+        address_from_gmap: '',
+        address_id: '',
+        requirement: [],
       },
+      // users: {
+      //   id: '',
+      //   first_name: '',
+      //   last_name: '',
+      //   email: '',
+      //   tel: '',
+      //   address: '',
+      //   position: null,
+      //   address_from_user: '',
+      //   address_from_gmap: '',
+      // },
+      isOldAddress: true,
+      zoom: 12,
+      center: { lat: 13.736717, lng: 100.523186 },
       image1: '',
       image2: '',
       markers: [],
@@ -484,16 +554,47 @@ export default {
       return this.selectedTypes.length > 0 && !this.likesAllFruit
     },
     icon() {
+      console.log('icon')
+
       if (this.likesAllFruit) return 'mdi-close-box'
       if (this.likesSomeFruit) return 'mdi-minus-box'
       return 'mdi-checkbox-blank-outline'
     },
+    isDisableAddress() {
+      return this.$auth.user.group_id == this.$constants.DATA.VOLUNTEER_GROUP
+    },
+    isDisabledSearch() {
+      return !this.place
+    },
+    isSaveEdit() {},
+    isReset() {},
   },
 
   watch: {
     steps(val) {
+      console.log('value Steps: ',val)
       if (this.e1 > val) {
         this.e1 = val
+      }
+    },
+    isOldAddress(newValue) {
+      console.log(newValue)
+      if (newValue == true) {
+        const taskInfo = this.$store.state.taskInfo
+
+        this.taskData.position = taskInfo.position
+        this.taskData.address_from_gmap = taskInfo.address_from_gmap
+        this.taskData.address_from_user = taskInfo.address_from_user
+        this.center = taskInfo.position
+        this.address_id = taskInfo.address_id
+        this.zoom = 16
+      } else {
+        this.taskData.position = null
+        this.taskData.address_from_gmap = ''
+        this.taskData.address_from_user = ''
+        this.taskData.address_id = ''
+        this.center = { lat: 13.736717, lng: 100.523186 }
+        this.zoom = 10
       }
     },
   },
@@ -504,17 +605,19 @@ export default {
         id: this.$route.query.id,
       })
       this.taskData = tasks
-      if (this.taskData.volunteer_id) {
-        const { result } = await this.$axios.$post('/api/user/getbyID', {
-          id: this.taskData.volunteer_id,
-        })
-        if (result) {
-          this.taskData.volunteer_firstname = result.first_name
-          this.taskData.volunteer_lastname = result.last_name
-          this.taskData.volunteer_tel = result.tel
-        }
-      }
-
+      console.log('Task Data: ', this.taskData)
+      this.center = this.taskData.position
+      // if (this.taskData.volunteer_id) {
+      //   const { result } = await this.$axios.$post('/api/user/getbyID', {
+      //     id: this.taskData.volunteer_id,
+      //   })
+      //   if (result) {
+      //     this.taskData.volunteer_firstname = result.first_name
+      //     this.taskData.volunteer_lastname = result.last_name
+      //     this.taskData.volunteer_tel = result.tel
+      //   }
+      // }
+      console.log('task requirement', this.taskData.requirement)
       if (this.taskData.status_id == this.$constants.DATA.ASK_FOR_HELP_STATUS) {
         this.e1 = 1
       } else if (
@@ -527,18 +630,32 @@ export default {
         this.e1 = 3
       }
 
-      this.users.first_name = this.$store.state.userInfo.first_name
-      this.users.last_name = this.$store.state.userInfo.last_name
-      this.users.email = this.$store.state.userInfo.email
-      this.users.address = this.$store.state.userInfo.address
-      this.users.tel = this.$store.state.userInfo.tel
+      // this.users.first_name = this.$store.state.userInfo.first_name
+      // this.users.last_name = this.$store.state.userInfo.last_name
+      // this.users.email = this.$store.state.userInfo.email
+      // this.users.address = this.$store.state.userInfo.address
+      // this.users.tel = this.$store.state.userInfo.tel
+      // this.$store.commit('SET_taskInfo', {
+      //   taskInfo: {
+      //     remark: this.taskData.remark,
+      //     status_id: this.taskData.status_id,
+      //     cancel_detail: this.taskData.cancel_detail,
+      //   },
+      // })
+
       this.$store.commit('SET_taskInfo', {
         taskInfo: {
           remark: this.taskData.remark,
           status_id: this.taskData.status_id,
           cancel_detail: this.taskData.cancel_detail,
+          position: this.taskData.position,
+          address_from_gmap: this.taskData.address_from_gmap,
+          address_from_user: this.taskData.address_from_user,
+          address_id: this.taskData.address_id,
+          requirement: this.taskData.requirement,
         },
       })
+      this.selectedTypes = this.$store.state.taskInfo.requirement
     },
     toggle() {
       this.$nextTick(() => {
@@ -556,6 +673,12 @@ export default {
     //     this.e1 = n + 1
     //   }
     // },
+    async resetForm() {
+      const taskInfo = await this.$store.state.taskInfo
+
+      this.selectedTypes = taskInfo.requirement
+      this.taskData.remark = taskInfo.remark
+    },
     async updateData() {
       if (
         this.taskData.status_id === this.$constants.DATA.ASK_FOR_HELP_STATUS
@@ -610,22 +733,71 @@ export default {
     setDescription(description) {
       this.description = description
     },
+    // setPlace(place) {
+    //   this.place = place
+
+    //   this.lat = this.place.geometry.location.lat()
+    //   this.lng = this.place.geometry.location.lng()
+    // },
+    // usePlace(place) {
+    //   if (this.place) {
+    //     this.markers.push({
+    //       position: {
+    //         lat: this.place.geometry.location.lat(),
+    //         lng: this.place.geometry.location.lng(),
+    //       },
+    //     })
+    //     this.place = null
+    //   }
+    // },
+
     setPlace(place) {
       this.place = place
-
-      this.lat = this.place.geometry.location.lat()
-      this.lng = this.place.geometry.location.lng()
+      console.log('current place', this.place)
+      console.log('lat from place: ', place.geometry.location.lat())
+      console.log('lat from place: ', place.geometry.location.lng())
     },
-    usePlace(place) {
+
+    usePlace() {
       if (this.place) {
-        this.markers.push({
-          position: {
-            lat: this.place.geometry.location.lat(),
-            lng: this.place.geometry.location.lng(),
-          },
-        })
+        this.taskData.position = {
+          lat: this.place.geometry.location.lat(),
+          lng: this.place.geometry.location.lng(),
+        }
+        console.log('latlng from usePlace: ', this.taskData.position)
+        console.log('latlng from usePlace: ', this.place.formatted_address)
+
+        this.taskData.address_from_gmap = this.place.formatted_address
+        this.zoom = 18
+        this.center = this.taskData.position
         this.place = null
       }
+    },
+    updatePosition(location) {
+      console.log('location after update: ', location)
+      this.taskData.position = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng(),
+      }
+      console.log('location: ', this.position)
+      this.getAddressDetail(
+        this.taskData.position.lat,
+        this.taskData.position.lng
+      )
+    },
+
+    async getAddressDetail(lat, lng) {
+      const geocoder = new google.maps.Geocoder()
+      const latlng = { lat, lng }
+
+      await geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === 'OK') {
+          console.log('result from getTown', results[0])
+          this.taskData.address_from_gmap = results[0].formatted_address
+        } else {
+          console.log('No results found')
+        }
+      })
     },
     addItem: function () {
       this.items.push({
@@ -639,3 +811,16 @@ export default {
   },
 }
 </script>
+<style scoped>
+.gsearch {
+  border: 1px solid rgba(0, 0, 0, 0.42);
+  border-radius: 4px;
+  max-height: 56px;
+  flex: 1 1 auto;
+  line-height: 20px;
+  padding: 16px 8px;
+  max-width: 100%;
+  min-width: 0px;
+  width: 100%;
+}
+</style>

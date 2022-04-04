@@ -355,10 +355,12 @@ export default {
         }
       })
     },
+    
     setPlace(place) {
       this.place = place
       console.log('current place', this.place)
     },
+
     usePlace() {
       if (this.place) {
         this.position = {

@@ -12,7 +12,12 @@ export const state = () => ({
     taskInfo: {
         remark: '',
         status_id: '',
-        cancel_detail:''
+        cancel_detail: '',
+        position: '',
+        address_from_gmap: '',
+        address_from_user: '',
+        address_id: '',
+        requirement:'',
     }
 })
 
@@ -33,7 +38,12 @@ export const mutations = {
         state.taskInfo = {
             remark: taskInfo.remark,
             status_id: taskInfo.status_id,
-            cancel_detail:taskInfo.cancel_detail
+            cancel_detail: taskInfo.cancel_detail,
+            position: taskInfo.position,
+            address_from_gmap: taskInfo.address_from_gmap,
+            address_from_user: taskInfo.address_from_user,
+            address_id: taskInfo.address_id,
+            requirement: taskInfo.requirement,
         }
     }
 }

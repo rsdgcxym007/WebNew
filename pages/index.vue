@@ -230,11 +230,11 @@ export default {
       group: 'ผู้ป่วย',
       groups: [],
       tabs: null,
-      password: '',
+      password: '123456789',
       first_name: '',
       last_name: '',
       tel: '',
-      email: '',
+      email: 'testuser1@dpu.ac.th',
       show1: false,
       emailRules: [
         (v) => !!v || 'E-mail is required',
