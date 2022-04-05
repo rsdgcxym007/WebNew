@@ -304,6 +304,13 @@ export default {
     //   }
     // },
     async request() {
+      if (!this.address_from_gmap) {
+        this.$swal({
+          type: 'warning',
+          title: 'กรุณาเพิ่มที่อยู่',
+        })
+        return false
+      }
       if (this.$refs.form1.validate() === true) {
         const data = {
           status: 'ขอความช่วยเหลือ',
@@ -334,9 +341,8 @@ export default {
       } else {
         this.$swal({
           type: 'warning',
-          message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+          title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
         })
-        this.$router.push({ path: '/manage' })
       }
     },
     changePatientGroup() {
@@ -355,7 +361,7 @@ export default {
         }
       })
     },
-    
+
     setPlace(place) {
       this.place = place
       console.log('current place', this.place)

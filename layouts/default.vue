@@ -192,14 +192,19 @@ export default {
       items_volunteen: [
         {
           icon: 'mdi-map-marker',
-          title: 'แผนที่',
-          to: '/manage/map',
+          title: 'หน้าแรก',
+          to: '/dashboard',
         },
-        {
-          icon: 'mdi-bell-circle',
-          title: 'รายงาน',
-          to: '/volunteen/report',
-        },
+        // {
+        //   icon: 'mdi-map-marker',
+        //   title: 'แผนที่',
+        //   to: '/manage/map',
+        // },
+        // {
+        //   icon: 'mdi-bell-circle',
+        //   title: 'รายงาน',
+        //   to: '/volunteen/report',
+        // },
         {
           icon: 'mdi-folder-account-outline',
           title: 'ผู้ป่วยที่อยู่ในการดูแล',
@@ -264,7 +269,7 @@ export default {
           position: result.position,
           address_from_gmap: result.address_from_gmap,
           address_from_user: result.address_from_user,
-          address_id:result.address_id
+          address_id: result.address_id,
         },
       })
     },

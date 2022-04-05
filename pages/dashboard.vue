@@ -1,12 +1,18 @@
 <template>
-  <div>
+  <div class="px-16">
     <!-- <pre>{{ lists }}</pre> -->
     <br />
-    <div class="black--text text-left text-h3">
+    <div
+      style="font-family: Prompt !important"
+      class="black--text text-left text-h3"
+    >
       สถานการณ์ผู้ติดเชื้อไวรัส COVID-19
     </div>
-    <div class="black--text text-left text-h5">
-      วันที่ : {{  lists.txn_date }} อัพเดทวันที่ : {{ lists.update_date }}
+    <div
+      style="font-family: Prompt !important"
+      class="black--text text-left text-h5"
+    >
+      วันที่ : {{ lists.txn_date }} อัพเดทวันที่ : {{ lists.update_date }}
     </div>
     <v-row class="mt-5">
       <v-col cols="4">
