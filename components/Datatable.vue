@@ -20,7 +20,7 @@
           @click:row="editItem"
         >
           <template v-slot:[`item.status_name`]="{ item }">
-            <v-chip :color="item.color">
+            <v-chip dark :color="item.color">
               {{ item.status_name }}
             </v-chip>
           </template>

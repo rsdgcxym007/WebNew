@@ -343,6 +343,7 @@
                         "
                         color="error"
                         class="mr-3"
+                        @click="cancelTask"
                       >
                         ยกเลิกขอความช่วยเหลือ
                       </v-btn>
@@ -530,20 +531,111 @@
             </v-stepper-content>
             <v-stepper-content step="3">
               <v-row class="px-4">
-                <v-col cols="12"
-                  ><v-card-title class="pa-0">หมายเหตุ</v-card-title></v-col
+                <v-col cols="12">
+                  <v-card-title class="pa-0"
+                    >อัพโหลดข้อมูลการรักษา</v-card-title
+                  ></v-col
                 >
-                <v-col cols="12"
-                  ><v-textarea
+                <!-- <v-col cols="12">
+                  <v-textarea
                     rows="3"
                     no-resize
                     label="หมายเหตุ"
                     outlined
                     required
                   ></v-textarea
-                ></v-col>
+                ></v-col> -->
+                <v-col cols="12">
+                  <v-form ref="form_uploadImage" v-model="valid2">
+                    <v-row class="px-4">
+                      <v-col cols="12" lg="6">
+                        <v-text-field
+                          v-model="hospital"
+                          label="ชื่อสถานที่รักษา"
+                          :rules="hospitalrules"
+                          required
+                          outlined
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" lg="6">
+                        <v-menu
+                          ref="menu"
+                          v-model="menu"
+                          :close-on-content-click="false"
+                          :return-value.sync="endDate"
+                          transition="scale-transition"
+                          offset-y
+                          min-width="auto"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-model="endDate"
+                              label="วันที่หาย"
+                              readonly
+                              :rules="hospitalrules"
+                              v-bind="attrs"
+                              v-on="on"
+                              outlined
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker v-model="endDate" no-title scrollable>
+                            <v-spacer></v-spacer>
+                            <v-btn text color="primary" @click="menu = false">
+                              Cancel
+                            </v-btn>
+                            <v-btn
+                              text
+                              color="primary"
+                              @click="$refs.menu.save(endDate)"
+                            >
+                              OK
+                            </v-btn>
+                          </v-date-picker>
+                        </v-menu>
+                      </v-col>
+                      <v-col cols="12" lg="6">
+                        <div>
+                          <label>ผลตรวจเชื้อแบบ RT-PCR</label>
+                        </div>
+                        <div v-if="imageRtpcr">
+                          <img class="image" :src="imageRtpcr" />
+                        </div>
+                        <div>
+                          <v-col cols="6" class="pa-0">
+                            <v-file-input
+                              label="อัพโหลดรูปผล RT-PCR"
+                              prepend-icon="mdi-camera"
+                              accept="image/*"
+                              :rules="hospitalrules"
+                              @change="createImageRtpcr($event)"
+                            ></v-file-input>
+                          </v-col>
+                        </div>
+                      </v-col>
+                      <v-col cols="12" lg="6">
+                        <div>
+                          <label>ใบรับรองแพทย์</label>
+                        </div>
+                        <div v-if="imageMedicalCert">
+                          <img class="image" :src="imageMedicalCert" />
+                        </div>
+                        <div>
+                          <v-col cols="6" class="pa-0">
+                            <v-file-input
+                              label="อัพโหลดรูปใบรับรองแพทย์"
+                              prepend-icon="mdi-camera"
+                              accept="image/*"
+                              :rules="hospitalrules"
+                              @change="createImageMedicalCert($event)"
+                            ></v-file-input>
+                          </v-col>
+                        </div>
+                      </v-col>
+                    </v-row>
+                  </v-form>
+                </v-col>
                 <v-col cols="12" class="mb-4" style="text-align: end">
-                  <v-btn color="primary"> เสร็จสิ้น </v-btn>
+                  <v-btn color="primary" @click="submit" :disabled="!valid2"> เสร็จสิ้น </v-btn>
                 </v-col>
               </v-row>
             </v-stepper-content>
@@ -597,6 +689,11 @@ export default {
       center: { lat: 13.736717, lng: 100.523186 },
       image1: '',
       image2: '',
+      valid2: '',
+      hospital: '',
+      hospitalrules: [(v) => !!v || 'required'],
+      imageRtpcr: '',
+      imageMedicalCert: '',
       markers: [],
       place: null,
       currentLocation: { lat: 13, lng: 100 },
@@ -613,6 +710,7 @@ export default {
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10),
+      endDate: '',
       menu: false,
       modal: false,
       menu2: false,
@@ -747,6 +845,28 @@ export default {
         this.isolation = 'hospital'
       }
     },
+    createImageRtpcr(pathFile) {
+      if (pathFile) {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          this.imageRtpcr = e.target.result
+        }
+        reader.readAsDataURL(pathFile)
+      } else {
+        this.imageRtpcr = ''
+      }
+    },
+    createImageMedicalCert(pathFile) {
+      if (pathFile) {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          this.imageMedicalCert = e.target.result
+        }
+        reader.readAsDataURL(pathFile)
+      } else {
+        this.imageMedicalCert = ''
+      }
+    },
     // nextStep(n) {
     //   if (n === this.steps) {
     //     this.e1 = 1
@@ -754,6 +874,39 @@ export default {
     //     this.e1 = n + 1
     //   }
     // },
+    async submit() {
+      const data = {
+        image_rtpcr: this.imageRtpcr,
+        image_medical: this.imageMedicalCert,
+        hospital: this.hospital,
+        day_of_visit: this.endDate,
+        user_id: this.taskData.user_id,
+        task_id: this.taskData.id,
+        status_id:'ef9e2e70-d55b-4250-8967-965b7cb0cbc7'
+      }
+      console.log('data for sent', data)
+      await this.$axios.$post('/api/manage/uploadImage', { data })
+      this.$swal.fire({
+        type: 'success',
+        title: 'บันทึกข้อมูลสำเร็จ',
+        showConfirmButton: false,
+        timer: 1500,
+      })
+      this.$router.push({ path: '/manage' })
+    },
+    async cancelTask(){
+      const { result, message } = await this.$axios.$post(
+          '/api/task/update',
+          {
+            id: this.taskData.id,
+            status_id:this.$constants.DATA.CANCEL_STATUS
+          })
+          if (!result) {
+            console.log('errer: ',message)
+          } else {
+            this.$router.push({ path: '/manage' })
+          }
+    },
     async resetForm() {
       const taskInfo = await this.$store.state.taskInfo
 
@@ -867,23 +1020,6 @@ export default {
     setDescription(description) {
       this.description = description
     },
-    // setPlace(place) {
-    //   this.place = place
-
-    //   this.lat = this.place.geometry.location.lat()
-    //   this.lng = this.place.geometry.location.lng()
-    // },
-    // usePlace(place) {
-    //   if (this.place) {
-    //     this.markers.push({
-    //       position: {
-    //         lat: this.place.geometry.location.lat(),
-    //         lng: this.place.geometry.location.lng(),
-    //       },
-    //     })
-    //     this.place = null
-    //   }
-    // },
 
     setPlace(place) {
       this.place = place
@@ -956,5 +1092,11 @@ export default {
   max-width: 100%;
   min-width: 0px;
   width: 100%;
+}
+
+img.image {
+  width: 100%;
+  max-width: 300px;
+  height: 100%;
 }
 </style>
