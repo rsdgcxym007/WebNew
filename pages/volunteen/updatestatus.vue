@@ -82,7 +82,7 @@ export default {
   methods: {
     async fetchData() {
       const { result, tasks } = await this.$axios.$post(
-        '/api/tasksvolunteen/getbyIduser',
+        // '/api/tasksvolunteen/getbyIduser',
         {
           id: this.$route.query.id,
         }

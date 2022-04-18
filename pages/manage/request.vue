@@ -99,13 +99,15 @@
               ></v-textarea>
             </v-col>
             <v-col cols="12">
+              <div style="font-weight: 500">โรคประจำตัว</div>
               <v-textarea
                 v-model="congenital_disease"
-                label="โรคประจำตัว"
+                label="รายละเอียดโรคประจำตัว"
                 outlined
                 rows="2"
                 required
               ></v-textarea>
+              
             </v-col>
             <!-- <v-col cols="12">
               <div style="font-weight: 500">ประเมินระดับอาการเบื้องต้น</div>
@@ -161,6 +163,7 @@
               </v-radio-group>
             </v-col> -->
             <v-col cols="12">
+              <div style="font-weight: 500">สิ่งที่ต้องการ</div>
               <v-select
                 v-model="selectedTypes"
                 :items="requirement"
@@ -202,6 +205,7 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      checkbox2: false,
       isOldAddress: true,
       selectedTypes: [],
       requirement: ['สถานที่รักษา', 'อาหาร / ยา / ของใช้', 'รถรับส่ง'],
@@ -325,7 +329,7 @@ export default {
         }
         console.log('dato for sent: ', data)
         const { result, message } = await this.$axios.$post(
-          '/api/user/request',
+          '/api/tasks/create',
           { data }
         )
         if (!result) {

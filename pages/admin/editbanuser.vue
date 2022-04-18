@@ -199,7 +199,7 @@ export default {
       })
     },
     async fetchData() {
-      const { result } = await this.$axios.$post('/api/user/getbyID', {
+      const { result } = await this.$axios.$post('/api/users/getByUserId', {
         id: this.$route.query.id,
       })
       console.log('editban', result)
@@ -218,7 +218,7 @@ export default {
           address_id: this.$store.state.userInfo.address_id,
         }
         const { result, message } = await this.$axios.$post(
-          '/api/user/update',
+          '/api/users/update',
           { data }
         )
         if (!result) {

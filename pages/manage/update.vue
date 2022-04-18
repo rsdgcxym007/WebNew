@@ -297,8 +297,8 @@ export default {
         this.$refs.form_cancelDetail.validate() === true
       ) {
         const { result, message } = await this.$axios.$post(
-          '/api/manage/updatetasks',
-          this.taskData
+          // '/api/manage/updatetasks',
+          // this.taskData
         )
         if (!result) {
           console.log('error : ', message)
@@ -323,10 +323,10 @@ export default {
         this.$refs.form_remark.validate() === true &&
         this.taskData.remark !== this.$store.state.taskInfo.remark
       ) {
-        const { result, message } = await this.$axios.$post(
-          '/api/manage/update',
-          this.taskData
-        )
+        // const { result, message } = await this.$axios.$post(
+        //   '/api/manage/update',
+        //   this.taskData
+        // )
         if (!result) {
           console.log('error : ', message)
         } else {

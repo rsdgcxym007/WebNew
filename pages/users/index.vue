@@ -220,7 +220,7 @@ export default {
           address_id: this.$store.state.userInfo.address_id,
         }
         const { result, message } = await this.$axios.$post(
-          '/api/user/update',
+          '/api/users/update',
           { data }
         )
         if (!result) {

@@ -5,34 +5,39 @@
         รายละเอียดการขอความช่วยเหลือ
         <v-spacer></v-spacer>
       </v-card-title>
-      <v-form ref="form_remark" lazy-validation class="px-4">
-        <v-stepper v-model="e1">
-          <v-stepper-header>
-            <v-stepper-step :complete="e1 > 1" :step="1" editable>
-              ขอความช่วยเหลือ
-            </v-stepper-step>
-            <v-divider></v-divider>
-            <v-stepper-step
-              :complete="e1 > 2"
-              :step="2"
-              :editable="
-                taskData.status_id == $constants.DATA.HELPING_STATUS ||
-                taskData.status_id == $constants.DATA.HELP_DONE_STATUS
-              "
+      <!-- <v-form ref="form_managetask" lazy-validation class="px-4"> -->
+      <v-stepper v-model="e1">
+        <v-stepper-header>
+          <v-stepper-step :complete="e1 > 1" :step="1" editable>
+            ขอความช่วยเหลือ
+          </v-stepper-step>
+          <v-divider></v-divider>
+          <v-stepper-step
+            :complete="e1 > 2"
+            :step="2"
+            :editable="
+              taskData.status_id == $constants.DATA.HELPING_STATUS ||
+              taskData.status_id == $constants.DATA.HELP_DONE_STATUS
+            "
+          >
+            กำลังช่วยเหลือ
+          </v-stepper-step>
+          <v-divider></v-divider>
+          <v-stepper-step
+            :complete="e1 > 3"
+            :step="3"
+            :editable="taskData.status_id == $constants.DATA.HELP_DONE_STATUS"
+          >
+            ช่วยเหลือเสร็จสิ้น
+          </v-stepper-step>
+        </v-stepper-header>
+        <v-stepper-items>
+          <v-stepper-content step="1">
+            <v-form
+              ref="form_request"
+              lazy-validation
+              v-model="validRequestForm"
             >
-              กำลังช่วยเหลือ
-            </v-stepper-step>
-            <v-divider></v-divider>
-            <v-stepper-step
-              :complete="e1 > 3"
-              :step="3"
-              :editable="taskData.status_id == $constants.DATA.HELP_DONE_STATUS"
-            >
-              ช่วยเหลือเสร็จสิ้น
-            </v-stepper-step>
-          </v-stepper-header>
-          <v-stepper-items>
-            <v-stepper-content step="1">
               <v-row class="px-4">
                 <v-col cols="12">
                   <v-card-title class="pa-0">ตำแหน่งที่อยู่</v-card-title>
@@ -112,6 +117,7 @@
                     v-model="taskData.address_from_gmap"
                     label="รายละเอียดที่อยู่จากหมุด"
                     rows="3"
+                    :rules="rules.notNullRule"
                     no-resize
                     outlined
                     required
@@ -186,9 +192,11 @@
                   <v-textarea
                     v-model="taskData.congenital_disease"
                     :disabled="
-                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                      this.taskData.status_id == $constants.DATA.CANCEL_STATUS
                     "
                     label="โรคประจำตัว"
+                    :rules="rules.notNullRule"
                     no-resize
                     outlined
                     rows="2"
@@ -198,10 +206,11 @@
                 <v-col cols="12">
                   <v-select
                     v-model="selectedTypes"
-                    :items="types"
                     label="ประเภทของความช่วยเหลือที่ต้องการ"
                     multiple
                     outlined
+                    :rules="rules.selectRule"
+                    :items="types"
                     :disabled="
                       $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
                       taskData.status_id !== $constants.DATA.ASK_FOR_HELP_STATUS
@@ -231,9 +240,10 @@
                     v-model="taskData.remark"
                     rows="3"
                     no-resize
-                    label="หมายเหตุ"
+                    label="อาการ"
                     outlined
                     required
+                    :rules="rules.notNullRule"
                     :disabled="
                       $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
                       taskData.status_id !== $constants.DATA.ASK_FOR_HELP_STATUS
@@ -242,10 +252,7 @@
                 ></v-col>
                 <v-col
                   cols="12"
-                  v-if="
-                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
-                    taskData.status_id !== $constants.DATA.ASK_FOR_HELP_STATUS
-                  "
+                  v-if="$auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP"
                 >
                   <div style="font-weight: 500">ประเมินระดับอาการเบื้องต้น</div>
                   <v-radio-group
@@ -332,24 +339,70 @@
                       </v-btn>
                     </v-col>
                   </v-row>
-                  <v-row>
-                    <v-col cols="12" class="ma-0 pr-0" style="text-align: end">
-                      <v-btn
-                        v-if="
-                          $auth.user.group_id ==
-                            $constants.DATA.PATIENT_GROUP &&
-                          taskData.status_id ==
-                            $constants.DATA.ASK_FOR_HELP_STATUS
-                        "
-                        color="error"
-                        class="mr-3"
-                        @click="cancelTask"
-                      >
-                        ยกเลิกขอความช่วยเหลือ
-                      </v-btn>
-                    </v-col>
+                  <v-row
+                    justify="end"
+                    class="mr-0 pt-1"
+                    v-if="
+                      $auth.user.group_id == $constants.DATA.PATIENT_GROUP &&
+                      taskData.status_id == $constants.DATA.ASK_FOR_HELP_STATUS
+                    "
+                  >
+                    <v-dialog v-model="dialog" persistent max-width="600px">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn color="error" dark v-bind="attrs" v-on="on">
+                          Cancel Task
+                        </v-btn>
+                      </template>
+                      <v-card>
+                        <v-card-title>สาเหตุที่ยกเลิก </v-card-title>
+                        <v-card-text class="pb-0">
+                          <v-container>
+                            <v-row>
+                              <v-col>
+                                <v-textarea
+                                  v-model="taskData.cancel_detail"
+                                  rows="5"
+                                  no-resize
+                                  label="รายละเอียด"
+                                  outlined
+                                  required
+                                ></v-textarea>
+                              </v-col>
+                            </v-row>
+                            <!-- <v-row>
+                              <v-col style="text-align: end">
+                                <v-btn
+                                  class="pr-5"
+                                  color="success"
+                                  @click="cancelTask"
+                                >
+                                  Save
+                                </v-btn>
+                              </v-col>
+                            </v-row> -->
+                          </v-container>
+                        </v-card-text>
+                        <v-card-actions class="pt-0">
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="closeDialog"
+                          >
+                            Close
+                          </v-btn>
+                          <v-btn
+                            class="pr-5"
+                            color="blue darken-1"
+                            text
+                            @click="cancelTask"
+                          >
+                            Save
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
                   </v-row>
-
                   <v-btn
                     v-if="
                       $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
@@ -362,60 +415,59 @@
                   </v-btn>
                 </v-col>
               </v-row>
-            </v-stepper-content>
-            <v-stepper-content step="2">
-              <v-row class="px-4">
-                <v-col cols="12">
-                  <v-card-title class="pa-0"
-                    >อาสาสมัครผู้ดำเนินการ</v-card-title
-                  >
-                </v-col>
-                <v-col cols="12" lg="6">
-                  <v-text-field
-                    label="ขื่อ"
-                    v-model="taskData.volunteer_firstname"
-                    outlined
-                    disabled
-                  >
-                  </v-text-field>
-                </v-col>
-                <v-col cols="12" lg="6">
-                  <v-text-field
-                    label="นามสกุล"
-                    v-model="taskData.volunteer_lastname"
-                    outlined
-                    disabled
-                  >
-                  </v-text-field>
-                </v-col>
-                <v-col cols="12" lg="6">
-                  <v-text-field
-                    label="เบอร์โทร"
-                    v-model="taskData.volunteer_tel"
-                    outlined
-                    disabled
-                  >
-                  </v-text-field>
-                </v-col>
-                <v-col
-                  v-if="
-                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
-                    taskData.status_id == $constants.DATA.HELPING_STATUS
-                  "
-                  cols="12"
-                  class="pt-0"
-                  align="end"
+            </v-form>
+          </v-stepper-content>
+          <v-stepper-content step="2">
+            <v-row class="px-4">
+              <v-col cols="12">
+                <v-card-title class="pa-0">อาสาสมัครผู้ดำเนินการ</v-card-title>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-text-field
+                  label="ขื่อ"
+                  v-model="taskData.volunteer_firstname"
+                  outlined
+                  disabled
                 >
-                  <nuxt-link to="/users" class="nav-link"
-                    >แก้ไขข้อมูลส่วนตัว</nuxt-link
-                  >
-                </v-col>
-                <!-- <v-col cols="12">
+                </v-text-field>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-text-field
+                  label="นามสกุล"
+                  v-model="taskData.volunteer_lastname"
+                  outlined
+                  disabled
+                >
+                </v-text-field>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-text-field
+                  label="เบอร์โทร"
+                  v-model="taskData.volunteer_tel"
+                  outlined
+                  disabled
+                >
+                </v-text-field>
+              </v-col>
+              <v-col
+                v-if="
+                  $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
+                  taskData.status_id == $constants.DATA.HELPING_STATUS
+                "
+                cols="12"
+                class="pt-0"
+                align="end"
+              >
+                <nuxt-link to="/users" class="nav-link"
+                  >แก้ไขข้อมูลส่วนตัว</nuxt-link
+                >
+              </v-col>
+              <!-- <v-col cols="12">
                   <v-card-title class="pa-0"
                     >รายละเอียดการช่วยเหลือ</v-card-title
                   >
                 </v-col> -->
-                <!-- <v-col cols="12">
+              <!-- <v-col cols="12">
                   <table class="table" style="width: 100%">
                     <thead>
                       <tr>
@@ -490,7 +542,7 @@
                     </tbody>
                   </table>
                 </v-col> -->
-                <!-- <v-col
+              <!-- <v-col
                   v-if="
                     $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
                     taskData.status_id == $constants.DATA.HELPING_STATUS
@@ -505,8 +557,8 @@
                   <v-divider class="mt-2"></v-divider>
                 </v-col> -->
 
-                <v-col cols="12" class="mb-4" style="text-align: end">
-                  <!-- <v-btn
+              <v-col cols="12" class="mb-4" style="text-align: end">
+                <!-- <v-btn
                     v-if="
                       $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
                       taskData.status_id == $constants.DATA.HELPING_STATUS
@@ -516,27 +568,27 @@
                   >
                     บันทึกข้อมูล
                   </v-btn> -->
-                  <v-btn
-                    v-if="
-                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
-                      taskData.status_id == $constants.DATA.HELPING_STATUS
-                    "
-                    color="primary"
-                    @click="updateData()"
-                  >
-                    ช่วยเหลือเสร็จสิ้น
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-stepper-content>
-            <v-stepper-content step="3">
-              <v-row class="px-4">
-                <v-col cols="12">
-                  <v-card-title class="pa-0"
-                    >อัพโหลดข้อมูลการรักษา</v-card-title
-                  ></v-col
+                <v-btn
+                  v-if="
+                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
+                    taskData.status_id == $constants.DATA.HELPING_STATUS
+                  "
+                  color="primary"
+                  @click="updateData()"
                 >
-                <!-- <v-col cols="12">
+                  ช่วยเหลือเสร็จสิ้น
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-stepper-content>
+          <v-stepper-content step="3">
+            <v-row class="px-4">
+              <v-col cols="12">
+                <v-card-title class="pa-0"
+                  >อัพโหลดข้อมูลการรักษา</v-card-title
+                ></v-col
+              >
+              <!-- <v-col cols="12">
                   <v-textarea
                     rows="3"
                     no-resize
@@ -545,103 +597,105 @@
                     required
                   ></v-textarea
                 ></v-col> -->
-                <v-col cols="12">
-                  <v-form ref="form_uploadImage" v-model="valid2">
-                    <v-row class="px-4">
-                      <v-col cols="12" lg="6">
-                        <v-text-field
-                          v-model="hospital"
-                          label="ชื่อสถานที่รักษา"
-                          :rules="hospitalrules"
-                          required
-                          outlined
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" lg="6">
-                        <v-menu
-                          ref="menu"
-                          v-model="menu"
-                          :close-on-content-click="false"
-                          :return-value.sync="endDate"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="auto"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="endDate"
-                              label="วันที่หาย"
-                              readonly
-                              :rules="hospitalrules"
-                              v-bind="attrs"
-                              v-on="on"
-                              outlined
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker v-model="endDate" no-title scrollable>
-                            <v-spacer></v-spacer>
-                            <v-btn text color="primary" @click="menu = false">
-                              Cancel
-                            </v-btn>
-                            <v-btn
-                              text
-                              color="primary"
-                              @click="$refs.menu.save(endDate)"
-                            >
-                              OK
-                            </v-btn>
-                          </v-date-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col cols="12" lg="6">
-                        <div>
-                          <label>ผลตรวจเชื้อแบบ RT-PCR</label>
-                        </div>
-                        <div v-if="imageRtpcr">
-                          <img class="image" :src="imageRtpcr" />
-                        </div>
-                        <div>
-                          <v-col cols="6" class="pa-0">
-                            <v-file-input
-                              label="อัพโหลดรูปผล RT-PCR"
-                              prepend-icon="mdi-camera"
-                              accept="image/*"
-                              :rules="hospitalrules"
-                              @change="createImageRtpcr($event)"
-                            ></v-file-input>
-                          </v-col>
-                        </div>
-                      </v-col>
-                      <v-col cols="12" lg="6">
-                        <div>
-                          <label>ใบรับรองแพทย์</label>
-                        </div>
-                        <div v-if="imageMedicalCert">
-                          <img class="image" :src="imageMedicalCert" />
-                        </div>
-                        <div>
-                          <v-col cols="6" class="pa-0">
-                            <v-file-input
-                              label="อัพโหลดรูปใบรับรองแพทย์"
-                              prepend-icon="mdi-camera"
-                              accept="image/*"
-                              :rules="hospitalrules"
-                              @change="createImageMedicalCert($event)"
-                            ></v-file-input>
-                          </v-col>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-form>
-                </v-col>
-                <v-col cols="12" class="mb-4" style="text-align: end">
-                  <v-btn color="primary" @click="submit" :disabled="!valid2"> เสร็จสิ้น </v-btn>
-                </v-col>
-              </v-row>
-            </v-stepper-content>
-          </v-stepper-items>
-        </v-stepper>
-      </v-form>
+              <v-col cols="12">
+                <v-form ref="form_uploadImage" v-model="valid2">
+                  <v-row class="px-4">
+                    <v-col cols="12" lg="6">
+                      <v-text-field
+                        v-model="hospital"
+                        label="ชื่อสถานที่รักษา"
+                        :rules="rules.notNullRule"
+                        required
+                        outlined
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" lg="6">
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :return-value.sync="endDate"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="endDate"
+                            label="วันที่หาย"
+                            readonly
+                            :rules="rules.notNullRule"
+                            v-bind="attrs"
+                            v-on="on"
+                            outlined
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="endDate" no-title scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="menu = false">
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="$refs.menu.save(endDate)"
+                          >
+                            OK
+                          </v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" lg="6">
+                      <div>
+                        <label>ผลตรวจเชื้อแบบ RT-PCR</label>
+                      </div>
+                      <div v-if="imageRtpcr">
+                        <img class="image" :src="imageRtpcr" />
+                      </div>
+                      <div>
+                        <v-col cols="6" class="pa-0">
+                          <v-file-input
+                            label="อัพโหลดรูปผล RT-PCR"
+                            prepend-icon="mdi-camera"
+                            accept="image/*"
+                            :rules="rules.notNullRule"
+                            @change="createImageRtpcr($event)"
+                          ></v-file-input>
+                        </v-col>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" lg="6">
+                      <div>
+                        <label>ใบรับรองแพทย์</label>
+                      </div>
+                      <div v-if="imageMedicalCert">
+                        <img class="image" :src="imageMedicalCert" />
+                      </div>
+                      <div>
+                        <v-col cols="6" class="pa-0">
+                          <v-file-input
+                            label="อัพโหลดรูปใบรับรองแพทย์"
+                            prepend-icon="mdi-camera"
+                            accept="image/*"
+                            :rules="rules.notNullRule"
+                            @change="createImageMedicalCert($event)"
+                          ></v-file-input>
+                        </v-col>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-form>
+              </v-col>
+              <v-col cols="12" class="mb-4" style="text-align: end">
+                <v-btn color="primary" @click="submit" :disabled="!valid2">
+                  เสร็จสิ้น
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+      <!-- </v-form> -->
     </v-card>
   </v-container>
 </template>
@@ -650,7 +704,41 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      center: { lat: 13.736717, lng: 100.523186 },
+      currentLocation: { lat: 13, lng: 100 },
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
+
+      dialog: false,
       e1: 1,
+      endDate: '',
+      hospital: '',
+      isOldAddress: true,
+      isolation: '',
+      image1: '',
+      image2: '',
+      imageRtpcr: '',
+      imageMedicalCert: '',
+      items: [
+        {
+          title: '',
+          description: '',
+        },
+      ],
+      lat: 0,
+      lng: 0,
+      markers: [],
+      menu: false,
+      menu2: false,
+      modal: false,
+      patient_group: '',
+      place: null,
+      rules: {
+        notNullRule: [(v) => !!v || 'required'],
+        selectRule: [(v) => v.length > 0 || 'required'],
+      },
+      selectedTypes: [],
       steps: 4,
       taskData: {
         remark: '',
@@ -671,49 +759,10 @@ export default {
         requirement: [],
         congenital_disease: '',
       },
-      // users: {
-      //   id: '',
-      //   first_name: '',
-      //   last_name: '',
-      //   email: '',
-      //   tel: '',
-      //   address: '',
-      //   position: null,
-      //   address_from_user: '',
-      //   address_from_gmap: '',
-      // },
-      isOldAddress: true,
-      patient_group: '',
-      isolation: '',
-      zoom: 12,
-      center: { lat: 13.736717, lng: 100.523186 },
-      image1: '',
-      image2: '',
-      valid2: '',
-      hospital: '',
-      hospitalrules: [(v) => !!v || 'required'],
-      imageRtpcr: '',
-      imageMedicalCert: '',
-      markers: [],
-      place: null,
-      currentLocation: { lat: 13, lng: 100 },
-      lat: 0,
-      lng: 0,
       types: ['สถานที่รักษา', 'อาหาร / ยา / ของใช้', 'รถรับส่ง'],
-      selectedTypes: [],
-      items: [
-        {
-          title: '',
-          description: '',
-        },
-      ],
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
-      endDate: '',
-      menu: false,
-      modal: false,
-      menu2: false,
+      validRequestForm: '',
+      valid2: '',
+      zoom: 12,
     }
   },
 
@@ -744,12 +793,24 @@ export default {
     },
     isSaveEdit() {
       return (
-        this.taskData.remark === this.$store.state.taskInfo.remark &&
-        this.taskData.position === this.$store.state.taskInfo.position &&
+        (this.taskData.remark === this.$store.state.taskInfo.remark &&
+          this.taskData.position === this.$store.state.taskInfo.position &&
+          this.taskData.remark === this.$store.state.taskInfo.remark &&
+          this.taskData.congenital_disease ===
+            this.$store.state.taskInfo.congenital_disease &&
+          this.selectedTypes === this.$store.state.taskInfo.requirement) ||
+        !this.validRequestForm
+      )
+    },
+    isReset() {
+      return (
+        this.isOldAddress &&
+        this.taskData.congenital_disease ===
+          this.$store.state.taskInfo.congenital_disease &&
+        this.selectedTypes === this.$store.state.taskInfo.requirement &&
         this.taskData.remark === this.$store.state.taskInfo.remark
       )
     },
-    isReset() {},
   },
 
   watch: {
@@ -782,11 +843,11 @@ export default {
 
   methods: {
     async fetchData() {
+      console.log('fetch task from para id')
       const { result: tasks } = await this.$axios.$post('/api/tasks/getbyId', {
         id: this.$route.query.id,
       })
       this.taskData = tasks
-      console.log('Task Data: ', this.taskData)
       this.center = this.taskData.position
       // if (this.taskData.volunteer_id) {
       //   const { result } = await this.$axios.$post('/api/user/getbyID', {
@@ -798,7 +859,6 @@ export default {
       //     this.taskData.volunteer_tel = result.tel
       //   }
       // }
-      console.log('task requirement', this.taskData.requirement)
       if (this.taskData.status_id == this.$constants.DATA.ASK_FOR_HELP_STATUS) {
         this.e1 = 1
       } else if (
@@ -823,6 +883,7 @@ export default {
           requirement: this.taskData.requirement,
           patient_group: this.taskData.level,
           isolation: this.taskData.treatment_location,
+          congenital_disease: this.taskData.congenital_disease,
         },
       })
       this.selectedTypes = this.$store.state.taskInfo.requirement
@@ -837,6 +898,10 @@ export default {
           this.selectedTypes = this.types.slice()
         }
       })
+    },
+    closeDialog() {
+      this.dialog = false
+      this.taskData.cancel_detail = ''
     },
     changePatientGroup() {
       if (this.patient_group == 'green') {
@@ -882,10 +947,10 @@ export default {
         day_of_visit: this.endDate,
         user_id: this.taskData.user_id,
         task_id: this.taskData.id,
-        status_id:'ef9e2e70-d55b-4250-8967-965b7cb0cbc7'
+        status_id: 'ef9e2e70-d55b-4250-8967-965b7cb0cbc7',
       }
       console.log('data for sent', data)
-      await this.$axios.$post('/api/manage/uploadImage', { data })
+      await this.$axios.$post('/api/uploadimages/create', { data })
       this.$swal.fire({
         type: 'success',
         title: 'บันทึกข้อมูลสำเร็จ',
@@ -894,24 +959,25 @@ export default {
       })
       this.$router.push({ path: '/manage' })
     },
-    async cancelTask(){
-      const { result, message } = await this.$axios.$post(
-          '/api/task/update',
-          {
-            id: this.taskData.id,
-            status_id:this.$constants.DATA.CANCEL_STATUS
-          })
-          if (!result) {
-            console.log('errer: ',message)
-          } else {
-            this.$router.push({ path: '/manage' })
-          }
+    async cancelTask() {
+      const { result, message } = await this.$axios.$post('/api/task/update', {
+        id: this.taskData.id,
+        status_id: this.$constants.DATA.CANCEL_STATUS,
+        cancel_detail: this.taskData.cancel_detail,
+      })
+      if (!result) {
+        console.log('errer: ', message)
+      } else {
+        this.$router.push('/manage')
+      }
     },
     async resetForm() {
       const taskInfo = await this.$store.state.taskInfo
 
       this.selectedTypes = taskInfo.requirement
       this.taskData.remark = taskInfo.remark
+      this.taskData.congenital_disease = taskInfo.congenital_disease
+      this.isOldAddress = true
     },
     async saveEdit() {
       if (this.taskData.position === this.$store.state.taskInfo.position) {
@@ -928,6 +994,12 @@ export default {
         if (!result) {
           console.log('error : ', message)
         } else {
+          this.$swal({
+            type: 'success',
+            title: message,
+            showConfirmButton: false,
+            timer: 500,
+          })
           await this.fetchData()
         }
       } else {

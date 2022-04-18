@@ -124,12 +124,12 @@ export default {
   },
   methods: {
     async fetchData() {
-      const { result: tasks } = await this.$axios.$post(
-        '/api/tasks/getbyuser',
-        { user_id: this.user_id }
-      )
+      // const { result: tasks } = await this.$axios.$post(
+      //   '/api/tasks/getbyuser',
+      //   { user_id: this.user_id }
+      // )
 
-      this.tasks = tasks
+      // this.tasks = tasks
     },
     handleImage(e) {
       const selectedImage = e.target.files[0] // get first file

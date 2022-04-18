@@ -57,6 +57,8 @@ export default {
       )
       this.details = tasks
       this.headers = headers
+      console.log('details : ' , this.details)
+      console.log('header: ' , this.headers)
     },
     // async helper(item) {
     //   const id = item.id

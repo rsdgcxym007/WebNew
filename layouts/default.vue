@@ -255,7 +255,7 @@ export default {
       this.$router.push('/')
     },
     async setUserStore() {
-      const { result } = await this.$axios.$post('/api/user/getbyID', {
+      const { result } = await this.$axios.$post('/api/users/getByUserId', {
         id: this.$auth.user.id,
         group_id: this.$auth.user.group_id,
       })

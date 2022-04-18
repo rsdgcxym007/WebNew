@@ -17,7 +17,8 @@ export const state = () => ({
         address_from_gmap: '',
         address_from_user: '',
         address_id: '',
-        requirement:'',
+        requirement: '',
+        congenital_disease:''
     }
 })
 
@@ -44,6 +45,7 @@ export const mutations = {
             address_from_user: taskInfo.address_from_user,
             address_id: taskInfo.address_id,
             requirement: taskInfo.requirement,
+            congenital_disease: taskInfo.congenital_disease
         }
     }
 }
