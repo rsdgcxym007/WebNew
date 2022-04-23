@@ -37,6 +37,7 @@
                             prepend-icon="mdi-account"
                             type="text"
                             autocomplete="off"
+                            @keyup.enter="onSubmit"
                           ></v-text-field>
 
                           <v-text-field
@@ -47,6 +48,7 @@
                             autocomplete="off"
                             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                             @click:append="show1 = !show1"
+                            @keyup.enter="onSubmit"
                           ></v-text-field>
                         </v-form>
                       </v-card-text>

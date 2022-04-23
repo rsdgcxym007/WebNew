@@ -92,6 +92,16 @@
                   @click="center = users.position"
                   @dragend="updatePosition"
                 />
+                <!-- <gmap-info-window
+                  :options="infoOptions"
+                  :position="users.position"
+                  :opened="infoOpened"
+                  :content="infoContent"
+                  :clickable="true"
+                  @click="goToDetail"
+                  @closeclick="infoOpened = false"
+                >
+                </gmap-info-window> -->
               </GmapMap>
             </v-col>
             <v-col>
@@ -178,6 +188,26 @@ export default {
       zoom: 7,
       center: { lat: 13.736717, lng: 100.523186 },
       address: '',
+      toggleMarker: false,
+      map: null,
+      mapLoaded: false,
+      infoContent: 'test Info Content',
+      infoOpened: false,
+      infoCurrentKey: null,
+      infoOptions: {
+        pixelOffset: {
+          width: 0,
+          height: -35,
+        },
+        content:
+          `<div>` +
+          `<h3 class="infoWindow">ข้อมูลผู้ร้องขอ</h3> <hr/><br>` +
+          `ชื่อ :${this.$store.state.userInfo.last_name} ${this.$store.state.userInfo.first_name}<br/>` +
+          `เบอร์โทร :${this.$store.state.userInfo.tel}<br/>` +
+          `<br/><hr/>` +
+          `<a href="/volunteen/userhelp"} action="_blank"> ดูข้อมูล</a>` +
+          `</div>`,
+      },
     }
   },
   async mounted() {
@@ -243,6 +273,23 @@ export default {
         }
       }
     },
+    goToDetail() {
+      console.log('ข้อมูลผู้ป่วย')
+    },
+    infoMap() {
+      this.infoOpened = true
+      console.log('marker info is: ', this.toggleMarker)
+    },
+    toggleInfo() {
+      if (this.infoOpened == false) {
+        this.infoOpened = true
+        console.log('infoOpened change to: ', this.infoOpened)
+      } else {
+        this.infoOpened = false
+        console.log('infoOpened change to: ', this.infoOpened)
+      }
+    },
+
     setPlace(place) {
       this.place = place
       console.log('current place', this.place)
@@ -318,7 +365,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @media only screen and (max-width: 600px) {
   v-card.cardRespond {
     padding: 2px;
@@ -335,5 +382,8 @@ export default {
   max-width: 100%;
   min-width: 0px;
   width: 100%;
+}
+h3.infoWindow{
+  color: blueviolet;
 }
 </style>

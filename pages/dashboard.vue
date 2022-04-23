@@ -54,8 +54,8 @@
       <v-col cols="12">
         <Gmap-Map
           style="width: 100%; height: 400px"
-          :zoom="7"
-          :center="{ lat: currentLocation.lat, lng: currentLocation.lng }"
+          :zoom="10"
+          :center="{ lat: 13.736717, lng: 100.523186 }"
           :options="{
             zoomControl: true,
             mapTypeControl: false,
@@ -67,18 +67,36 @@
           }"
         >
           <Gmap-Marker
-            v-for="(marker, index) in markers"
+            v-for="(item, index) in tasks"
             :key="index"
-            :position="marker.position"
-          ></Gmap-Marker>
-          <Gmap-Marker
+            :position="item.position"
+            @click="toggleInfoWindow(item, index)"
+          >
+          </Gmap-Marker>
+          <gmap-info-window
+            :options="infoOptions"
+            :position="infoWindowPos"
+            :opened="infoWinOpen"
+            :clickable="true"
+            @closeclick="infoWinOpen = false"
+            ><div v-html="infoContent"></div>
+          </gmap-info-window>
+          <!-- <gmap-info-window
+            :options="infoOptions"
+            :position="infoWindowPos"
+            :opened="infoWinOpen"
+            @closeclick="infoWinOpen = false"
+          >
+            <div v-html="infoContent"></div>
+          </gmap-info-window> -->
+          <!-- <Gmap-Marker
             v-if="this.place"
             label="&#x2605;"
             :position="{
               lat: this.place.geometry.location.lat(),
               lng: this.place.geometry.location.lng(),
             }"
-          ></Gmap-Marker>
+          ></Gmap-Marker> -->
         </Gmap-Map>
       </v-col>
     </v-row>
@@ -92,8 +110,8 @@ export default {
   },
   data() {
     return {
+      tasks: [],
       lists: [],
-      markers: [],
       place: null,
       currentLocation: { lat: 13, lng: 100 },
       lat: 0,
@@ -101,6 +119,28 @@ export default {
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10),
+      // markers: [
+      //   {
+      //     position: {
+      //       lat: 22.449769,
+      //       lng: 0.3902178,
+      //     },
+      //   },
+      // ],
+      infoContent: '',
+      infoWindowPos: {
+        lat: 0,
+        lng: 0,
+      },
+      infoWinOpen: false,
+      currentMidx: null,
+      //optional: offset infowindow so it visually sits nicely on top of our marker
+      infoOptions: {
+        pixelOffset: {
+          width: 0,
+          height: -35,
+        },
+      },
     }
   },
   mounted: function () {
@@ -111,9 +151,18 @@ export default {
       const result = await this.$axios.$get(
         'https://covid19.ddc.moph.go.th/api/Cases/today-cases-all'
       )
+      console.log('result before set from API', result)
       this.lists = result[0]
-      console.log(this.lists)
+      console.log('result from API', this.lists)
+
+      const { result: details } = await this.$axios.$post(
+        '/api/tasks/askForHelp'
+      )
+      console.log('data before set : ', details)
+      this.tasks = details
+      console.log('data after set : ', this.tasks[0].position)
     },
+
     geolocation: function () {
       navigator.geolocation.getCurrentPosition((position) => {
         this.currentLocation = {
@@ -122,6 +171,43 @@ export default {
         }
       })
     },
+    toggleInfoWindow: function (item, idx) {
+      this.infoWindowPos = item.position
+      this.infoContent = this.getInfoWindowContent(item)
+
+      //check if its the same marker that was selected if yes toggle
+      if (this.currentMidx == idx) {
+        this.infoWinOpen = !this.infoWinOpen
+      }
+      //if different marker set infowindow to open and reset current marker index
+      else {
+        this.infoWinOpen = true
+        this.currentMidx = idx
+      }
+    },
+
+    getInfoWindowContent: function (item) {
+      return `<div class="card">
+                <div class="card-content">
+                  <div class="media">
+                    <div class="media-content">
+                      <p class="title is-4 ma-0"><a href='/task/managetaskAll?id=${item.id}'>ข้อมูลผู้ป่วย</a></p>
+                      <hr>
+                    </div>
+                  </div>
+                  <div class="content">
+                    ${item.name}
+                    <br>
+                    ${item.tel}
+                    <br>
+                    ${item.address_from_gmap}
+                    <br>
+                    <time datetime="2016-1-1" >${item.created_at}</time>
+                  </div>
+                </div>
+              </div>`
+    },
+
     setDescription(description) {
       this.description = description
     },
@@ -142,6 +228,10 @@ export default {
         this.place = null
       }
     },
+  },
+  goToHelp(item) {
+    // this.$router.push('/task/managetaskAll?id=' + data.id)
+    console.log('data from InfoWindow ')
   },
 }
 </script>

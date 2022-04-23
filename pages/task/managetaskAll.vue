@@ -106,7 +106,7 @@
                       :position="taskData.position"
                       :clickable="true"
                       :draggable="!isOldAddress"
-                      @click="center = position"
+                      @click="center = taskData.position"
                       @dragend="updatePosition"
                     ></Gmap-Marker>
                   </Gmap-Map>
