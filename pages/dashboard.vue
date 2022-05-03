@@ -156,7 +156,7 @@ export default {
       console.log('result from API', this.lists)
 
       const { result: details } = await this.$axios.$post(
-        '/api/tasks/askForHelp'
+        '/api/tasks/getAskForHelp'
       )
       console.log('data before set : ', details)
       this.tasks = details

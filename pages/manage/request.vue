@@ -6,7 +6,7 @@
           ขอความช่วยเหลือ
           <v-spacer></v-spacer>
         </v-card-title>
-        <v-form ref="form1" lazy-validation class="px-4">
+        <v-form ref="form1" v-model="valid1" lazy-validation class="px-4">
           <v-row>
             <v-col cols="12"
               ><div style="font-weight: 500">ที่อยู่</div>
@@ -107,7 +107,6 @@
                 rows="2"
                 required
               ></v-textarea>
-              
             </v-col>
             <!-- <v-col cols="12">
               <div style="font-weight: 500">ประเมินระดับอาการเบื้องต้น</div>
@@ -165,6 +164,7 @@
             <v-col cols="12">
               <div style="font-weight: 500">สิ่งที่ต้องการ</div>
               <v-select
+                :rules="selectedTypesRules"
                 v-model="selectedTypes"
                 :items="requirement"
                 label="ประเภทของความช่วยเหลือที่ต้องการ"
@@ -191,7 +191,89 @@
               </v-select>
             </v-col>
             <v-col cols="12" style="text-align: end">
-              <v-btn color="success" @click="request()">ขอความช่วยเหลือ</v-btn>
+              <v-dialog v-model="dialog" persistent max-width="600px">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    :disabled="disableDialog"
+                    color="success"
+                    v-bind="attrs"
+                    v-on="on"
+                    >ขอความช่วยเหลือ</v-btn
+                  >
+                </template>
+                <v-card>
+                  <v-card-title>แบบประเมินระดับอาการ </v-card-title>
+                  <v-card-text>
+                    <v-container fluid>
+                      <v-row>
+                        <v-col cols="12">
+                          <div>
+                            <h4>
+                              1. ผู้ป่วยมีโรคประจำตัว 8 โรคร้ายแรงหรือไม่?
+                            </h4>
+                            <hr class="mb-5" />
+                            <v-row>
+                              <v-col
+                                cols="12"
+                                v-for="(item, index) in forCheckbox1"
+                                :key="index"
+                              >
+                                <v-checkbox
+                                  class="ma-0 pa-0"
+                                  v-model="selectCheckbox"
+                                  :label="item.label"
+                                  color="red"
+                                  :value="item.value"
+                                  hide-details
+                                ></v-checkbox
+                              ></v-col>
+                            </v-row>
+                          </div>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12">
+                          <div>
+                            <h4>2. ผู้ป่วยมีลักษณะอาการอย่างไรบ้าง?</h4>
+                            <hr class="mb-5" />
+                            <v-row>
+                              <v-col
+                                cols="12"
+                                v-for="(item, index) in forCheckbox2"
+                                :key="index"
+                              >
+                                <v-checkbox
+                                  class="ma-0 pa-0"
+                                  v-model="selectCheckbox2"
+                                  :label="item.label"
+                                  color="red"
+                                  :value="item.value"
+                                  hide-details
+                                ></v-checkbox
+                              ></v-col>
+                            </v-row>
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions class="pt-0">
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closeDialog">
+                      Close
+                    </v-btn>
+                    <v-btn
+                      class="pr-5"
+                      color="blue darken-1"
+                      text
+                      @click="evaluate"
+                      :disabled="disabledSave"
+                    >
+                      Save
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
             </v-col>
           </v-row>
         </v-form>
@@ -205,11 +287,66 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      valid1: false,
+      selectCheckbox: [],
+      selectCheckbox2: [],
+      forCheckbox1: [
+        {
+          label: 'ไตเรื้อรัง ผู้ป่วยฟอกไต และปลูกถ่ายไต',
+          value: 'danger1',
+          point: 35,
+        },
+        {
+          label: 'เส้นเลือดหัวใจตีบ หัวใจเต้นผิดจังหวะ',
+          value: 'danger2',
+          point: 35,
+        },
+        { label: 'เบาหวาน', value: 'danger3', point: 35 },
+        { label: 'ความดันโลหิตสูง', value: 'danger4', point: 35 },
+        { label: 'หอบหืด ปอดอักเสบเรื้อรัง', value: 'danger5', point: 35 },
+        { label: 'ตับแข็ง ตับอักเสบเรื้อรัง', value: 'danger6', point: 35 },
+        { label: 'ภูมิคุ้มกันบกพร่อง', value: 'danger7', point: 35 },
+        { label: 'อ้วน', value: 'danger8', point: 35 },
+      ],
+      forCheckbox2: [
+        // Green Zone
+        { label: 'มีไข้ต่ำๆ', value: 'green1', point: 1 },
+        { label: 'ไอ , เจ็บคอ , มีน้ำมูก ', value: 'green2', point: 1 },
+        { label: 'ตาแดง', value: 'green3', point: 1 },
+        { label: 'ถ่ายเหลว', value: 'green4', point: 1 },
+        { label: 'หายใจปกติ ไม่เหนื่อย', value: 'green5', point: 0 },
+        // Yellow Zone
+        { label: 'อ่อนเพลีย เวียนศรีษะ', value: 'yellow1', point: 5 },
+        { label: 'แน่นหน้าอก', value: 'yellow2', point: 5 },
+        { label: 'แน่นหน้าอกตลอดเวลา', value: 'yellow3', point: 5 },
+        {
+          label: 'เหนื่อยหอบ , หายใจลำบาก , หายใจเร็ว , ไอแล้วเหนื่อย',
+          value: 'yellow4',
+          point: 5,
+        },
+        { label: 'อาเจียน', value: 'yellow5', point: 5 },
+        {
+          label: 'ถ่ายเหลวไม่ต่ำกว่า 3 ครั้งต่อวัน',
+          value: 'yellow6',
+          point: 5,
+        },
+        // Red Zone
+        { label: 'แน่นหน้าอกตลอดเวลา', value: 'red1', point: 35 },
+        {
+          label: 'เหนื่อยหอบตลอดเวลา , หายใจแล้วเจ็บหน้าอก',
+          value: 'red2',
+          point: 35,
+        },
+        { label: 'ไม่รู้สึกตัว , ซึม ตอบสนองช้า', value: 'red3', point: 35 },
+      ],
+      checkbox1: true,
       checkbox2: false,
+      dialog: false,
       isOldAddress: true,
       selectedTypes: [],
       requirement: ['สถานที่รักษา', 'อาหาร / ยา / ของใช้', 'รถรับส่ง'],
       remark: '',
+      level: '',
       congenital_disease: '',
       patient_group: '',
       isolation: '',
@@ -223,14 +360,16 @@ export default {
       zoom: 7,
       center: { lat: 13.736717, lng: 100.523186 },
       remarkRules: [(v) => !!v || 'กรุณาใส่ คำอธิบาย อาการเบื้องต้น'],
-    }
-  },
-  async fetch() {
-    if (this.$auth.user.group_id != '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
-      this.$router.push('/')
+      diseaseRules: [(v) => !!v || 'กรุณาใส่ รายละเอียดโรคประจำตัว'],
+      selectedTypesRules: [
+        (v) => v.length > 0 || 'กรุณาเลือกความช่วยเหลือที่ต้องการ',
+      ],
     }
   },
   async mounted() {
+    if (this.$auth.user.group_id != '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
+      this.$router.push('/')
+    }
     await this.fetchData()
   },
   watch: {
@@ -254,6 +393,14 @@ export default {
         this.zoom = 8
       }
     },
+    checkbox1(newValue) {
+      if (newValue == false) {
+        this.diseaseRules = ''
+        this.congenital_disease = ''
+      } else {
+        this.diseaseRules = [(v) => !!v || 'กรุณาใส่ รายละเอียดโรคประจำตัว']
+      }
+    },
   },
   computed: {
     likesAllFruit() {
@@ -270,6 +417,17 @@ export default {
     isDisabledSearch() {
       return !this.place
     },
+    disableDialog() {
+      return (
+        this.valid1 === false ||
+        this.address_from_gmap == '' ||
+        this.remark === '' ||
+        this.selectedTypes == ''
+      )
+    },
+    disabledSave() {
+      return this.selectCheckbox2 == ''
+    },
   },
   methods: {
     fetchData() {
@@ -282,31 +440,6 @@ export default {
       this.address_id = userInfo.address_id
       this.zoom = 16
     },
-    // async request() {
-    //   this.$refs.form1.validate()
-    //   if (this.$refs.form1.validate() === true) {
-    //     const body = {
-    //       type: 'ป่วย',
-    //       remark: '',
-    //       user_id: this.user_id,
-    //       status_id: 'ขอความช่วยเหลือ',
-    //     }
-    //     const { result, message } = await this.$axios.$post(
-    //       '/api/manage/request',
-    //       body
-    //     )
-
-    //     if (!result) {
-    //       console.log('error : ', message)
-    //     } else {
-    //       this.$swal({
-    //         type: 'success',
-    //         title: message,
-    //       })
-    //       this.$router.push({ path: '/manage' })
-    //     }
-    //   }
-    // },
     async request() {
       if (!this.address_from_gmap) {
         this.$swal({
@@ -326,6 +459,7 @@ export default {
           congenital_disease: this.congenital_disease,
           treatment_location: this.isolation,
           requirement: this.selectedTypes,
+          level: this.level,
         }
         console.log('dato for sent: ', data)
         const { result, message } = await this.$axios.$post(
@@ -349,6 +483,35 @@ export default {
         })
       }
     },
+    async evaluate() {
+      let sum = 0
+      for (let i = 0; i < this.selectCheckbox.length; i++) {
+        console.log('1111')
+        let result = await this.forCheckbox1.find(
+          (word) => word.value == this.selectCheckbox[i]
+        ).point
+        sum += result
+      }
+      for (let i = 0; i < this.selectCheckbox2.length; i++) {
+        console.log('222')
+        let result = await this.forCheckbox2.find(
+          (word) => word.value == this.selectCheckbox2[i]
+        ).point
+        sum += result
+      }
+      console.log(sum)
+      if (sum >= 35) {
+        console.log('redzone')
+        this.level = 'red'
+      } else if (sum < 35 && sum > 4) {
+        console.log('yellow zone')
+        this.level = 'yellow'
+      } else {
+        console.log('green zone')
+        this.level = 'green'
+      }
+      await this.request()
+    },
     changePatientGroup() {
       if (this.patient_group == 'green') {
         this.isolation = 'home'
@@ -365,7 +528,11 @@ export default {
         }
       })
     },
-
+    closeDialog() {
+      this.dialog = false
+      this.selectCheckbox = ''
+      this.selectCheckbox2 = ''
+    },
     setPlace(place) {
       this.place = place
       console.log('current place', this.place)

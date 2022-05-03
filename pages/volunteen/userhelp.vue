@@ -53,7 +53,8 @@ export default {
   methods: {
     async fetchData() {
       const { result: tasks, headers } = await this.$axios.$post(
-        '/api/volunteen/taskallhelp'
+        // '/api/volunteen/taskallhelp'
+        '/api/tasks/getAskForHelp'
       )
       this.details = tasks
       this.headers = headers
