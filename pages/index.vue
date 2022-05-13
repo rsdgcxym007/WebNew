@@ -48,6 +48,7 @@
                             autocomplete="off"
                             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                             @click:append="show1 = !show1"
+                            :type="value ? 'password' : 'text'"
                             @keyup.enter="onSubmit"
                           ></v-text-field>
                         </v-form>
@@ -223,6 +224,7 @@ export default {
   },
   data() {
     return {
+      value: String,
       address_from_user: '',
       position: null,
       place: null,

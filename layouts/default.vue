@@ -161,11 +161,11 @@ export default {
           title: 'คำร้องขอ',
           to: '/manage',
         },
-        {
-          icon: 'mdi-map-marker',
-          title: 'แผนที่',
-          to: '/manage/map',
-        },
+        // {
+        //   icon: 'mdi-map-marker',
+        //   title: 'แผนที่',
+        //   to: '/manage/map',
+        // },
         {
           icon: 'mdi-handshake',
           title: 'ขอความช่วย',

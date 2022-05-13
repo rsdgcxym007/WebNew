@@ -25,10 +25,10 @@
             </v-chip>
           </template>
           <template v-slot:[`item.level`]="{ item }">
-            <v-chip :color="item.level" >
-            <div v-if="item.level == 'green'">เขียว</div>
-            <div v-if="item.level == 'yellow'">เหลือง</div>
-            <div v-if="item.level == 'red'">แดง</div>
+            <v-chip :color="item.level">
+              <div v-if="item.level == 'green'">เขียว</div>
+              <div v-if="item.level == 'yellow'">เหลือง</div>
+              <div v-if="item.level == 'red'">แดง</div>
             </v-chip>
           </template>
         </v-data-table>

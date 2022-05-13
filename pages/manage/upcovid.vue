@@ -1,9 +1,7 @@
 <template>
   <v-container fluid>
     <v-card elevation="8" class="mx-4 pa-4">
-      <v-card-title>
-        ทำเรื่องหายป่วย
-      </v-card-title>
+      <v-card-title> ทำเรื่องหายป่วย </v-card-title>
       <v-row class="px-4">
         <v-col cols="12" sm="6" md="12">
           <v-autocomplete
@@ -77,11 +75,7 @@
         </v-col>
         <v-col cols="12" style="text-align: end">
           <v-btn color="error" class="mr-4" @click="black"> ย้อนกลับ</v-btn>
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            @click="uploadImage"
-          >
+          <v-btn :disabled="!valid" color="success" @click="uploadImage">
             บันทึกข้อมูล
           </v-btn>
         </v-col>
@@ -168,8 +162,8 @@ export default {
         task,
         status: 'หายป่วยแล้ว',
       }
-      console.log('data b send:',)
-      
+      console.log('data b send:')
+
       await this.$axios.$post('/api/upload2', { data })
       this.$swal.fire({
         type: 'success',
@@ -177,7 +171,7 @@ export default {
         showConfirmButton: false,
         timer: 1500,
       })
-      this.$router.push({ path: '/manage' })
+      this.$router.push({ path: '/volunteen/takecareuser' })
 
       // axios
       //   .post('http://127.0.0.1:8081/upload', { image })

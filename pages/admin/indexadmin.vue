@@ -1,21 +1,21 @@
 <template>
   <v-container fluid class="pa-0">
     <v-row align="center">
-      <v-col cols="12">
+      <v-col cols="4">
         <div class="my-16">
           <v-btn x-large color="success" dark @click="edituser"
             >ข้อมูลผู้ป่วย</v-btn
           >
         </div>
       </v-col>
-      <v-col cols="12" sm="6">
+      <v-col cols="4">
         <div class="my-2">
           <v-btn x-large color="success" dark @click="editvolun"
             >ข้อมูลอาสา</v-btn
           >
         </div>
       </v-col>
-      <v-col cols="12" sm="6">
+      <v-col cols="4">
         <div class="my-2">
           <v-btn x-large color="success" dark @click="banuser"
             >ผู้ใช้งานที่ถูกแบน</v-btn
@@ -28,9 +28,7 @@
 <script>
 export default {
   data() {
-    return {
-
-    }
+    return {}
   },
   methods: {
     edituser() {

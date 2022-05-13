@@ -183,6 +183,26 @@ export default {
       zoom: 7,
       center: { lat: 13.736717, lng: 100.523186 },
       address: '',
+      toggleMarker: false,
+      map: null,
+      mapLoaded: false,
+      infoContent: 'test Info Content',
+      infoOpened: false,
+      infoCurrentKey: null,
+      infoOptions: {
+        pixelOffset: {
+          width: 0,
+          height: -35,
+        },
+        content:
+          `<div>` +
+          `<h3 class="infoWindow">ข้อมูลผู้ร้องขอ</h3> <hr/><br>` +
+          `ชื่อ :${this.$store.state.userInfo.last_name} ${this.$store.state.userInfo.first_name}<br/>` +
+          `เบอร์โทร :${this.$store.state.userInfo.tel}<br/>` +
+          `<br/><hr/>` +
+          `<a href="/volunteen/userhelp"} action="_blank"> ดูข้อมูล</a>` +
+          `</div>`,
+      },
     }
   },
   async mounted() {
@@ -198,12 +218,26 @@ export default {
         }
       })
     },
+
     async fetchData() {
       const { result } = await this.$axios.$post('/api/users/getByUserId', {
         id: this.$route.query.id,
       })
+
       console.log('editban', result)
       ;(this.users = result), (this.zoom = 16)
+      const userInfo = this.$store.state.userInfo
+
+      this.users.first_name = userInfo.first_name
+      this.users.last_name = userInfo.last_name
+      this.users.email = userInfo.email
+      this.users.tel = userInfo.tel
+      this.users.id = this.$auth.user.id
+      this.users.position = userInfo.position
+      this.users.address_from_gmap = userInfo.address_from_gmap
+      this.users.address_from_user = userInfo.address_from_user
+      this.center = userInfo.position
+      this.zoom = 16
     },
     async updateDataUser() {
       if (this.$refs.form_user.validate() === true) {

@@ -25,9 +25,11 @@
               {{ item.status_name }}
             </v-chip>
           </template>
-          <!-- <template v-slot:[`item.actions`]="{ item }">
-            <v-btn color="success" @click="helper(item)">ช่วยเหลือ</v-btn>
-          </template> -->
+          <template v-slot:[`item.actions`]="{ item }">
+            <v-btn color="success" @click="helper(item)"
+              >ผู้ป่วยที่อยู่ในการดูแล</v-btn
+            >
+          </template>
         </v-data-table>
       </v-card>
     </v-container>
@@ -40,10 +42,11 @@ export default {
     await this.fetchData()
   },
   data() {
-    return { 
-      details: [], 
-      headers: [], 
-      search: '' }
+    return {
+      details: [],
+      headers: [],
+      search: '',
+    }
   },
   methods: {
     async fetchData() {
@@ -57,6 +60,10 @@ export default {
     },
     editItem(data) {
       this.$router.push('/admin/editbanuser?id=' + data.id)
+      // this.$router.push('/manage/update?id=' + data.id)
+    },
+    helper(item) {
+      this.$router.push('/admin/adminuser?id=' + item.id)
       // this.$router.push('/manage/update?id=' + data.id)
     },
   },

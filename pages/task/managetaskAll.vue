@@ -4,6 +4,12 @@
       <v-card-title>
         รายละเอียดการขอความช่วยเหลือ
         <v-spacer></v-spacer>
+        <!-- {{ taskData.level }} -->
+        <v-chip :color="taskData.level">
+          <div v-if="taskData.level == 'green'">เขียว</div>
+          <div v-if="taskData.level == 'yellow'">เหลือง</div>
+          <div v-if="taskData.level == 'red'">แดง</div>
+        </v-chip>
       </v-card-title>
       <!-- <v-form ref="form_managetask" lazy-validation class="px-4"> -->
       <v-stepper v-model="e1">
@@ -250,11 +256,11 @@
                     "
                   ></v-textarea
                 ></v-col>
-                <v-col
+                <!-- <v-col
                   cols="12"
                   v-if="$auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP"
-                >
-                  <div style="font-weight: 500">ประเมินระดับอาการเบื้องต้น</div>
+                > -->
+                  <!-- <div style="font-weight: 500">ประเมินระดับอาการเบื้องต้น</div>
                   <v-radio-group
                     v-model="patient_group"
                     v-on:change="changePatientGroup"
@@ -304,8 +310,8 @@
                         <v-radio label="โรงพยาบาล" value="hospital"></v-radio
                       ></v-radio-group>
                     </div>
-                  </v-radio-group>
-                </v-col>
+                  </v-radio-group> -->
+                <!-- </v-col> -->
                 <v-col cols="12" class="mb-4" style="text-align: end">
                   <v-row>
                     <v-col cols="12" class="ma-0 pr-0" style="text-align: end">
@@ -849,6 +855,7 @@ export default {
       })
       this.taskData = tasks
       this.center = this.taskData.position
+      console.log('taskdata', this.taskData)
       // if (this.taskData.volunteer_id) {
       //   const { result } = await this.$axios.$post('/api/user/getbyID', {
       //     id: this.taskData.volunteer_id,
@@ -1050,13 +1057,13 @@ export default {
       // }
     },
     async updateHelping() {
-      if (!this.patient_group || !this.isolation) {
-        this.$swal({
-          type: 'warning',
-          title: 'กรุณาประเมินอาการผู้ป่วย',
-        })
-        return false
-      }
+      // if (!this.patient_group || !this.isolation) {
+      //   this.$swal({
+      //     type: 'warning',
+      //     title: 'กรุณาประเมินอาการผู้ป่วย',
+      //   })
+      //   return false
+      // }
       const { result, message } = await this.$axios.$post('/api/task/update', {
         id: this.taskData.id,
         status_id: this.$constants.DATA.HELPING_STATUS,
