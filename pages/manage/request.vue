@@ -367,7 +367,7 @@ export default {
     }
   },
   async mounted() {
-    if (this.$auth.user.group_id != '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
+    if (this.$auth.user.group_id != this.$constants.DATA.PATIENT_GROUP) {
       this.$router.push('/')
     }
     await this.fetchData()

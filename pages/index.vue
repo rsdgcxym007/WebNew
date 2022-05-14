@@ -219,7 +219,7 @@ import saltedMd5 from 'salted-md5'
 export default {
   layout: 'emplty',
   //   middleware: 'logged',
-  async fetch() {
+  async mounted() {
     await this.fetchData()
   },
   data() {
@@ -241,14 +241,14 @@ export default {
       email: 'testuser1@dpu.ac.th',
       show1: false,
       emailRules: [
-        (v) => !!v || 'E-mail is required',
-        (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+        (v) => !!v || 'กรุณากรอกอีเมล',
+        (v) => /.+@.+\..+/.test(v) || 'กรุณากรอกอีเมลให้ถูกต้อง',
       ],
-      passwordRules: [(v) => !!v || 'Password is required'],
-      first_nameRules: [(v) => !!v || 'Name is required'],
-      last_nameRules: [(v) => !!v || 'last_name is required'],
-      addressRules: [(v) => !!v || 'Position is required'],
-      telRules: [(v) => !!v || 'Tel is required'],
+      passwordRules: [(v) => !!v || 'กรุณากรอกรหัสผ่าน'],
+      first_nameRules: [(v) => !!v || 'กรุณากรอกชื่อ'],
+      last_nameRules: [(v) => !!v || 'กรุณากรอกนามสกุล'],
+      addressRules: [(v) => !!v || 'กรุณากรอกที่อยู่'],
+      telRules: [(v) => !!v || 'กรุณากรอกเบอร์โทรศัพท์'],
     }
   },
   computed: {
@@ -306,14 +306,14 @@ export default {
         confirmButtonText: 'ตกลง',
         // text: `${message}`,
       })
-      if (this.$auth.user.group_id === '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
+      if (this.$auth.user.group_id === this.$constants.DATA.PATIENT_GROUP) {
         this.$router.push({ path: '/manage' })
       } else if (
-        this.$auth.user.group_id === '87191711-d7ff-4664-b648-8e9bceaab5ea'
+        this.$auth.user.group_id === this.$constants.DATA.VOLUNTEER_GROUP
       ) {
         this.$router.push({ path: '/volunteen/userhelp' })
       } else if (
-        this.$auth.user.group_id === '4e095238-1b60-4303-a207-8927d9c992d5'
+        this.$auth.user.group_id === this.$constants.DATA.ADMIN_GROUP
       ) {
         this.$router.push({ path: '/admin/indexadmin' })
       }

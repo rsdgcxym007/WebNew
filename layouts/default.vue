@@ -233,15 +233,13 @@ export default {
   },
   async fetch() {
     console.log('this profile_id : ', this.$auth.user.group_id)
-    if (this.$auth.user.group_id === '51b0e763-1f09-416a-afa9-d2f0ce78e9e6') {
+    if (this.$auth.user.group_id === this.$constants.DATA.PATIENT_GROUP) {
       this.items = this.items_user
     } else if (
-      this.$auth.user.group_id === '87191711-d7ff-4664-b648-8e9bceaab5ea'
+      this.$auth.user.group_id === this.$constants.DATA.VOLUNTEER_GROUP
     ) {
       this.items = this.items_volunteen
-    } else if (
-      this.$auth.user.group_id === '4e095238-1b60-4303-a207-8927d9c992d5'
-    ) {
+    } else if (this.$auth.user.group_id === this.$constants.DATA.ADMIN_GROUP) {
       this.items = this.items_admin
     }
     await this.setUserStore()
