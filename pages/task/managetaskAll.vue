@@ -194,6 +194,27 @@
                     >รายละเอียดการขอความช่วยเหลือ</v-card-title
                   >
                 </v-col>
+                <v-col
+                  cols="12"
+                  v-if="
+                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                    $auth.user.group_id == $constants.DATA.ADMIN_GROUP
+                  "
+                >
+                  <v-textarea
+                    v-model="taskData.form"
+                    :disabled="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                      this.taskData.status_id == $constants.DATA.CANCEL_STATUS
+                    "
+                    label="โรคประจำตัวร้ายแรง และ อาการจากแบบประเมิน"
+                    :rules="rules.notNullRule"
+                    no-resize
+                    outlined
+                    rows="3"
+                    required
+                  ></v-textarea>
+                </v-col>
                 <v-col cols="12">
                   <v-textarea
                     v-model="taskData.congenital_disease"
@@ -201,7 +222,7 @@
                       $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
                       this.taskData.status_id == $constants.DATA.CANCEL_STATUS
                     "
-                    label="โรคประจำตัว"
+                    label="โรคประจำตัวอื่นๆ"
                     :rules="rules.notNullRule"
                     no-resize
                     outlined
@@ -246,7 +267,7 @@
                     v-model="taskData.remark"
                     rows="3"
                     no-resize
-                    label="อาการ"
+                    label="อาการอื่นๆ"
                     outlined
                     required
                     :rules="rules.notNullRule"
@@ -256,11 +277,32 @@
                     "
                   ></v-textarea
                 ></v-col>
+                <v-col
+                  cols="12"
+                  v-if="
+                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                    $auth.user.group_id == $constants.DATA.ADMIN_GROUP
+                  "
+                >
+                  <v-textarea
+                    v-model="taskData.treatment_location"
+                    :disabled="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                      this.taskData.status_id == $constants.DATA.CANCEL_STATUS
+                    "
+                    label="สถานที่รักษา"
+                    :rules="rules.notNullRule"
+                    no-resize
+                    outlined
+                    rows="1"
+                    required
+                  ></v-textarea>
+                </v-col>
                 <!-- <v-col
                   cols="12"
                   v-if="$auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP"
                 > -->
-                  <!-- <div style="font-weight: 500">ประเมินระดับอาการเบื้องต้น</div>
+                <!-- <div style="font-weight: 500">ประเมินระดับอาการเบื้องต้น</div>
                   <v-radio-group
                     v-model="patient_group"
                     v-on:change="changePatientGroup"
@@ -764,6 +806,8 @@ export default {
         address_id: '',
         requirement: [],
         congenital_disease: '',
+        form: [],
+        treatment_location: '',
       },
       types: ['สถานที่รักษา', 'อาหาร / ยา / ของใช้', 'รถรับส่ง'],
       validRequestForm: '',

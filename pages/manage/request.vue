@@ -293,51 +293,75 @@ export default {
       forCheckbox1: [
         {
           label: 'ไตเรื้อรัง ผู้ป่วยฟอกไต และปลูกถ่ายไต',
-          value: 'danger1',
+          value: 'ไตเรื้อรัง ผู้ป่วยฟอกไต และปลูกถ่ายไต',
           point: 35,
         },
         {
           label: 'เส้นเลือดหัวใจตีบ หัวใจเต้นผิดจังหวะ',
-          value: 'danger2',
+          value: 'เส้นเลือดหัวใจตีบ หัวใจเต้นผิดจังหวะ',
           point: 35,
         },
-        { label: 'เบาหวาน', value: 'danger3', point: 35 },
-        { label: 'ความดันโลหิตสูง', value: 'danger4', point: 35 },
-        { label: 'หอบหืด ปอดอักเสบเรื้อรัง', value: 'danger5', point: 35 },
-        { label: 'ตับแข็ง ตับอักเสบเรื้อรัง', value: 'danger6', point: 35 },
-        { label: 'ภูมิคุ้มกันบกพร่อง', value: 'danger7', point: 35 },
-        { label: 'อ้วน', value: 'danger8', point: 35 },
+        { label: 'เบาหวาน', value: 'เบาหวาน', point: 35 },
+        { label: 'ความดันโลหิตสูง', value: 'ความดันโลหิตสูง', point: 35 },
+        {
+          label: 'หอบหืด ปอดอักเสบเรื้อรัง',
+          value: 'หอบหืด ปอดอักเสบเรื้อรัง',
+          point: 35,
+        },
+        {
+          label: 'ตับแข็ง ตับอักเสบเรื้อรัง',
+          value: 'ตับแข็ง ตับอักเสบเรื้อรัง',
+          point: 35,
+        },
+        { label: 'ภูมิคุ้มกันบกพร่อง', value: 'ภูมิคุ้มกันบกพร่อง', point: 35 },
+        { label: 'อ้วน', value: 'อ้วน', point: 35 },
       ],
       forCheckbox2: [
         // Green Zone
-        { label: 'มีไข้ต่ำๆ', value: 'green1', point: 1 },
-        { label: 'ไอ , เจ็บคอ , มีน้ำมูก ', value: 'green2', point: 1 },
-        { label: 'ตาแดง', value: 'green3', point: 1 },
-        { label: 'ถ่ายเหลว', value: 'green4', point: 1 },
-        { label: 'หายใจปกติ ไม่เหนื่อย', value: 'green5', point: 0 },
-        // Yellow Zone
-        { label: 'อ่อนเพลีย เวียนศรีษะ', value: 'yellow1', point: 5 },
-        { label: 'แน่นหน้าอก', value: 'yellow2', point: 5 },
-        { label: 'แน่นหน้าอกตลอดเวลา', value: 'yellow3', point: 5 },
+        { label: 'มีไข้ต่ำๆ', value: 'มีไข้ต่ำๆ', point: 1 },
         {
-          label: 'เหนื่อยหอบ , หายใจลำบาก , หายใจเร็ว , ไอแล้วเหนื่อย',
-          value: 'yellow4',
+          label: 'ไอ , เจ็บคอ , มีน้ำมูก ',
+          value: 'ไอ , เจ็บคอ , มีน้ำมูก ',
+          point: 1,
+        },
+        { label: 'ตาแดง', value: 'ตาแดง', point: 1 },
+        { label: 'ถ่ายเหลว', value: 'ถ่ายเหลว', point: 1 },
+        {
+          label: 'หายใจปกติ ไม่เหนื่อย',
+          value: 'หายใจปกติ ไม่เหนื่อย',
+          point: 0,
+        },
+        // Yellow Zone
+        {
+          label: 'อ่อนเพลีย เวียนศรีษะ',
+          value: 'อ่อนเพลีย เวียนศรีษะ',
           point: 5,
         },
-        { label: 'อาเจียน', value: 'yellow5', point: 5 },
+        { label: 'แน่นหน้าอก', value: 'แน่นหน้าอก', point: 5 },
+        { label: 'แน่นหน้าอกตลอดเวลา', value: 'แน่นหน้าอกตลอดเวลา', point: 5 },
+        {
+          label: 'เหนื่อยหอบ , หายใจลำบาก , หายใจเร็ว , ไอแล้วเหนื่อย',
+          value: 'เหนื่อยหอบ , หายใจลำบาก , หายใจเร็ว , ไอแล้วเหนื่อย',
+          point: 5,
+        },
+        { label: 'อาเจียน', value: 'อาเจียน', point: 5 },
         {
           label: 'ถ่ายเหลวไม่ต่ำกว่า 3 ครั้งต่อวัน',
-          value: 'yellow6',
+          value: 'ถ่ายเหลวไม่ต่ำกว่า 3 ครั้งต่อวัน',
           point: 5,
         },
         // Red Zone
-        { label: 'แน่นหน้าอกตลอดเวลา', value: 'red1', point: 35 },
+        { label: 'แน่นหน้าอกตลอดเวลา', value: 'แน่นหน้าอกตลอดเวลา', point: 35 },
         {
           label: 'เหนื่อยหอบตลอดเวลา , หายใจแล้วเจ็บหน้าอก',
-          value: 'red2',
+          value: 'เหนื่อยหอบตลอดเวลา , หายใจแล้วเจ็บหน้าอก',
           point: 35,
         },
-        { label: 'ไม่รู้สึกตัว , ซึม ตอบสนองช้า', value: 'red3', point: 35 },
+        {
+          label: 'ไม่รู้สึกตัว , ซึม ตอบสนองช้า',
+          value: 'ไม่รู้สึกตัว , ซึม ตอบสนองช้า',
+          point: 35,
+        },
       ],
       checkbox1: true,
       checkbox2: false,
@@ -460,6 +484,7 @@ export default {
           treatment_location: this.isolation,
           requirement: this.selectedTypes,
           level: this.level,
+          form: this.selectCheckbox && this.selectCheckbox2,
         }
         console.log('dato for sent: ', data)
         const { result, message } = await this.$axios.$post(
@@ -503,12 +528,15 @@ export default {
       if (sum >= 35) {
         console.log('redzone')
         this.level = 'red'
+        this.treatment_location = 'hospital'
       } else if (sum < 35 && sum > 4) {
         console.log('yellow zone')
         this.level = 'yellow'
+        this.treatment_location = 'hospitel'
       } else {
         console.log('green zone')
         this.level = 'green'
+        this.treatment_location = 'home isolation'
       }
       await this.request()
     },
@@ -530,8 +558,8 @@ export default {
     },
     closeDialog() {
       this.dialog = false
-      this.selectCheckbox = ''
-      this.selectCheckbox2 = ''
+      // this.selectCheckbox = ''
+      // this.selectCheckbox2 = ''
     },
     setPlace(place) {
       this.place = place
