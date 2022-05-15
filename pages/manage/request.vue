@@ -88,7 +88,7 @@
               <v-divider></v-divider>
             </v-col>
             <v-col cols="12">
-              <div style="font-weight: 500">อาการ</div>
+              <div style="font-weight: 500">อาการ*</div>
               <v-textarea
                 v-model="remark"
                 :rules="remarkRules"
@@ -162,7 +162,7 @@
               </v-radio-group>
             </v-col> -->
             <v-col cols="12">
-              <div style="font-weight: 500">สิ่งที่ต้องการ</div>
+              <div style="font-weight: 500">สิ่งที่ต้องการ*</div>
               <v-select
                 :rules="selectedTypesRules"
                 v-model="selectedTypes"
@@ -202,7 +202,9 @@
                   >
                 </template>
                 <v-card>
-                  <v-card-title>แบบประเมินระดับอาการ </v-card-title>
+                  <v-card-title
+                    >แบบประเมินระดับอาการก่อนขอความช่วยเหลือ
+                  </v-card-title>
                   <v-card-text>
                     <v-container fluid>
                       <v-row>
@@ -260,16 +262,15 @@
                   <v-card-actions class="pt-0">
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="closeDialog">
-                      Close
+                      ยกเลิก
                     </v-btn>
                     <v-btn
                       class="pr-5"
                       color="blue darken-1"
                       text
                       @click="evaluate"
-                      :disabled="disabledSave"
                     >
-                      Save
+                      ยืนยัน
                     </v-btn>
                   </v-card-actions>
                 </v-card>

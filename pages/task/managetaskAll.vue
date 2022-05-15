@@ -440,7 +440,7 @@
                             text
                             @click="closeDialog"
                           >
-                            Close
+                            ยกเลิก
                           </v-btn>
                           <v-btn
                             class="pr-5"
@@ -448,7 +448,7 @@
                             text
                             @click="cancelTask"
                           >
-                            Save
+                            ยืนยัน
                           </v-btn>
                         </v-card-actions>
                       </v-card>

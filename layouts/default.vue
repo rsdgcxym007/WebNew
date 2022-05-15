@@ -157,6 +157,11 @@ export default {
       fixed: false,
       items_user: [
         {
+          icon: 'mdi-map-marker',
+          title: 'หน้าแรก',
+          to: '/dashboard',
+        },
+        {
           icon: 'mdi-file-table',
           title: 'คำร้องขอ',
           to: '/manage',

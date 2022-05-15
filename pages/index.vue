@@ -32,7 +32,7 @@
                       <v-card-text>
                         <v-form ref="form1" lazy-validation>
                           <v-text-field
-                            v-model="email"
+                            v-model="emailLogin"
                             label="อีเมล"
                             prepend-icon="mdi-account"
                             type="text"
@@ -234,11 +234,12 @@ export default {
       group: 'ผู้ป่วย',
       groups: [],
       tabs: null,
-      password: '123456789',
+      password: '',
       first_name: '',
       last_name: '',
+      emailLogin: '',
       tel: '',
-      email: 'testuser1@dpu.ac.th',
+      email: '',
       show1: false,
       emailRules: [
         (v) => !!v || 'กรุณากรอกอีเมล',
@@ -294,7 +295,7 @@ export default {
     async onSubmit() {
       const mdpassword = saltedMd5(this.password, 'SUPER-S@LT!')
       const { data } = await this.$auth.loginWith('local', {
-        data: { email: this.email, password: mdpassword },
+        data: { email: this.emailLogin, password: mdpassword },
       })
 
       const { result, message } = data
@@ -331,26 +332,40 @@ export default {
         address_from_gmap: this.address_from_gmap,
         address_from_user: this.address_from_user,
       }
-
       const { result, message } = await this.$axios.$post(
         '/api/auth/register',
         user
       )
 
-      this.$swal.fire({
-        type: result ? 'success' : 'warning',
-        title: 'register',
-        text: `${message}`,
-      })
-      this.mdpassword = ''
-      this.email = ''
-      this.first_name = ''
-      this.last_name = ''
-      this.tel = ''
-      this.address = ''
-      this.position = ''
-      this.address_from_gmap = ''
-      this.address_from_user = ''
+      if (!result) {
+        this.$swal.fire({
+          type: result ? 'success' : 'warning',
+          title: 'register',
+          text: `${message}`,
+        })
+      } else {
+        this.mdpassword = ''
+        this.email = ''
+        this.first_name = ''
+        this.last_name = ''
+        this.tel = ''
+        this.address = ''
+        this.position = null
+        this.address_from_gmap = ''
+        this.address_from_user = ''
+        this.password = ''
+        this.$refs.form2.resetValidation()
+
+        this.$swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'สมัครสมาชิกสำเร็จ',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+
+        this.tabs = '#mobile-tabs-5-1'
+      }
     },
     setPlace(place) {
       this.place = place
