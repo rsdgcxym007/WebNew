@@ -707,7 +707,11 @@
                         <label>ผลตรวจเชื้อแบบ RT-PCR</label>
                       </div>
                       <div v-if="taskData.image_rtpcr">
-                        <img class="image" :src="taskData.image_rtpcr" />
+                        <img
+                          @click="openDialogImage(taskData.image_rtpcr)"
+                          class="image"
+                          :src="taskData.image_rtpcr"
+                        />
                       </div>
                       <div>
                         <v-col cols="6" class="pa-0">
@@ -732,7 +736,11 @@
                         <label>ใบรับรองแพทย์</label>
                       </div>
                       <div v-if="taskData.image_medical">
-                        <img class="image" :src="taskData.image_medical" />
+                        <img
+                          @click="openDialogImage(taskData.image_medical)"
+                          class="image"
+                          :src="taskData.image_medical"
+                        />
                       </div>
                       <div>
                         <v-col cols="6" class="pa-0">
@@ -766,6 +774,15 @@
       </v-stepper>
       <!-- </v-form> -->
     </v-card>
+    <v-dialog v-model="dialogImage" width="600">
+      <v-card>
+        <v-img class="image-dialog" :src="imageDialog"
+          ><div @click="closeDialogImage" class="close-dialog">
+            <v-icon>mdi-close</v-icon> <span>ปิด</span>
+          </div></v-img
+        >
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -773,6 +790,8 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      dialogImage: false,
+      imageDialog: '',
       center: { lat: 13.736717, lng: 100.523186 },
       currentLocation: { lat: 13, lng: 100 },
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -1250,10 +1269,18 @@ export default {
     removeItem: function (index) {
       this.items.splice(index, 1)
     },
+    openDialogImage(val) {
+      this.dialogImage = true
+      this.imageDialog = val
+    },
+    closeDialogImage() {
+      this.dialogImage = false
+      this.imageDialog = ''
+    },
   },
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 .gsearch {
   border: 1px solid rgba(0, 0, 0, 0.42);
   border-radius: 4px;
@@ -1270,5 +1297,20 @@ img.image {
   width: 100%;
   max-width: 300px;
   height: 100%;
+}
+
+img.image-dialog {
+  width: 100%;
+  height: 100%;
+}
+
+.close-dialog {
+  text-align: right;
+  padding: 10px;
+  cursor: pointer;
+
+  span {
+    text-decoration: underline;
+  }
 }
 </style>

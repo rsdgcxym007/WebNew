@@ -24,6 +24,12 @@
               {{ item.status_name }}
             </v-chip>
           </template>
+          <template v-slot:[`item.warning`]="{ item }">
+            <span v-if="item.status_name == 'ช่วยเหลือเสร็จสิ้น'">
+              <v-icon>mdi-alert-outline</v-icon>กรุณาอัพโหลดเอกสารการรักษา</span
+            >
+            <span v-else>-</span></template
+          >
         </v-data-table>
       </v-card>
     </v-container>
