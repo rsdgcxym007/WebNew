@@ -504,12 +504,32 @@
                   >แก้ไขข้อมูลส่วนตัว</nuxt-link
                 >
               </v-col>
-              <!-- <v-col cols="12">
-                  <v-card-title class="pa-0"
-                    >รายละเอียดการช่วยเหลือ</v-card-title
-                  >
-                </v-col> -->
-              <!-- <v-col cols="12">
+              <v-col cols="12">
+                <v-row>
+                  <v-checkbox
+                    v-model="taskData.is_care_until_end"
+                    label="ช่วยเหลือจนผู้ป่วยไม่พบเชื้อ"
+                    :disabled="
+                      $auth.user.group_id !== $constants.DATA.VOLUNTEER_GROUP ||
+                      taskData.status_id == $constants.DATA.HEALED_STATUS ||
+                      taskData.status_id == $constants.DATA.HELP_DONE_STATUS
+                    "
+                  ></v-checkbox>
+                  <v-tooltip right>
+                    <template v-slot:activator="{ on, attrs }"
+                      ><v-icon v-bind="attrs" v-on="on" class="ml-2"
+                        >mdi-help-circle</v-icon
+                      ></template
+                    >
+                    <span>สำหรับการช่วยเหลือที่ผู้ป่วยต้องการให้ดูแลจนหาย</span>
+                  </v-tooltip></v-row
+                >
+              </v-col>
+              <v-col cols="12">
+                <v-card-title class="pa-0">รายละเอียดการช่วยเหลือ</v-card-title>
+              </v-col>
+              <v-col cols="12">
+                <v-form ref="detailForm" lazy-validation>
                   <table class="table" style="width: 100%">
                     <thead>
                       <tr>
@@ -520,7 +540,7 @@
                     </thead>
                     <tbody>
                       <tr v-for="(item, index) in items" :key="index">
-                        <td>
+                        <td style="width: 40%">
                           <v-menu
                             v-model="menu2"
                             :close-on-content-click="false"
@@ -531,25 +551,46 @@
                           >
                             <template v-slot:activator="{ on, attrs }">
                               <v-text-field
-                                v-model="date"
+                                v-model="item.date"
+                                label="วันที่"
                                 readonly
                                 v-bind="attrs"
                                 v-on="on"
                                 outlined
+                                :rules="dateRules"
+                                required
+                                :disabled="
+                                  $auth.user.group_id !==
+                                    $constants.DATA.VOLUNTEER_GROUP ||
+                                  taskData.status_id ==
+                                    $constants.DATA.HEALED_STATUS ||
+                                  taskData.status_id ==
+                                    $constants.DATA.HELP_DONE_STATUS
+                                "
                               ></v-text-field>
                             </template>
                             <v-date-picker
-                              v-model="date"
+                              v-model="item.date"
                               @input="menu2 = false"
                             ></v-date-picker>
                           </v-menu>
                         </td>
-                        <td>
+                        <td style="width: 40%">
                           <v-text-field
                             v-model="item.description"
                             label="รายละเอียด"
                             outlined
                             class="ml-3"
+                            :rules="descriptionRules"
+                            required
+                            :disabled="
+                              $auth.user.group_id !==
+                                $constants.DATA.VOLUNTEER_GROUP ||
+                              taskData.status_id ==
+                                $constants.DATA.HEALED_STATUS ||
+                              taskData.status_id ==
+                                $constants.DATA.HELP_DONE_STATUS
+                            "
                           >
                           </v-text-field>
                         </td>
@@ -559,22 +600,27 @@
                             v-if="items.length - 1 <= index"
                             v-bind:class="{
                               disabled:
-                                item.title.length == 0 ||
+                                item.date.length == 0 ||
                                 item.description.length == 0,
                             }"
                             color="success"
                             class="mr-3"
                             style="margin-top: -32px"
+                            :disabled="
+                              $auth.user.group_id !==
+                                $constants.DATA.VOLUNTEER_GROUP ||
+                              taskData.status_id ==
+                                $constants.DATA.HEALED_STATUS ||
+                              taskData.status_id ==
+                                $constants.DATA.HELP_DONE_STATUS
+                            "
                           >
                             เพิ่ม
                           </v-btn>
                           <v-btn
                             v-on:click="removeItem(index)"
-                            v-if="
-                              items.length - 1 >= index &&
-                              items.length - 1 != index
-                            "
                             color="error"
+                            v-if="items.length != 1"
                             style="margin-top: -32px; margin-right: 12px"
                           >
                             ลบ
@@ -583,7 +629,21 @@
                       </tr>
                     </tbody>
                   </table>
-                </v-col> -->
+                </v-form>
+              </v-col>
+              <div style="width: 80%; text-align: center">
+                <v-btn
+                  @click="saveDetail"
+                  text
+                  color="green"
+                  :disabled="
+                    $auth.user.group_id !== $constants.DATA.VOLUNTEER_GROUP ||
+                    taskData.status_id == $constants.DATA.HEALED_STATUS ||
+                    taskData.status_id == $constants.DATA.HELP_DONE_STATUS
+                  "
+                  ><v-icon>mdi-content-save</v-icon> บันทึกการช่วยเหลือ</v-btn
+                >
+              </div>
               <!-- <v-col
                   v-if="
                     $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
@@ -600,6 +660,8 @@
                 </v-col> -->
 
               <v-col cols="12" class="mb-4" style="text-align: end">
+                <v-divider></v-divider>
+                <br />
                 <!-- <v-btn
                     v-if="
                       $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
@@ -624,7 +686,7 @@
             </v-row>
           </v-stepper-content>
           <v-stepper-content step="3">
-            <v-row class="px-4">
+            <v-row v-if="this.taskData.is_care_until_end" class="px-4">
               <v-col cols="12">
                 <v-card-title class="pa-0"
                   >อัพโหลดข้อมูลการรักษา</v-card-title
@@ -769,6 +831,12 @@
                 </v-btn>
               </v-col>
             </v-row>
+            <v-col
+              v-if="taskData.status_id == $constants.DATA.HEALED_STATUS"
+              cols="12"
+              class="text-center"
+              ><v-icon>mdi-check-all</v-icon> การช่วยเหลือเสร็จสิ้นแล้ว</v-col
+            >
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
@@ -790,6 +858,8 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      descriptionRules: [(v) => !!v || 'กรุณากรอกรายละเอียด'],
+      dateRules: [(v) => !!v || 'กรุณาเลือกวัน'],
       dialogImage: false,
       imageDialog: '',
       center: { lat: 13.736717, lng: 100.523186 },
@@ -810,7 +880,7 @@ export default {
       imageMedicalCert: '',
       items: [
         {
-          title: '',
+          date: '',
           description: '',
         },
       ],
@@ -939,8 +1009,12 @@ export default {
       const { result: tasks } = await this.$axios.$post('/api/tasks/getbyId', {
         id: this.$route.query.id,
       })
+      console.log('taskkk', tasks)
       this.taskData = tasks
       this.center = this.taskData.position
+      if (tasks.help_detail) {
+        this.items = tasks.help_detail
+      }
       // if (this.taskData.volunteer_id) {
       //   const { result } = await this.$axios.$post('/api/user/getbyID', {
       //     id: this.taskData.volunteer_id,
@@ -1132,7 +1206,7 @@ export default {
     async getPatientInCare() {
       const { length } = await this.$axios.$post(
         '/api/volunteen/takecareuser',
-        { userId: this.$auth.user.id }
+        { userId: this.$auth.user.id, statusName: 'กำลังช่วยเหลือ' }
       )
       return length
     },
@@ -1142,7 +1216,6 @@ export default {
       ) {
         // get ผู้ป่วยที่อยู่ในการดูแล
         var patientInCare = await this.getPatientInCare()
-
         if (patientInCare > 10) {
           this.$swal.fire({
             type: 'warning',
@@ -1151,12 +1224,40 @@ export default {
             confirmButtonText: 'ตกลง',
           })
         } else {
-          await this.updateHelping()
+          this.$swal({
+            title: 'ยืนยันการช่วยเหลือ?',
+            text: '',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonText: 'ยืนยัน',
+          }).then((result) => {
+            if (result.value) {
+              this.updateHelping()
+            }
+          })
         }
       } else if (
         this.taskData.status_id === this.$constants.DATA.HELPING_STATUS
       ) {
-        await this.updateHelpDone()
+        if (this.$refs.detailForm.validate()) {
+          this.$swal({
+            title: 'ยืนยันการช่วยเหลือเสร็จสิ้น?',
+            text: '',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonText: 'ยืนยัน',
+          }).then((result) => {
+            if (result.value) {
+              this.updateHelpDone()
+            }
+          })
+        }
       }
       // else if (
       //   this.taskData.status_id === '7c2f1759-f664-40d2-8184-c20f2e76c229' ||
@@ -1192,7 +1293,11 @@ export default {
     async updateHelpDone() {
       const { result, message } = await this.$axios.$post('/api/task/update', {
         id: this.taskData.id,
-        status_id: this.$constants.DATA.HELP_DONE_STATUS,
+        help_detail: this.items,
+        is_care_until_end: this.taskData.is_care_until_end,
+        status_id: this.taskData.is_care_until_end
+          ? this.$constants.DATA.HELP_DONE_STATUS
+          : this.$constants.DATA.HEALED_STATUS,
       })
       if (!result) {
         console.log('error : ', message)
@@ -1260,9 +1365,31 @@ export default {
         }
       })
     },
-    addItem: function () {
+    async saveDetail() {
+      if (this.$refs.detailForm.validate()) {
+        const { result, message } = await this.$axios.$post(
+          '/api/task/update',
+          {
+            id: this.taskData.id,
+            help_detail: this.items,
+          }
+        )
+        if (!result) {
+          console.log('error : ', message)
+        } else {
+          this.$swal.fire({
+            type: 'success',
+            title: 'บันทึกสำเร็จ',
+            showConfirmButton: false,
+            timer: 1500,
+          })
+          await this.fetchData()
+        }
+      }
+    },
+    addItem() {
       this.items.push({
-        title: '',
+        date: '',
         description: '',
       })
     },
