@@ -25,11 +25,11 @@
               {{ item.status_name }}
             </v-chip>
           </template>
-          <template v-slot:[`item.actions`]="{ item }">
+          <!-- <template v-slot:[`item.actions`]="{ item }">
             <v-btn color="success" @click="helper(item)"
               >ผู้ป่วยที่อยู่ในการดูแล</v-btn
             >
-          </template>
+          </template> -->
         </v-data-table>
       </v-card>
     </v-container>
@@ -54,16 +54,12 @@ export default {
         '/api/user/getAllVA'
         // { userId: this.$auth.user.id }
       )
-      console.log('users', users)
+      console.log('edituser', users)
       this.details = users
       this.headers = headers
     },
     editItem(data) {
       this.$router.push('/admin/editbanuser?id=' + data.id)
-      // this.$router.push('/manage/update?id=' + data.id)
-    },
-    helper(item) {
-      this.$router.push('/admin/adminuser?id=' + item.id)
       // this.$router.push('/manage/update?id=' + data.id)
     },
   },

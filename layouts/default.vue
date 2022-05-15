@@ -13,7 +13,7 @@
         <v-list-item-avatar>
           <v-img :src="require('../assets/images/virus19.png')"></v-img>
         </v-list-item-avatar>
-        <v-list-item-title>Covid 19</v-list-item-title>
+        <v-list-item-title @click="dashboard">Covid 19</v-list-item-title>
       </v-list-item>
 
       <v-divider></v-divider>
@@ -185,8 +185,18 @@ export default {
       items_admin: [
         {
           icon: 'mdi-map-marker',
-          title: 'หน้าแรก',
-          to: '/admin/indexadmin',
+          title: 'ข้อมูลอาสา',
+          to: '/admin/editvolun',
+        },
+                {
+          icon: 'mdi-map-marker',
+          title: 'ข้อมูลผู้ป่วย',
+          to: '/admin/edituser',
+        },
+                {
+          icon: 'mdi-map-marker',
+          title: 'ผู้ใช้งานที่ถูกแบร',
+          to: '/admin/banuser',
         },
       ],
       items_volunteen: [
@@ -247,6 +257,9 @@ export default {
   methods: {
     goToUserpage() {
       this.$router.push('/users')
+    },
+    dashboard() {
+      this.$router.push('/dashboard')
     },
     async logout() {
       await this.$auth.logout()

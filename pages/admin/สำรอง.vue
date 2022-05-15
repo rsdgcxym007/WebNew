@@ -277,7 +277,7 @@ export default {
       )
       this.details = tasks
       this.headers = headers
-      ;(this.users = result),(this.zoom = 16)
+      ;(this.users = result), (this.zoom = 16)
 
       // const userInfo = this.$store.state.userInfo
       // this.users.first_name = userInfo.first_name
@@ -387,7 +387,7 @@ export default {
         this.users.last_name === this.$store.state.userInfo.last_name &&
         this.users.email === this.$store.state.userInfo.email &&
         this.users.address_from_user ===
-this.$store.state.userInfo.address_from_user &&
+          this.$store.state.userInfo.address_from_user &&
         this.users.tel === this.$store.state.userInfo.tel &&
         this.users.position === this.$store.state.userInfo.position
       )

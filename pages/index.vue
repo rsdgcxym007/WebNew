@@ -315,7 +315,7 @@ export default {
       } else if (
         this.$auth.user.group_id === this.$constants.DATA.ADMIN_GROUP
       ) {
-        this.$router.push({ path: '/admin/indexadmin' })
+        this.$router.push({ path: '/admin/editvolun' })
       }
     },
     async register() {

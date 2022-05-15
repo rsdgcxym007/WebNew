@@ -3,7 +3,7 @@
     <v-container>
       <v-card>
         <v-card-title>
-          ผู้ป่วยที่อยู่ในการแล
+          ผู้ป่วยที่อยู่ในการดูแล
           <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
