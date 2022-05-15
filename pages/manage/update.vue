@@ -27,9 +27,7 @@
             label="เลือกสถานะ"
             segmented
           ></v-select>
-          <div
-            v-if="taskData.status_id === 'ef9e2e70-d55b-4250-8967-965b7cb0cbc7'"
-          >
+          <div v-if="taskData.status_id === $constants.DATA.HEALED_STATUS">
             <v-form ref="form_uploadImage" v-model="valid2">
               <v-row class="px-4">
                 <v-col cols="12" lg="6">
@@ -123,9 +121,7 @@
             </v-form>
             <br />
           </div>
-          <div
-            v-if="taskData.status_id === '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee'"
-          >
+          <div v-if="taskData.status_id === $constants.DATA.CANCEL_STATUS">
             <v-form ref="form_cancelDetail">
               <v-textarea
                 v-model="taskData.cancel_detail"
@@ -142,9 +138,8 @@
           <v-col
             v-if="
               $store.state.taskInfo.status_id !==
-                '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee' &&
-              $store.state.taskInfo.status_id !==
-                'ef9e2e70-d55b-4250-8967-965b7cb0cbc7'
+                $constants.DATA.CANCEL_STATUS &&
+              $store.state.taskInfo.status_id !== $constants.DATA.HEALED_STATUS
             "
             cols="12"
             class="px-0"
@@ -186,7 +181,7 @@ export default {
       },
       status: '',
       dropdown_icon: [
-        { text: 'หายป่วยแล้ว', id: 'ef9e2e70-d55b-4250-8967-965b7cb0cbc7' },
+        { text: 'หายป่วยแล้ว', id: this.$constants.DATA.HEALED_STATUS },
       ],
       task: '',
       tasks: [],
@@ -202,7 +197,6 @@ export default {
     }
   },
   methods: {
-
     async fetchData() {
       const result = await this.$axios.$get(
         'https://api.longdo.com/map/services/address?lon=100.53726&lat=13.72427&noelevation=1&key=19a82191e775c0fc9435aa5910727a3e'
@@ -276,12 +270,12 @@ export default {
       this.image_medicalcert = ''
     },
     async updateData() {
-      if (this.taskData.status_id === '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee') {
+      if (this.taskData.status_id === this.$constants.DATA.CANCEL_STATUS) {
         // if cancle
         await this.updateCanceldetail()
       } else if (
-        this.taskData.status_id === '7c2f1759-f664-40d2-8184-c20f2e76c229' ||
-        this.taskData.status_id === '490089af-cb09-476d-9568-a0896a50143a'
+        this.taskData.status_id === this.$constants.DATA.ASK_FOR_HELP_STATUS ||
+        this.taskData.status_id === this.$constants.DATA.HELPING_STATUS
       ) {
         //if just update remark
         await this.updateRemark()
@@ -452,19 +446,19 @@ export default {
       // check for disabled lable when tasks gone complete
       if (
         this.$store.state.taskInfo.status_id ==
-        'ef9e2e70-d55b-4250-8967-965b7cb0cbc7'
+        this.$constants.DATA.HEALED_STATUS
       ) {
         return (
           this.$store.state.taskInfo.status_id ===
-          'ef9e2e70-d55b-4250-8967-965b7cb0cbc7'
+          this.$constants.DATA.HEALED_STATUS
         )
       } else if (
         this.$store.state.taskInfo.status_id ==
-        '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee'
+        this.$constants.DATA.CANCEL_STATUS
       ) {
         return (
           this.$store.state.taskInfo.status_id ===
-          '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee'
+          this.$constants.DATA.CANCEL_STATUS
         )
       }
     },

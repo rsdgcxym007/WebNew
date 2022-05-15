@@ -45,7 +45,7 @@ export default {
     }
   },
   async fetch() {
-    if (this.$auth.user.group_id != '87191711-d7ff-4664-b648-8e9bceaab5ea') {
+    if (this.$auth.user.group_id != this.$constants.DATA.VOLUNTEER_GROUP) {
       this.$router.push('/')
     }
     await this.fetchData()
@@ -58,8 +58,8 @@ export default {
       )
       this.details = tasks
       this.headers = headers
-      console.log('details : ' , this.details)
-      console.log('header: ' , this.headers)
+      console.log('details : ', this.details)
+      console.log('header: ', this.headers)
     },
     // async helper(item) {
     //   const id = item.id

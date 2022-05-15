@@ -20,7 +20,7 @@
           target="#dropdown-example-2"
         ></v-select>
         <br />
-        <div v-if="status === '95757608-7aec-426b-a4eb-286e1e44ecdd'">
+        <div v-if="status === $constants.DATA.HELP_DONE_STATUS">
           <v-select
             v-model="level"
             class="my-2"
@@ -58,7 +58,7 @@ export default {
       requests: [],
       status_id: 'เขียว' || 'เหลือง' || 'แดง',
       dropdown_icon: [
-        { text: 'ดำเนินเสร็จสิ้น', id: '95757608-7aec-426b-a4eb-286e1e44ecdd' },
+        { text: 'ดำเนินเสร็จสิ้น', id: this.$constants.DATA.HELP_DONE_STATUS },
         {
           text: 'ยกเลิก',
           id: '700d6270-2eb6-4acb-b9a4-426909fd343f',

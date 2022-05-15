@@ -4,7 +4,6 @@
       <v-card-title>
         รายละเอียดการขอความช่วยเหลือ
         <v-spacer></v-spacer>
-        <!-- {{ taskData.level }} -->
         <v-chip :color="taskData.level">
           <div v-if="taskData.level == 'green'">เขียว</div>
           <div v-if="taskData.level == 'yellow'">เหลือง</div>
@@ -23,7 +22,8 @@
             :step="2"
             :editable="
               taskData.status_id == $constants.DATA.HELPING_STATUS ||
-              taskData.status_id == $constants.DATA.HELP_DONE_STATUS
+              taskData.status_id == $constants.DATA.HELP_DONE_STATUS ||
+              taskData.status_id == $constants.DATA.HEALED_STATUS
             "
           >
             กำลังช่วยเหลือ
@@ -32,7 +32,10 @@
           <v-stepper-step
             :complete="e1 > 3"
             :step="3"
-            :editable="taskData.status_id == $constants.DATA.HELP_DONE_STATUS"
+            :editable="
+              taskData.status_id == $constants.DATA.HELP_DONE_STATUS ||
+              taskData.status_id == $constants.DATA.HEALED_STATUS
+            "
           >
             ช่วยเหลือเสร็จสิ้น
           </v-stepper-step>
@@ -917,7 +920,8 @@ export default {
       ) {
         this.e1 = 2
       } else if (
-        this.taskData.status_id == this.$constants.DATA.HELP_DONE_STATUS
+        this.taskData.status_id == this.$constants.DATA.HELP_DONE_STATUS ||
+        this.taskData.status_id == this.$constants.DATA.HEALED_STATUS
       ) {
         this.e1 = 3
       }
@@ -998,7 +1002,7 @@ export default {
         day_of_visit: this.endDate,
         user_id: this.taskData.user_id,
         task_id: this.taskData.id,
-        status_id: 'ef9e2e70-d55b-4250-8967-965b7cb0cbc7',
+        status_id: this.$constants.DATA.HEALED_STATUS,
       }
       console.log('data for sent', data)
       await this.$axios.$post('/api/uploadimages/create', { data })
@@ -1008,7 +1012,11 @@ export default {
         showConfirmButton: false,
         timer: 1500,
       })
-      this.$router.push({ path: '/manage' })
+      if (this.$auth.user.group_id != this.$constants.DATA.VOLUNTEER_GROUP) {
+        this.$router.push('/volunteen/takecareuser')
+      } else {
+        this.$router.push({ path: '/manage' })
+      }
     },
     async cancelTask() {
       const { result, message } = await this.$axios.$post('/api/task/update', {
