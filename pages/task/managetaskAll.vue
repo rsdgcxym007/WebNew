@@ -197,6 +197,27 @@
                     >รายละเอียดการขอความช่วยเหลือ</v-card-title
                   >
                 </v-col>
+                <v-col
+                  cols="12"
+                  v-if="
+                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                    $auth.user.group_id == $constants.DATA.ADMIN_GROUP
+                  "
+                >
+                  <v-textarea
+                    v-model="taskData.form"
+                    :disabled="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                      this.taskData.status_id == $constants.DATA.CANCEL_STATUS
+                    "
+                    label="โรคประจำตัวร้ายแรง และ อาการจากแบบประเมิน"
+                    :rules="rules.notNullRule"
+                    no-resize
+                    outlined
+                    rows="3"
+                    required
+                  ></v-textarea>
+                </v-col>
                 <v-col cols="12">
                   <v-textarea
                     v-model="taskData.congenital_disease"
@@ -204,7 +225,7 @@
                       $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
                       this.taskData.status_id == $constants.DATA.CANCEL_STATUS
                     "
-                    label="โรคประจำตัว"
+                    label="โรคประจำตัวอื่นๆ"
                     :rules="rules.notNullRule"
                     no-resize
                     outlined
@@ -249,7 +270,7 @@
                     v-model="taskData.remark"
                     rows="3"
                     no-resize
-                    label="อาการ"
+                    label="อาการอื่นๆ"
                     outlined
                     required
                     :rules="rules.notNullRule"
@@ -259,6 +280,27 @@
                     "
                   ></v-textarea
                 ></v-col>
+                <v-col
+                  cols="12"
+                  v-if="
+                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                    $auth.user.group_id == $constants.DATA.ADMIN_GROUP
+                  "
+                >
+                  <v-textarea
+                    v-model="taskData.treatment_location"
+                    :disabled="
+                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
+                      this.taskData.status_id == $constants.DATA.CANCEL_STATUS
+                    "
+                    label="สถานที่รักษา"
+                    :rules="rules.notNullRule"
+                    no-resize
+                    outlined
+                    rows="1"
+                    required
+                  ></v-textarea>
+                </v-col>
                 <!-- <v-col
                   cols="12"
                   v-if="$auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP"
@@ -611,11 +653,16 @@
                   <v-row class="px-4">
                     <v-col cols="12" lg="6">
                       <v-text-field
-                        v-model="hospital"
+                        v-model="taskData.hospital"
                         label="ชื่อสถานที่รักษา"
                         :rules="rules.notNullRule"
                         required
                         outlined
+                        :disabled="
+                          $auth.user.group_id ==
+                            $constants.DATA.VOLUNTEER_GROUP ||
+                          taskData.status_id == $constants.DATA.HEALED_STATUS
+                        "
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" lg="6">
@@ -623,23 +670,33 @@
                         ref="menu"
                         v-model="menu"
                         :close-on-content-click="false"
-                        :return-value.sync="endDate"
+                        :return-value.sync="taskData.day_of_visit"
                         transition="scale-transition"
                         offset-y
                         min-width="auto"
                       >
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
-                            v-model="endDate"
+                            v-model="taskData.day_of_visit"
                             label="วันที่หาย"
                             readonly
                             :rules="rules.notNullRule"
                             v-bind="attrs"
                             v-on="on"
                             outlined
+                            :disabled="
+                              $auth.user.group_id ==
+                                $constants.DATA.VOLUNTEER_GROUP ||
+                              taskData.status_id ==
+                                $constants.DATA.HEALED_STATUS
+                            "
                           ></v-text-field>
                         </template>
-                        <v-date-picker v-model="endDate" no-title scrollable>
+                        <v-date-picker
+                          v-model="taskData.day_of_visit"
+                          no-title
+                          scrollable
+                        >
                           <v-spacer></v-spacer>
                           <v-btn text color="primary" @click="menu = false">
                             Cancel
@@ -647,7 +704,7 @@
                           <v-btn
                             text
                             color="primary"
-                            @click="$refs.menu.save(endDate)"
+                            @click="$refs.menu.save(taskData.day_of_visit)"
                           >
                             OK
                           </v-btn>
@@ -658,8 +715,8 @@
                       <div>
                         <label>ผลตรวจเชื้อแบบ RT-PCR</label>
                       </div>
-                      <div v-if="imageRtpcr">
-                        <img class="image" :src="imageRtpcr" />
+                      <div v-if="taskData.image_rtpcr">
+                        <img class="image" :src="taskData.image_rtpcr" />
                       </div>
                       <div>
                         <v-col cols="6" class="pa-0">
@@ -669,6 +726,12 @@
                             accept="image/*"
                             :rules="rules.notNullRule"
                             @change="createImageRtpcr($event)"
+                            :disabled="
+                              $auth.user.group_id ==
+                                $constants.DATA.VOLUNTEER_GROUP ||
+                              taskData.status_id ==
+                                $constants.DATA.HEALED_STATUS
+                            "
                           ></v-file-input>
                         </v-col>
                       </div>
@@ -677,8 +740,8 @@
                       <div>
                         <label>ใบรับรองแพทย์</label>
                       </div>
-                      <div v-if="imageMedicalCert">
-                        <img class="image" :src="imageMedicalCert" />
+                      <div v-if="taskData.image_medical">
+                        <img class="image" :src="taskData.image_medical" />
                       </div>
                       <div>
                         <v-col cols="6" class="pa-0">
@@ -688,6 +751,12 @@
                             accept="image/*"
                             :rules="rules.notNullRule"
                             @change="createImageMedicalCert($event)"
+                            :disabled="
+                              $auth.user.group_id ==
+                                $constants.DATA.VOLUNTEER_GROUP ||
+                              taskData.status_id ==
+                                $constants.DATA.HEALED_STATUS
+                            "
                           ></v-file-input>
                         </v-col>
                       </div>
@@ -767,6 +836,11 @@ export default {
         address_id: '',
         requirement: [],
         congenital_disease: '',
+        form: [],
+        treatment_location: '',
+        image_rtpcr: '',
+        image_medical: '',
+        day_of_visit: '',
       },
       types: ['สถานที่รักษา', 'อาหาร / ยา / ของใช้', 'รถรับส่ง'],
       validRequestForm: '',
@@ -852,7 +926,6 @@ export default {
 
   methods: {
     async fetchData() {
-      console.log('fetch task from para id')
       const { result: tasks } = await this.$axios.$post('/api/tasks/getbyId', {
         id: this.$route.query.id,
       })
@@ -925,22 +998,22 @@ export default {
       if (pathFile) {
         const reader = new FileReader()
         reader.onload = (e) => {
-          this.imageRtpcr = e.target.result
+          this.taskData.image_rtpcr = e.target.result
         }
         reader.readAsDataURL(pathFile)
       } else {
-        this.imageRtpcr = ''
+        this.taskData.image_rtpcr = ''
       }
     },
     createImageMedicalCert(pathFile) {
       if (pathFile) {
         const reader = new FileReader()
         reader.onload = (e) => {
-          this.imageMedicalCert = e.target.result
+          this.taskData.image_medical = e.target.result
         }
         reader.readAsDataURL(pathFile)
       } else {
-        this.imageMedicalCert = ''
+        this.taskData.image_medical = ''
       }
     },
     // nextStep(n) {
@@ -952,10 +1025,10 @@ export default {
     // },
     async submit() {
       const data = {
-        image_rtpcr: this.imageRtpcr,
-        image_medical: this.imageMedicalCert,
-        hospital: this.hospital,
-        day_of_visit: this.endDate,
+        image_rtpcr: this.taskData.image_rtpcr,
+        image_medical: this.taskData.image_medical,
+        hospital: this.taskData.hospital,
+        day_of_visit: this.taskData.day_of_visit,
         user_id: this.taskData.user_id,
         task_id: this.taskData.id,
         status_id: this.$constants.DATA.HEALED_STATUS,
@@ -969,9 +1042,9 @@ export default {
         timer: 1500,
       })
       if (this.$auth.user.group_id != this.$constants.DATA.VOLUNTEER_GROUP) {
-        this.$router.push('/volunteen/takecareuser')
+        this.$router.push('/manage')
       } else {
-        this.$router.push({ path: '/manage' })
+        this.$router.push('/volunteen/takecareuser')
       }
     },
     async cancelTask() {
