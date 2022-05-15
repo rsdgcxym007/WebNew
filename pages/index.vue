@@ -46,10 +46,9 @@
                             label="รหัสผ่าน"
                             prepend-icon="mdi-lock"
                             autocomplete="off"
-                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                            @click:append="show1 = !show1"
-                            :type="value ? 'password' : 'text'"
-                            @keyup.enter="onSubmit"
+                            :type="show ? 'text' : 'password'"
+                            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                            @click:append="show = !show"
                           ></v-text-field>
                         </v-form>
                       </v-card-text>
@@ -111,6 +110,10 @@
                             label="รหัสผ่าน"
                             prepend-icon="mdi-lock"
                             :rules="passwordRules"
+                            autocomplete="off"
+                            :type="show1 ? 'text' : 'password'"
+                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                            @click:append="show1 = !show1"
                             required
                           ></v-text-field>
                           <v-col cols="12" sm="6" md="12">
@@ -224,14 +227,13 @@ export default {
   },
   data() {
     return {
-      value: String,
       address_from_user: '',
       position: null,
       place: null,
       zoom: 7,
       center: { lat: 13.736717, lng: 100.523186 },
       address_from_gmap: '',
-      group: 'ผู้ป่วย',
+      group: '',
       groups: [],
       tabs: null,
       password: '',
@@ -240,16 +242,29 @@ export default {
       emailLogin: '',
       tel: '',
       email: '',
+      show: false,
       show1: false,
       emailRules: [
         (v) => !!v || 'กรุณากรอกอีเมล',
         (v) => /.+@.+\..+/.test(v) || 'กรุณากรอกอีเมลให้ถูกต้อง',
       ],
-      passwordRules: [(v) => !!v || 'กรุณากรอกรหัสผ่าน'],
-      first_nameRules: [(v) => !!v || 'กรุณากรอกชื่อ'],
-      last_nameRules: [(v) => !!v || 'กรุณากรอกนามสกุล'],
+      passwordRules: [
+        (v) => !!v || 'กรุณากรอกรหัสผ่าน',
+        (v) => (v && v.length >= 8) || 'กรุณากรอกรหัสผ่านมากกว่า8ตัว',
+      ],
+      first_nameRules: [
+        (v) => !!v || 'กรุณากรอกชื่อ',
+        (v) => (v && v.length <= 20) || 'กรุณากรอกชื่อไม่เกิน 20 ตัวอักษร',
+      ],
+      last_nameRules: [
+        (v) => !!v || 'กรุณากรอกนามสกุล',
+        (v) => (v && v.length <= 20) || 'กรุณากรอกนามสกุลไม่เกิน 20 ตัวอักษร',
+      ],
       addressRules: [(v) => !!v || 'กรุณากรอกที่อยู่'],
-      telRules: [(v) => !!v || 'กรุณากรอกเบอร์โทรศัพท์'],
+      telRules: [
+        (v) => !!v || 'กรุณากรอกเบอร์โทรศัพท์',
+        (v) => /^\d{10}$/.test(v) || 'เบอร์โทรไม่ถูกต้อง',
+      ],
     }
   },
   computed: {
@@ -269,6 +284,7 @@ export default {
     reset2() {
       this.$refs.form2.reset()
     },
+
     validate1() {
       if (this.$refs.form1.validate() === true) {
         this.onSubmit()
@@ -319,6 +335,7 @@ export default {
         this.$router.push({ path: '/admin/editvolun' })
       }
     },
+
     async register() {
       const mdpassword = saltedMd5(this.password, 'SUPER-S@LT!')
       const user = {
@@ -357,12 +374,12 @@ export default {
         this.$refs.form2.resetValidation()
 
         this.$swal.fire({
-          position: 'top-end',
-          icon: 'success',
+          type: 'success',
           title: 'สมัครสมาชิกสำเร็จ',
           showConfirmButton: false,
           timer: 1500,
         })
+        this.$router.push({ path: '/' })
 
         this.tabs = '#mobile-tabs-5-1'
       }

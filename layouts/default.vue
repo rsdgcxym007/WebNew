@@ -190,6 +190,11 @@ export default {
         // },
       ],
       items_admin: [
+                {
+          icon: 'mdi-map-marker',
+          title: 'หน้าแรก',
+          to: '/dashboard',
+        },
         {
           icon: 'mdi-map-marker',
           title: 'ข้อมูลอาสา',
