@@ -15,7 +15,7 @@ const HELPING_STATUS = '490089af-cb09-476d-9568-a0896a50143a';
 const HELP_DONE_STATUS = '95757608-7aec-426b-a4eb-286e1e44ecdd';
 //ยกเลิก
 const CANCEL_STATUS = '9fbd7f42-28da-41c1-8e03-3118fd9ab6ee';
-//หายป่วยแล้ว
+//SUCCESS
 const HEALED_STATUS = "ef9e2e70-d55b-4250-8967-965b7cb0cbc7"
 
 export const DATA = {
