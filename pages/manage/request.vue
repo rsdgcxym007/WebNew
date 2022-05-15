@@ -338,7 +338,6 @@ export default {
           point: 5,
         },
         { label: 'แน่นหน้าอก', value: 'แน่นหน้าอก', point: 5 },
-        { label: 'แน่นหน้าอกตลอดเวลา', value: 'แน่นหน้าอกตลอดเวลา', point: 5 },
         {
           label: 'เหนื่อยหอบ , หายใจลำบาก , หายใจเร็ว , ไอแล้วเหนื่อย',
           value: 'เหนื่อยหอบ , หายใจลำบาก , หายใจเร็ว , ไอแล้วเหนื่อย',
@@ -373,6 +372,7 @@ export default {
       level: '',
       congenital_disease: '',
       patient_group: '',
+      treatment_location: '',
       isolation: '',
       user_id: this.$auth.user.id,
       position: null,
@@ -473,6 +473,7 @@ export default {
         return false
       }
       if (this.$refs.form1.validate() === true) {
+        this.selectCheckbox.push(...this.selectCheckbox2)
         const data = {
           status: 'ขอความช่วยเหลือ',
           user_id: this.user_id,
@@ -481,10 +482,10 @@ export default {
           address_from_user: this.address_from_user,
           remark: this.remark,
           congenital_disease: this.congenital_disease,
-          treatment_location: this.isolation,
+          treatment_location: this.treatment_location,
           requirement: this.selectedTypes,
           level: this.level,
-          form: this.selectCheckbox && this.selectCheckbox2,
+          form: this.selectCheckbox,
         }
         console.log('dato for sent: ', data)
         const { result, message } = await this.$axios.$post(
