@@ -197,19 +197,10 @@
                     >รายละเอียดการขอความช่วยเหลือ</v-card-title
                   >
                 </v-col>
-                <v-col
-                  cols="12"
-                  v-if="
-                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
-                    $auth.user.group_id == $constants.DATA.ADMIN_GROUP
-                  "
-                >
+                <v-col cols="12">
                   <v-textarea
                     v-model="taskData.form"
-                    :disabled="
-                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
-                      this.taskData.status_id == $constants.DATA.CANCEL_STATUS
-                    "
+                    disabled
                     label="โรคประจำตัวร้ายแรง และ อาการจากแบบประเมิน"
                     :rules="rules.notNullRule"
                     no-resize
@@ -931,7 +922,6 @@ export default {
       })
       this.taskData = tasks
       this.center = this.taskData.position
-      console.log('taskdata', this.taskData)
       // if (this.taskData.volunteer_id) {
       //   const { result } = await this.$axios.$post('/api/user/getbyID', {
       //     id: this.taskData.volunteer_id,
@@ -942,6 +932,9 @@ export default {
       //     this.taskData.volunteer_tel = result.tel
       //   }
       // }
+      if (this.taskData.form.length == 0) {
+        this.taskData.form = 'ไม่มีโรคประจำตัวร้ายแรง และอาการ'
+      }
       if (this.taskData.status_id == this.$constants.DATA.ASK_FOR_HELP_STATUS) {
         this.e1 = 1
       } else if (
@@ -1117,11 +1110,30 @@ export default {
         }
       }
     },
+    async getPatientInCare() {
+      const { length } = await this.$axios.$post(
+        '/api/volunteen/takecareuser',
+        { userId: this.$auth.user.id }
+      )
+      return length
+    },
     async updateData() {
       if (
         this.taskData.status_id === this.$constants.DATA.ASK_FOR_HELP_STATUS
       ) {
-        await this.updateHelping()
+        // get ผู้ป่วยที่อยู่ในการดูแล
+        var patientInCare = await this.getPatientInCare()
+
+        if (patientInCare > 10) {
+          this.$swal.fire({
+            type: 'warning',
+            title: 'ไม่สามารถเข้าช่วยเหลือได้',
+            text: 'คุณมีผู้ป่วยที่กำลังดูแลถึงขีดจำกัดแล้ว',
+            confirmButtonText: 'ตกลง',
+          })
+        } else {
+          await this.updateHelping()
+        }
       } else if (
         this.taskData.status_id === this.$constants.DATA.HELPING_STATUS
       ) {

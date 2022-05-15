@@ -497,8 +497,10 @@ export default {
           console.log('error: ', message)
         } else {
           this.$swal({
+            position: 'top-end',
             type: 'success',
             title: message,
+            showConfirmButton: false,
             timer: 1500,
           })
           this.$router.push({ path: '/manage' })
@@ -540,7 +542,20 @@ export default {
         this.level = 'green'
         this.treatment_location = 'home isolation'
       }
-      await this.request()
+      this.$swal({
+        title: 'ยืนยันขอความช่วยเหลือ?',
+        text: '',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonText: 'ยืนยัน',
+      }).then((result) => {
+        if (result.value) {
+          this.request()
+        }
+      })
     },
     changePatientGroup() {
       if (this.patient_group == 'green') {
