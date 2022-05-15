@@ -162,11 +162,8 @@
           </v-card>
         </v-tab-item>
 
-        <v-tab href="#takecareuser" editable>ผู้ป่วยที่อยู่ในการดูแล</v-tab>
-        <v-tab-item
-          value="takecareuser"
-          :editable="users.group_id == '87191711-d7ff-4664-b648-8e9bceaab5ea'"
-        >
+        <v-tab href="#takecareuser"  v-if="users.group_id == $constants.DATA.VOLUNTEER_GROUP">ผู้ป่วยที่อยู่ในการดูแล</v-tab>
+        <v-tab-item value="takecareuser">
           <div>
             <!-- <pre>{{ this.$auth.user }}</pre> -->
             <v-container>
@@ -266,7 +263,7 @@ export default {
     },
 
     async fetchData() {
-      const { result } = await this.$axios.$post('/api/users/getByUserId', {
+      const { result } = await this.$axios.$post('/api/user/getAllById', {
         id: this.$route.query.id,
       })
       console.log('fetchข้อมูล', result)
@@ -277,7 +274,7 @@ export default {
       )
       this.details = tasks
       this.headers = headers
-      ;(this.users = result),(this.zoom = 16)
+      ;(this.users = result), (this.zoom = 16)
 
       // const userInfo = this.$store.state.userInfo
       // this.users.first_name = userInfo.first_name
@@ -387,7 +384,7 @@ export default {
         this.users.last_name === this.$store.state.userInfo.last_name &&
         this.users.email === this.$store.state.userInfo.email &&
         this.users.address_from_user ===
-this.$store.state.userInfo.address_from_user &&
+          this.$store.state.userInfo.address_from_user &&
         this.users.tel === this.$store.state.userInfo.tel &&
         this.users.position === this.$store.state.userInfo.position
       )

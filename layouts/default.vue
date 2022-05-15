@@ -95,7 +95,9 @@
         <template v-slot:activator="{ attrs, on }">
           <v-btn class="ml-2" min-width="0" text v-bind="attrs" v-on="on">
             <v-icon>mdi-account</v-icon>
-            <v-card-text>{{ $store.state.userInfo.first_name }} </v-card-text>
+            <v-card-text
+              >{{ $store.state.userInfo.first_name }} ({{ displayGroupName }})
+            </v-card-text>
             <!-- <v-card-text>{{$auth.user.first_name }} </v-card-text> -->
           </v-btn>
         </template>
@@ -193,14 +195,14 @@ export default {
           title: 'ข้อมูลอาสา',
           to: '/admin/editvolun',
         },
-                {
+        {
           icon: 'mdi-map-marker',
           title: 'ข้อมูลผู้ป่วย',
           to: '/admin/edituser',
         },
-                {
+        {
           icon: 'mdi-map-marker',
-          title: 'ผู้ใช้งานที่ถูกแบร',
+          title: 'ผู้ใช้งานที่ถูกแบน',
           to: '/admin/banuser',
         },
       ],
@@ -258,6 +260,17 @@ export default {
       this.items = this.items_admin
     }
     await this.setUserStore()
+  },
+  computed: {
+    displayGroupName() {
+      if (this.$auth.user.group_id == this.$constants.DATA.VOLUNTEER_GROUP)
+        return 'อาสาสมัคร'
+      if (this.$auth.user.group_id == this.$constants.DATA.PATIENT_GROUP)
+        return 'ผู้ป่วย'
+      if (this.$auth.user.group_id == this.$constants.DATA.ADMIN_GROUP)
+        return 'แอดมิน'
+      return ''
+    },
   },
   methods: {
     goToUserpage() {
