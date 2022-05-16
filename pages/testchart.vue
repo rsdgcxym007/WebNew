@@ -27,6 +27,10 @@ export default {
           name: 'Low - 2013',
           data: [12, 11, 14, 18, 17, 13, 13],
         },
+        {
+          name: 'High - 2015',
+          data: [25, 22, 31, 33, 30, 42, 53],
+        },
       ],
       chartOptions: {
         chart: {
@@ -46,7 +50,7 @@ export default {
             show: false,
           },
         },
-        colors: ['#77B6EA', '#545454'],
+        colors: ['#77B6EA', '#545454','red'],
         dataLabels: {
           enabled: true,
         },
@@ -71,6 +75,7 @@ export default {
           categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
           title: {
             text: 'Month',
+            
           },
         },
         yaxis: {
