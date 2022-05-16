@@ -165,6 +165,7 @@ export default {
         position: null,
         address_from_user: '',
         address_from_gmap: '',
+        address_id: '',
       },
       valid: '',
       FnameRules: [
@@ -234,6 +235,7 @@ export default {
       this.users.position = userInfo.position
       this.users.address_from_gmap = userInfo.address_from_gmap
       this.users.address_from_user = userInfo.address_from_user
+      this.users.address_id = userInfo.address_id
       this.center = userInfo.position
       this.zoom = 16
     },
@@ -264,8 +266,10 @@ export default {
               position: this.users.position,
               address_from_gmap: this.users.address_from_gmap,
               address_from_user: this.users.address_from_user,
+              address_id: this.users.address_id,
             },
           })
+          this.fetchData()
           this.$swal({
             type: 'success',
             title: message,
@@ -383,7 +387,7 @@ export default {
   min-width: 0px;
   width: 100%;
 }
-h3.infoWindow{
+h3.infoWindow {
   color: blueviolet;
 }
 </style>
