@@ -21,6 +21,7 @@ export default {
       )
       this.details = tasks
       this.headers = headers
+      console.log('takecareuser',tasks)
     },
   },
 }
