@@ -1,6 +1,10 @@
 <template>
   <div>
-    <Datatable :headers="headers" :details="details" />
+    <Datatable
+      :headers="headers"
+      :details="details"
+      :onChangeStatus="onChangeStatus"
+    />
   </div>
 </template>
 
@@ -11,15 +15,13 @@ export default {
     await this.fetchData()
   },
   data() {
-    return { details: [], headers: [], search: '' }
+    return { details: [], headers: [], search: '', statusName: '' }
   },
   methods: {
     async fetchData() {
       const { result: tasks, headers } = await this.$axios.$post(
         '/api/tasks/getAllByUserId',
-        // '/api/manage/taskallbyuserid',
-        { userId: this.$auth.user.id }
-        
+        { userId: this.$auth.user.id, statusName: this.statusName }
       )
       this.details = tasks
       this.headers = headers
@@ -30,6 +32,15 @@ export default {
     async logout() {
       await this.$auth.logout()
       this.$router.push('/')
+    },
+    onChangeStatus(val) {
+      console.log('change', val)
+      if (val == 'ทั้งหมด') {
+        this.statusName = ''
+      } else {
+        this.statusName = val
+      }
+      this.fetchData()
     },
   },
 }
