@@ -26,6 +26,9 @@ export default {
       this.details = tasks
       this.headers = headers
     },
+    nex_txt(txt) {
+      txt.substr(0, 15) + '...'
+    },
     request() {
       this.$router.push({ path: '/manage/request' })
     },

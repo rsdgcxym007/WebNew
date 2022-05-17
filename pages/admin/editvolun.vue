@@ -25,6 +25,12 @@
               {{ item.status_name }}
             </v-chip>
           </template>
+          <template v-slot:[`item.address_from_gmap`]="{ item }">
+            <div class="a">{{ item.address_from_gmap }}.</div>
+          </template>
+          <template v-slot:[`item.id`]="{ item }">
+            <div class="a">{{ item.id }}.</div>
+          </template>
           <!-- <template v-slot:[`item.actions`]="{ item }">
             <v-btn color="success" @click="helper(item)"
               >ผู้ป่วยที่อยู่ในการดูแล</v-btn
@@ -65,3 +71,15 @@ export default {
   },
 }
 </script>
+<style scoped>
+div.a {
+  white-space: nowrap;
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+div.a:hover {
+  overflow: visible;
+}
+</style>

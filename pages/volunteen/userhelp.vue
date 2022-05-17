@@ -25,6 +25,12 @@
               {{ item.status_name }}
             </v-chip>
           </template>
+          <template v-slot:[`item.address_from_gmap`]="{ item }">
+            <div class="a">{{ item.address_from_gmap }}.</div>
+          </template>
+          <template v-slot:[`item.remark`]="{ item }">
+            <div class="a">{{ item.remark }}.</div>
+          </template>
           <template v-slot:[`item.level`]="{ item }">
             <v-chip :color="item.level" dark>
               <div v-if="item.level == 'green'">เขียว</div>
@@ -42,6 +48,7 @@
 </template>
 
 <script>
+import moment from 'moment-timezone/builds/moment-timezone-with-data-2012-2022'
 export default {
   middleware: 'auth',
   data() {
@@ -65,9 +72,14 @@ export default {
       )
       this.details = tasks
       this.headers = headers
-      console.log('details : ', this.details)
-      console.log('header: ', this.headers)
+      // console.log('details : ', this.details)
+      // console.log('header: ', this.headers)
     },
+
+    moment(date) {
+      return moment(date).add('543', 'year').format('dd MM YYYY, h:mm')
+    },
+
     // async helper(item) {
     //   const id = item.id
     //   const { result, message } = await this.$axios.$post(
@@ -96,3 +108,15 @@ export default {
   },
 }
 </script>
+<style scoped>
+div.a {
+  white-space: nowrap;
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+div.a:hover {
+  overflow: visible;
+}
+</style>

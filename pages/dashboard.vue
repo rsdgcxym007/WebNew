@@ -12,7 +12,8 @@
       style="font-family: Prompt !important"
       class="black--text text-left text-h5"
     >
-      วันที่ : {{ lists.txn_date }} อัพเดทวันที่ : {{ lists.update_date }}
+      วันที่ : {{ moment(lists.txn_date) }} อัพเดทวันที่ :
+      {{ moment(lists.update_date) }}
     </div>
     <v-row class="mt-5">
       <v-col cols="4">
@@ -54,7 +55,7 @@
       <v-col cols="12">
         <Gmap-Map
           style="width: 100%; height: 400px"
-          :zoom="10"
+          :zoom="9"
           :center="{ lat: 13.736717, lng: 100.523186 }"
           :options="{
             zoomControl: true,
@@ -103,6 +104,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment'
 export default {
   middleware: 'auth',
   async fetch() {
@@ -116,9 +118,6 @@ export default {
       currentLocation: { lat: 13, lng: 100 },
       lat: 0,
       lng: 0,
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
       // markers: [
       //   {
       //     position: {
@@ -151,6 +150,7 @@ export default {
       const result = await this.$axios.$get(
         'https://covid19.ddc.moph.go.th/api/Cases/today-cases-all'
       )
+
       console.log('result before set from API', result)
       this.lists = result[0]
       console.log('result from API', this.lists)
@@ -161,6 +161,12 @@ export default {
       console.log('data before set : ', details)
       this.tasks = details
       console.log('data after set : ', this.tasks[0].position)
+    },
+    moment(date) {
+      return moment(date)
+        .add('543', 'year', 'Asia/Bangkok')
+        .locale('th')
+        .format('LLLL')
     },
 
     geolocation: function () {
