@@ -54,6 +54,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment'
 export default {
   middleware: 'auth',
   data() {
@@ -342,7 +343,7 @@ export default {
       chartOptions: {
         chart: {
           id: 'area-datetime',
-          type: 'area',
+          type: 'bar',
           height: 350,
           zoom: {
             autoScaleYaxis: true,
@@ -411,6 +412,8 @@ export default {
   },
   methods: {
     updateData: function (timeline) {
+      console.log('moment', moment('2022-02-04').unix())
+
       this.selection = timeline
 
       switch (timeline) {
