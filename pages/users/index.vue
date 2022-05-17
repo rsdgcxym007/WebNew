@@ -1,8 +1,10 @@
 <template>
+
   <div>
     <v-card elevation="8" width="auto" class="mx-12 my-1 pa-4">
       <v-card-title>ข้อมูลส่วนตัว </v-card-title>
       <v-container>
+        <notifications/>
         <v-form ref="form_user" v-model="valid" lazy-validation>
           <v-row>
             <v-col cols="12" lg="6">
@@ -272,6 +274,7 @@ export default {
           this.fetchData()
           this.$swal({
             type: 'success',
+            text: 'อัพเดทข้อมูลเสร็จสิ้น',
             title: message,
           })
         }

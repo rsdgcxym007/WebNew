@@ -497,7 +497,6 @@ export default {
           console.log('error: ', message)
         } else {
           this.$swal({
-            position: 'top-end',
             type: 'success',
             title: message,
             showConfirmButton: false,
