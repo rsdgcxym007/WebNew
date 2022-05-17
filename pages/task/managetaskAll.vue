@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <notifications class="vue-notifcation" />
     <v-card elevation="8" class="mx-4 pa-4">
       <v-card-title>
         รายละเอียดการขอความช่วยเหลือ
@@ -534,6 +535,7 @@
                     <thead>
                       <tr>
                         <td>วันที่</td>
+
                         <td class="pl-3">รายละเอียดการช่วยเหลือ</td>
                         <td></td>
                       </tr>
@@ -572,7 +574,8 @@
                             <v-date-picker
                               v-model="item.date"
                               @input="menu2 = false"
-                            ></v-date-picker>
+                            >
+                            </v-date-picker>
                           </v-menu>
                         </td>
                         <td style="width: 40%">
@@ -1140,8 +1143,15 @@ export default {
         cancel_detail: this.taskData.cancel_detail,
       })
       if (!result) {
-        console.log('errer: ', message)
+        this.$swal.fire({
+          type: result ? 'success' : 'warning',
+        })
       } else {
+        this.$swal.fire({
+          type: 'success',
+          title: 'ยกเลิกการขอความช่วยเหลือ',
+          timer: 1500,
+        })
         this.$router.push('/manage')
       }
     },
@@ -1377,9 +1387,9 @@ export default {
         if (!result) {
           console.log('error : ', message)
         } else {
-          this.$swal.fire({
+          this.$notify({
             type: 'success',
-            title: 'บันทึกสำเร็จ',
+            text: 'บันทึกสำเร็จ',
             showConfirmButton: false,
             timer: 1500,
           })
@@ -1438,6 +1448,34 @@ img.image-dialog {
 
   span {
     text-decoration: underline;
+  }
+}
+.vue-notification {
+  // styling
+  margin: 0 5px 5px;
+  padding: 10px;
+  font-size: 25px !important;
+  color: #ffffff;
+
+  // default (blue)
+  background: #44a4fc;
+  border-left: 5px solid #187fe7;
+
+  // types (green, amber, red)
+  &.success {
+    background: #68cd86;
+    border-left-color: #42a85f;
+    font-size: 25px;
+  }
+
+  &.warn {
+    background: #ffb648;
+    border-left-color: #f48a06;
+  }
+
+  &.error {
+    background: #e54d42;
+    border-left-color: #b82e24;
   }
 }
 </style>

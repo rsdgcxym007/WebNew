@@ -25,6 +25,13 @@
               {{ item.status_name }}
             </v-chip>
           </template>
+          <template v-slot:[`item.level`]="{ item }">
+            <v-chip :color="item.level" dark>
+              <div v-if="item.level == 'green'">เขียว</div>
+              <div v-if="item.level == 'yellow'">เหลือง</div>
+              <div v-if="item.level == 'red'">แดง</div>
+            </v-chip>
+          </template>
           <!-- <template v-slot:[`item.actions`]="{ item }">
             <v-btn color="success" @click="helper(item)">ช่วยเหลือ</v-btn>
           </template> -->

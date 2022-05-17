@@ -1,8 +1,10 @@
 <template>
+
   <div>
     <v-card elevation="8" width="auto" class="mx-12 my-1 pa-4">
       <v-card-title>ข้อมูลส่วนตัว </v-card-title>
       <v-container>
+        <notifications/>
         <v-form ref="form_user" v-model="valid" lazy-validation>
           <v-row>
             <v-col cols="12" lg="6">
@@ -165,6 +167,7 @@ export default {
         position: null,
         address_from_user: '',
         address_from_gmap: '',
+        address_id: '',
       },
       valid: '',
       FnameRules: [
@@ -234,6 +237,7 @@ export default {
       this.users.position = userInfo.position
       this.users.address_from_gmap = userInfo.address_from_gmap
       this.users.address_from_user = userInfo.address_from_user
+      this.users.address_id = userInfo.address_id
       this.center = userInfo.position
       this.zoom = 16
     },
@@ -264,10 +268,13 @@ export default {
               position: this.users.position,
               address_from_gmap: this.users.address_from_gmap,
               address_from_user: this.users.address_from_user,
+              address_id: this.users.address_id,
             },
           })
+          this.fetchData()
           this.$swal({
             type: 'success',
+            text: 'อัพเดทข้อมูลเสร็จสิ้น',
             title: message,
           })
         }
@@ -383,7 +390,7 @@ export default {
   min-width: 0px;
   width: 100%;
 }
-h3.infoWindow{
+h3.infoWindow {
   color: blueviolet;
 }
 </style>
