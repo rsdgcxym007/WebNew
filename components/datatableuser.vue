@@ -37,6 +37,17 @@
               {{ item.status_name }}
             </v-chip>
           </template>
+          <template v-slot:[`item.address`]="{ item }">
+            <div class="a">{{ item.address }}.</div>
+          </template>
+          <template v-slot:[`item.remark`]="{ item }">
+            <div class="a">{{ item.remark }}.</div>
+          </template>
+          <!-- <tamplate>
+          <v-text-field>
+            <v-slot>{{moment(data)}}</v-slot>
+          </v-text-field>
+        </tamplate> -->
           <template v-slot:[`item.level`]="{ item }">
             <v-chip :color="item.level" dark>
               <div v-if="item.level == 'green'">เขียว</div>
@@ -50,6 +61,7 @@
   </div>
 </template>
 <script>
+import tableadmin from './tableadmin.vue'
 export default {
   props: {
     headers: {
@@ -81,6 +93,21 @@ export default {
     editItem(data) {
       this.$router.push('/task/managetaskAll?id=' + data.id)
     },
+    // moment: function (date) {
+    //   return moment(date).format('MMMM Do YYYY, h:mm:ss a')
+    // },
   },
 }
 </script>
+<style scoped>
+div.a {
+  white-space: nowrap;
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+div.a:hover {
+  overflow: visible;
+}
+</style>

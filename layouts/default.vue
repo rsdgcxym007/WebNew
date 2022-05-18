@@ -159,7 +159,7 @@ export default {
       fixed: false,
       items_user: [
         {
-          icon: 'mdi-map-marker',
+          icon: 'mdi-animation-outline',
           title: 'หน้าแรก',
           to: '/dashboard',
         },
@@ -190,30 +190,30 @@ export default {
         // },
       ],
       items_admin: [
-                {
-          icon: 'mdi-map-marker',
+        {
+          icon: 'mdi-animation-outline',
           title: 'หน้าแรก',
           to: '/dashboard',
         },
         {
-          icon: 'mdi-map-marker',
+          icon: 'mdi-account-tie',
           title: 'ข้อมูลอาสา',
           to: '/admin/editvolun',
         },
         {
-          icon: 'mdi-map-marker',
+          icon: 'mdi-account-injury-outline',
           title: 'ข้อมูลผู้ป่วย',
           to: '/admin/edituser',
         },
-        {
-          icon: 'mdi-map-marker',
-          title: 'ผู้ใช้งานที่ถูกแบน',
-          to: '/admin/banuser',
-        },
+        // {
+        //   icon: 'mdi-alert-circle-outline',
+        //   title: 'ผู้ใช้งานที่ถูกแบน',
+        //   to: '/admin/banuser',
+        // },
       ],
       items_volunteen: [
         {
-          icon: 'mdi-map-marker',
+          icon: 'mdi-animation-outline',
           title: 'หน้าแรก',
           to: '/dashboard',
         },
@@ -238,7 +238,7 @@ export default {
         //   to: '/volunteen/updatestatus',
         // },
         {
-          icon: 'mdi-account-arrow-up-outline',
+          icon: 'mdi-account-injury-outline',
           title: 'ผู้ป่วยที่ขอความช่วยเหลือ',
           to: '/volunteen/userhelp',
         },

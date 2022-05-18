@@ -1,10 +1,9 @@
 <template>
-
   <div>
     <v-card elevation="8" width="auto" class="mx-12 my-1 pa-4">
       <v-card-title>ข้อมูลส่วนตัว </v-card-title>
       <v-container>
-        <notifications/>
+        <notifications />
         <v-form ref="form_user" v-model="valid" lazy-validation>
           <v-row>
             <v-col cols="12" lg="6">
@@ -188,7 +187,7 @@ export default {
         (v) => /^\d{10}$/.test(v) || 'เบอร์โทรไม่ถูกต้อง',
       ],
       place: null,
-      zoom: 7,
+      zoom: 10,
       center: { lat: 13.736717, lng: 100.523186 },
       address: '',
       toggleMarker: false,
@@ -239,7 +238,7 @@ export default {
       this.users.address_from_user = userInfo.address_from_user
       this.users.address_id = userInfo.address_id
       this.center = userInfo.position
-      this.zoom = 16
+      this.zoom = 15
     },
     async updateDataUser() {
       if (this.$refs.form_user.validate() === true) {
@@ -308,7 +307,7 @@ export default {
           lng: this.place.geometry.location.lng(),
         }
         this.users.address_from_gmap = this.place.formatted_address
-        this.zoom = 18
+        this.zoom = 10
         this.center = this.users.position
         this.place = null
         console.log('address: ', this.address)

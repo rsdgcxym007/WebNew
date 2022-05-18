@@ -571,6 +571,11 @@
                                 "
                               ></v-text-field>
                             </template>
+                            <!-- <template v-slot:[`attrs`]="{ attrs }">
+                              <div>
+                                {{ moment(attrs.date) }}
+                              </div>
+                            </template> -->
                             <v-date-picker
                               v-model="item.date"
                               @input="menu2 = false"
@@ -1063,6 +1068,11 @@ export default {
       this.patient_group = this.taskData.level
       this.isolation = this.taskData.treatment_location
     },
+
+    // moment(date) {
+    //   return moment(date).add('543', 'year').format('dd MM YYYY, h:mm')
+    // },
+
     toggle() {
       this.$nextTick(() => {
         if (this.likesAllFruit) {
