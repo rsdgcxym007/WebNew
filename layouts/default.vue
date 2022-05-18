@@ -205,11 +205,11 @@ export default {
           title: 'ข้อมูลผู้ป่วย',
           to: '/admin/edituser',
         },
-        {
-          icon: 'mdi-alert-circle-outline',
-          title: 'ผู้ใช้งานที่ถูกแบน',
-          to: '/admin/banuser',
-        },
+        // {
+        //   icon: 'mdi-alert-circle-outline',
+        //   title: 'ผู้ใช้งานที่ถูกแบน',
+        //   to: '/admin/banuser',
+        // },
       ],
       items_volunteen: [
         {

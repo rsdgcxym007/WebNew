@@ -18,7 +18,6 @@
           :items-per-page="5"
           :search="search"
           class="elevation-1"
-          @click:row="editItem"
         >
           <template v-slot:[`item.status_name`]="{ item }">
             <v-chip :color="item.color">
@@ -31,11 +30,22 @@
           <template v-slot:[`item.id`]="{ item }">
             <div class="a">{{ item.id }}.</div>
           </template>
-          <!-- <template v-slot:[`item.actions`]="{ item }">
-            <v-btn color="success" @click="helper(item)"
-              >ผู้ป่วยที่อยู่ในการดูแล</v-btn
-            >
-          </template> -->
+          <template v-slot:[`item.status`]="{ item }">
+            <v-chip :color="item.color">
+              {{ item.status }}
+            </v-chip>
+          </template>
+          <template v-slot:[`item.actions`]="{ item }">
+            <!-- <v-switch color="warning" @click="ban(item)">ระงับการใช้งาน</v-switch> -->
+            <v-switch
+              :input-value="getStatus(item.status)"
+              :label="item.status"
+              @change="ban(item)"
+            ></v-switch>
+          </template>
+          <template v-slot:[`item.actions1`]="{ item }">
+            <v-btn color="success" @click="editItem(item)">ดูข้อมูล</v-btn>
+          </template>
         </v-data-table>
       </v-card>
     </v-container>
@@ -52,6 +62,7 @@ export default {
       details: [],
       headers: [],
       search: '',
+      status: true,
     }
   },
   methods: {
@@ -63,6 +74,38 @@ export default {
       console.log('edituser', users)
       this.details = users
       this.headers = headers
+    },
+    getStatus(value) {
+      console.log(value)
+      if (value == 'active') {
+        return true
+      } else {
+        return false
+      }
+    },
+    async ban(data) {
+      console.log(data)
+      console.log('status', this.status)
+      let value = ''
+      if (data.status == 'active') {
+        value = 'inactive'
+      } else {
+        value = 'active'
+      }
+      //   this.status = 'inactive'
+      const { result, message } = await this.$axios.$post('/api/admin/ban', {
+        id: data.id,
+        status: value,
+      })
+      if (!result) {
+        console.log('error : ', message)
+      } else {
+        this.$swal({
+          type: 'success',
+          title: message,
+        })
+        await this.fetchData()
+      }
     },
     editItem(data) {
       this.$router.push('/admin/editbanuser?id=' + data.id)

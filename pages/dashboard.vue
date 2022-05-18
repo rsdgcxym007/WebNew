@@ -82,6 +82,7 @@
             @closeclick="infoWinOpen = false"
             ><div v-html="infoContent"></div>
           </gmap-info-window>
+
           <!-- <gmap-info-window
             :options="infoOptions"
             :position="infoWindowPos"
@@ -191,7 +192,6 @@ export default {
         this.currentMidx = idx
       }
     },
-
     getInfoWindowContent: function (item) {
       return `<div class="card">
                 <div class="card-content">
@@ -202,6 +202,7 @@ export default {
                     </div>
                   </div>
                   <div class="content">
+                  <br>
                     ${item.name}
                     <br>
                     ${item.tel}
@@ -209,6 +210,9 @@ export default {
                     ${item.address_from_gmap}
                     <br>
                     <time datetime="2016-1-1" >${item.created_at}</time>
+                    <br>
+                    <br>
+                    <p class="title is-2 ma-0"><a href='https://www.google.com/maps/search/?api=1&query=${item.position.lat},${item.position.lng}';>เปิดใน googlemap</a></p>
                   </div>
                 </div>
               </div>`

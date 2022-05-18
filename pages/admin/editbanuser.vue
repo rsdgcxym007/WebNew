@@ -162,7 +162,11 @@
           </v-card>
         </v-tab-item>
 
-        <v-tab href="#takecareuser"  v-if="users.group_id == $constants.DATA.VOLUNTEER_GROUP">ผู้ป่วยที่อยู่ในการดูแล</v-tab>
+        <v-tab
+          href="#takecareuser"
+          v-if="users.group_id == $constants.DATA.VOLUNTEER_GROUP"
+          >ผู้ป่วยที่อยู่ในการดูแล</v-tab
+        >
         <v-tab-item value="takecareuser">
           <div>
             <!-- <pre>{{ this.$auth.user }}</pre> -->
@@ -231,7 +235,7 @@ export default {
         (v) => /^\d{10}$/.test(v) || 'เบอร์โทรไม่ถูกต้อง',
       ],
       place: null,
-      zoom: 7,
+      zoom: 10,
       center: { lat: 13.736717, lng: 100.523186 },
       address: '',
       toggleMarker: false,
@@ -245,6 +249,14 @@ export default {
           width: 0,
           height: -35,
         },
+        content:
+          `<div>` +
+          `<h3 class="infoWindow">ข้อมูลผู้ร้องขอ</h3> <hr/><br>` +
+          `ชื่อ :${this.$store.state.userInfo.last_name} ${this.$store.state.userInfo.first_name}<br/>` +
+          `เบอร์โทร :${this.$store.state.userInfo.tel}<br/>` +
+          `<br/><hr/>` +
+          `<a href="/volunteen/userhelp"} action="_blank"> ดูข้อมูล</a>` +
+          `</div>`,
       },
     }
   },
@@ -274,7 +286,8 @@ export default {
       )
       this.details = tasks
       this.headers = headers
-      ;(this.users = result), (this.zoom = 16)
+      ;(this.users = result), (this.zoom = 15)
+      this.center = result.position
 
       // const userInfo = this.$store.state.userInfo
       // this.users.first_name = userInfo.first_name

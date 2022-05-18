@@ -52,11 +52,10 @@
             <span v-if="item.status_name == 'หายป่วยแล้ว'">
               <v-icon>mdi-alert-outline</v-icon>กรุณาอัพโหลดเอกสารการรักษา</span
             >
-            <span v-if="item.status_name == 'ช่วยเหลือเสร็จสิ้น'">
-              <v-icon>mdi-alert-outline</v-icon>อัพโหลดเอกสารแล้ว</span
+            <span v-else-if="item.status_name == 'ช่วยเหลือเสร็จสิ้น'"
+              ><v-icon>mdi-alert-outline</v-icon>อัพโหลดเอกสารแล้ว</span
             >
-            <span v-else>-</span></template
-          >
+            <span v-else>-</span></template>
         </v-data-table>
       </v-card>
     </v-container>
