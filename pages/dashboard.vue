@@ -101,6 +101,54 @@
           ></Gmap-Marker> -->
         </Gmap-Map>
       </v-col>
+      <v-col>
+        <div id="chart">
+          <br /><br />
+          <div
+            style="font-family: Prompt !important"
+            class="black--text text-left text-h5"
+          >
+            จำนวนผู้ป่วยที่ขอความช่วยเหลือต่อวัน
+          </div>
+          <br />
+          <div class="toolbar">
+            <button
+              id="one_month"
+              @click="updateData('one_month')"
+              :class="{ active: selection === 'one_month' }"
+            >
+              1เดือน
+            </button>
+
+            <button
+              id="six_months"
+              @click="updateData('six_months')"
+              :class="{ active: selection === 'six_months' }"
+            >
+              6เดือน
+            </button>
+
+            <button
+              id="one_year"
+              @click="updateData('one_year')"
+              :class="{ active: selection === 'one_year' }"
+            >
+              1ปี
+            </button>
+          </div>
+          <br />
+          <div id="chart-timeline">
+            <apexchart
+              type="bar"
+              height="350"
+              width="100%"
+              ref="chart"
+              :options="chartOptions"
+              :series="datafrom"
+            ></apexchart>
+          </div>
+        </div>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -111,10 +159,104 @@ export default {
   async fetch() {
     await this.fetchData()
   },
+  async created() {
+    console.log('create start')
+    await this.getDataChart()
+    console.log('create end')
+    // this.timer = setInterval(this.loop, 10000)
+  },
   data() {
     return {
       tasks: [],
       lists: [],
+      datafrom: [
+        {
+          data: [],
+        },
+      ],
+      chartOptions: {
+        chart: {
+          type: 'bar',
+          background: 'white',
+          height: 350,
+          zoom: {
+            autoScaleYaxis: true,
+          },
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              columnWidth: '70%',
+              endingShape: 'rounded',
+            },
+          },
+        },
+        annotations: {
+          yaxis: [
+            {
+              y: 5,
+              min: 0,
+              borderColor: '#999',
+              // label: {
+              //   show: true,
+              //   showDuplicates: false,
+              //   text: 'Total',
+              //   style: {
+              //     color: '#fff',
+              //     background: '#00E396',
+              //   },
+              // },
+              labels: {
+                formatter: function (val) {
+                  return parseInt(val) === val ? val : ''
+                },
+              },
+            },
+          ],
+          xaxis: [
+            {
+              x: new Date('01 Apr 2022').getTime(),
+              borderColor: '#999',
+              yAxisIndex: 0,
+              label: {
+                show: true,
+                text: 'Rally',
+                style: {
+                  color: '#fff',
+                  background: '#775DD0',
+                },
+              },
+            },
+          ],
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        markers: {
+          size: 0,
+          style: 'hollow',
+        },
+        xaxis: {
+          type: 'datetime',
+          min: new Date('01 Apr 2022').getTime(),
+          tickAmount: 6,
+        },
+        tooltip: {
+          x: {
+            format: 'dd MM yyyy',
+          },
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.7,
+            opacityTo: 0.9,
+            stops: [0, 100],
+          },
+        },
+      },
+
+      selection: 'one_year',
       place: null,
       currentLocation: { lat: 13, lng: 100 },
       lat: 0,
@@ -147,6 +289,9 @@ export default {
     this.geolocation()
   },
   methods: {
+    loop() {
+      this.getDataChart()
+    },
     async fetchData() {
       const result = await this.$axios.$get(
         'https://covid19.ddc.moph.go.th/api/Cases/today-cases-all'
@@ -154,14 +299,11 @@ export default {
 
       console.log('result before set from API', result)
       this.lists = result[0]
-      console.log('result from API', this.lists)
 
       const { result: details } = await this.$axios.$post(
         '/api/tasks/getAskForHelp'
       )
-      console.log('data before set : ', details)
       this.tasks = details
-      console.log('data after set : ', this.tasks[0].position)
     },
     moment(date) {
       return moment(date)
@@ -170,6 +312,19 @@ export default {
         .format('LLLL')
     },
 
+    async getDataChart() {
+      console.log('let1111')
+      const { result } = await this.$axios.$post('/api/tasks/countByDay')
+      console.log('data Fetch', result)
+      const results = []
+      result.forEach((e) => {
+        results.push([e.date_request, parseInt(e.total_case)])
+      })
+      console.log('data for each', results)
+      this.datafrom[0].data = results
+      console.log('dataFrom', this.datafrom[0])
+      console.log('dataSerieFrom', this.series)
+    },
     geolocation: function () {
       navigator.geolocation.getCurrentPosition((position) => {
         this.currentLocation = {
@@ -238,10 +393,60 @@ export default {
         this.place = null
       }
     },
+    updateData: function (timeline) {
+      this.selection = timeline
+
+      switch (timeline) {
+        case 'one_month':
+          this.$refs.chart.zoomX(
+            new Date('01 Apr 2022').getTime(),
+            new Date('01 May 2022').getTime()
+          )
+          break
+        case 'six_months':
+          this.$refs.chart.zoomX(
+            new Date('01 Apr 2022').getTime(),
+            new Date('01 Aug 2022').getTime()
+          )
+          break
+        case 'one_year':
+          this.$refs.chart.zoomX(
+            new Date('01 Apr 2022').getTime(),
+            new Date('01 Apr 2023').getTime()
+          )
+          break
+        case 'ytd':
+          this.$refs.chart.zoomX(
+            new Date('01 Jan 2013').getTime(),
+            new Date('27 Feb 2013').getTime()
+          )
+          break
+        case 'all':
+          this.$refs.chart.zoomX(
+            new Date('23 Jan 2012').getTime(),
+            new Date('27 Feb 2013').getTime()
+          )
+          break
+        default:
+      }
+    },
   },
-  goToHelp(item) {
-    // this.$router.push('/task/managetaskAll?id=' + data.id)
-    console.log('data from InfoWindow ')
+  computed: {
+    width() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs':
+          return '300'
+        case 'sm':
+          return '490'
+        case 'md':
+          return '500'
+        case 'lg':
+          return '500'
+        case 'xl':
+          return '600'
+      }
+      return ''
+    },
   },
 }
 </script>
@@ -252,5 +457,35 @@ element.style {
 .card-color {
   background: #f12711; /* fallback for old browsers */
   background: linear-gradient(#f12711, #f5af19);
+}
+button#six_months,
+button#one_month,
+button#one_year {
+  display: inline-block;
+  padding: 1px 10px;
+  margin: 1px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+button#six_months:hover,
+button#one_month:hover,
+button#one_year:hover {
+  background-color: #3e8e41;
+}
+
+button#six_months:active,
+button#one_month:active,
+button#one_year:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
 }
 </style>

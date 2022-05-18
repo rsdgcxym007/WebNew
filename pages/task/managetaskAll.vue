@@ -1033,7 +1033,7 @@ export default {
       //     this.taskData.volunteer_tel = result.tel
       //   }
       // }
-      if (this.taskData.form.length == 0) {
+      if (!this.taskData.form || this.taskData.form.length == 0) {
         this.taskData.form = 'ไม่มีโรคประจำตัวร้ายแรง และอาการ'
       }
       if (this.taskData.status_id == this.$constants.DATA.ASK_FOR_HELP_STATUS) {
