@@ -21,7 +21,7 @@
                 <v-tabs v-model="tabs" fixed-tabs color="light-blue darken-4">
                   <v-tabs-slider></v-tabs-slider>
                   <v-tab href="#mobile-tabs-5-1">
-                    <h3>เข้าสู่ระบบ2222</h3>
+                    <h3>เข้าสู่ระบบ</h3>
                   </v-tab>
 
                   <v-tab href="#mobile-tabs-5-2"> <h3>ลงทะเบียน</h3> </v-tab>
