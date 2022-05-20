@@ -153,7 +153,7 @@
   </div>
 </template>
 <script>
-import moment from 'moment'
+import moment from 'moment-timezone/builds/moment-timezone-with-data-2012-2022'
 export default {
   middleware: 'auth',
   async fetch() {
@@ -308,7 +308,7 @@ export default {
     moment(date) {
       return moment(date)
         .add('543', 'year', 'Asia/Bangkok')
-        .locale('th')
+        .locale('Th')
         .format('LLLL')
     },
 

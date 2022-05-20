@@ -89,7 +89,7 @@ export default {
   auth: {
     strategies: {
       // facebook: {
-      //   endpoints: {
+      //   eปndpoints: {
       //     userInfo: 'https://graph.facebook.com/v6.0/me?fields=id,name,picture{url}'
       //   },
       //   clientId: '974165653138352',

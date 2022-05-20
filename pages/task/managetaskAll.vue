@@ -505,27 +505,7 @@
                   >แก้ไขข้อมูลส่วนตัว</nuxt-link
                 >
               </v-col>
-              <v-col cols="12">
-                <v-row>
-                  <v-checkbox
-                    v-model="taskData.is_care_until_end"
-                    label="ช่วยเหลือจนผู้ป่วยไม่พบเชื้อ"
-                    :disabled="
-                      $auth.user.group_id !== $constants.DATA.VOLUNTEER_GROUP ||
-                      taskData.status_id == $constants.DATA.HEALED_STATUS ||
-                      taskData.status_id == $constants.DATA.HELP_DONE_STATUS
-                    "
-                  ></v-checkbox>
-                  <v-tooltip right>
-                    <template v-slot:activator="{ on, attrs }"
-                      ><v-icon v-bind="attrs" v-on="on" class="ml-2"
-                        >mdi-help-circle</v-icon
-                      ></template
-                    >
-                    <span>สำหรับการช่วยเหลือที่ผู้ป่วยต้องการให้ดูแลจนหาย</span>
-                  </v-tooltip></v-row
-                >
-              </v-col>
+
               <v-col cols="12">
                 <v-card-title class="pa-0">รายละเอียดการช่วยเหลือ</v-card-title>
               </v-col>
@@ -557,6 +537,7 @@
                                 label="วันที่"
                                 readonly
                                 v-bind="attrs"
+                                @blur="date = moment(item.date)"
                                 v-on="on"
                                 outlined
                                 :rules="dateRules"
@@ -578,6 +559,7 @@
                             </template> -->
                             <v-date-picker
                               v-model="item.date"
+                              no-title
                               @input="menu2 = false"
                             >
                             </v-date-picker>
@@ -666,31 +648,112 @@
                   >
                   <v-divider class="mt-2"></v-divider>
                 </v-col> -->
-
-              <v-col cols="12" class="mb-4" style="text-align: end">
-                <v-divider></v-divider>
-                <br />
-                <!-- <v-btn
-                    v-if="
-                      $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
-                      taskData.status_id == $constants.DATA.HELPING_STATUS
-                    "
-                    color="warning"
-                    class="mr-3"
-                  >
-                    บันทึกข้อมูล
-                  </v-btn> -->
-                <v-btn
-                  v-if="
-                    $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
-                    taskData.status_id == $constants.DATA.HELPING_STATUS
-                  "
-                  color="primary"
-                  @click="updateData()"
-                >
-                  ช่วยเหลือเสร็จสิ้น
-                </v-btn>
-              </v-col>
+              <v-row
+                justify="end"
+                class="mr-0 pt-1"
+                v-if="
+                  $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP &&
+                  taskData.status_id == $constants.DATA.HELPING_STATUS
+                "
+              >
+                <v-col cols="12" class="mb-4" style="text-align: end">
+                  <v-dialog v-model="dialog" persistent max-width="600px">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        :disabled="disableDialog"
+                        color="primary"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        ช่วยเหลือเสร็จสิ้น
+                      </v-btn>
+                    </template>
+                    <v-card>
+                      <v-card-title>กรุณาเลือก </v-card-title>
+                      <v-card-text>
+                        <v-container fluid>
+                          <v-row>
+                            <v-col cols="12">
+                              <div>
+                                <v-row>
+                                  <v-col cols="12">
+                                    <v-row>
+                                      <v-checkbox
+                                        v-model="taskData.is_care_until_end"
+                                        label="ช่วยเหลือจนผู้ป่วยไม่พบเชื้อ"
+                                        :disabled="
+                                          $auth.user.group_id !==
+                                            $constants.DATA.VOLUNTEER_GROUP ||
+                                          taskData.status_id ==
+                                            $constants.DATA.HEALED_STATUS ||
+                                          taskData.status_id ==
+                                            $constants.DATA.HELP_DONE_STATUS
+                                        "
+                                      ></v-checkbox>
+                                      <v-tooltip right>
+                                        <template
+                                          v-slot:activator="{ on, attrs }"
+                                          ><v-icon
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            class="ml-2"
+                                            >mdi-help-circle</v-icon
+                                          ></template
+                                        >
+                                        <span
+                                          >สำหรับการช่วยเหลือที่ผู้ป่วยต้องการให้ดูแลจนหายป่วย</span
+                                        >
+                                      </v-tooltip></v-row
+                                    >
+                                  </v-col>
+                                </v-row>
+                              </div>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="12">
+                              <div>
+                                <v-row>
+                                  <v-checkbox
+                                    label="ช่วยเหลือผู้ป่วยหาโรงพยาบาล"
+                                  ></v-checkbox>
+                                  <v-tooltip right>
+                                    <template v-slot:activator="{ on, attrs }"
+                                      ><v-icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        class="ml-2"
+                                        >mdi-help-circle</v-icon
+                                      ></template
+                                    >
+                                    <span
+                                      >สำหรับการช่วยเหลือที่ผู้ป่วยต้องรักษาที่โรงพยาบาล</span
+                                    >
+                                  </v-tooltip></v-row
+                                >
+                              </div>
+                            </v-col>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+                      <v-card-actions class="pt-0">
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="closeDialog">
+                          ยกเลิก
+                        </v-btn>
+                        <v-btn
+                          class="pr-5"
+                          color="blue darken-1"
+                          text
+                          @click="updateData"
+                        >
+                          ยืนยัน
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </v-col>
+              </v-row>
             </v-row>
           </v-stepper-content>
           <v-stepper-content step="3">
@@ -862,6 +925,7 @@
   </v-container>
 </template>
 <script>
+import moment from 'moment-timezone/builds/moment-timezone-with-data-2012-2022'
 export default {
   middleware: 'auth',
   data() {
@@ -872,10 +936,6 @@ export default {
       imageDialog: '',
       center: { lat: 13.736717, lng: 100.523186 },
       currentLocation: { lat: 13, lng: 100 },
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
-
       dialog: false,
       e1: 1,
       endDate: '',
@@ -1069,9 +1129,9 @@ export default {
       this.isolation = this.taskData.treatment_location
     },
 
-    // moment(date) {
-    //   return moment(date).add('543', 'year').format('dd MM YYYY, h:mm')
-    // },
+    moment(date) {
+      return moment(date).add('543', 'year').format('dd MM YYYY, h:mm')
+    },
 
     toggle() {
       this.$nextTick(() => {
