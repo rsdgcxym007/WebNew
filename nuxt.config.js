@@ -83,7 +83,8 @@ export default {
   },
   proxy: {
     '/api': {
-      target: 'http://localhost:9000'
+      target: 'http://203.159.92.216:3000',
+      changeOrigin: true
     }
   },
   auth: {
