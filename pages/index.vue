@@ -49,6 +49,7 @@
                             :type="show ? 'text' : 'password'"
                             :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
                             @click:append="show = !show"
+                            @keyup.enter="onSubmit"
                           ></v-text-field>
                         </v-form>
                       </v-card-text>
