@@ -5,7 +5,7 @@
       <v-card-title>
         รายละเอียดการขอความช่วยเหลือ
         <v-spacer></v-spacer>
-        <v-chip :color="taskData.level">
+        <v-chip dark :color="taskData.level">
           <div v-if="taskData.level == 'green'">เขียว</div>
           <div v-if="taskData.level == 'yellow'">เหลือง</div>
           <div v-if="taskData.level == 'red'">แดง</div>

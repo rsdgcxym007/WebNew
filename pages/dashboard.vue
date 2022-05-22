@@ -285,7 +285,7 @@ export default {
       },
     }
   },
-  mounted: function () {
+  mounted() {
     this.geolocation()
   },
   methods: {
@@ -324,6 +324,14 @@ export default {
       this.datafrom[0].data = results
       console.log('dataFrom', this.datafrom[0])
       console.log('dataSerieFrom', this.series)
+      this.updateSeriesLine()
+    },
+    updateSeriesLine() {
+      this.$refs.chart.updateSeries([
+        {
+          data: this.datafrom[0].data,
+        },
+      ])
     },
     geolocation: function () {
       navigator.geolocation.getCurrentPosition((position) => {
