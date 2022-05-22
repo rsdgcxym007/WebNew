@@ -142,7 +142,7 @@
         <v-btn color="error" class="mb-6" @click="logout">ออกจากระบบ</v-btn>
       </v-list>
     </v-navigation-drawer> -->
-    <v-footer :absolute="!fixed" app elevation="12">
+    <v-footer :absolute="fixed" app elevation="12">
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>

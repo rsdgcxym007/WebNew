@@ -101,7 +101,7 @@
           ></Gmap-Marker> -->
         </Gmap-Map>
       </v-col>
-      <v-col>
+      <v-col cols="12">
         <div id="chart">
           <br /><br />
           <div
@@ -348,7 +348,30 @@ export default {
       }
     },
     getInfoWindowContent: function (item) {
-      return `<div class="card">
+      if (this.$auth.user.group_id === this.$constants.DATA.PATIENT_GROUP) {
+        return `<div class="card">
+                <div class="card-content">
+                  <div class="media">
+                    <div class="media-content">
+                      <p class="title is-4 ma-0">ข้อมูลผู้ป่วย</p>
+                      <hr>
+                    </div>
+                  </div>
+                  <div class="content">
+                  <br>
+                    ${item.name}
+                    <br>
+                    ${item.tel}
+                    <br>
+                    ${item.address_from_gmap}
+                    <br>
+                    <time datetime="2016-1-1" >${item.created_at}</time>
+                    <br>
+                  </div>
+                </div>
+              </div>`
+      } else {
+        return `<div class="card">
                 <div class="card-content">
                   <div class="media">
                     <div class="media-content">
@@ -371,6 +394,7 @@ export default {
                   </div>
                 </div>
               </div>`
+      }
     },
 
     setDescription(description) {
