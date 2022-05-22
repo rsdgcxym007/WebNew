@@ -51,6 +51,10 @@ export default {
       src: '~/plugins/notifications-client',
       ssr: false
     },
+    {
+      src: '~/plugins/vue-moment',
+      ssr: true
+    },
     '~/plugins/constants/index.js'
   ],
 

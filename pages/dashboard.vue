@@ -108,7 +108,7 @@
             style="font-family: Prompt !important"
             class="black--text text-left text-h5"
           >
-            จำนวนผู้ป่วยที่ขอความช่วยเหลือต่อวัน
+            จำนวนผู้ป่วยที่ขอความช่วยเหลือต่อเดือน
           </div>
           <br />
           <div class="toolbar">

@@ -521,6 +521,14 @@
                       </tr>
                     </thead>
                     <tbody>
+                      <div>
+                        <DatePicker
+                          v-model="selectedDate"
+                          :buddhist-year="buddhistYear"
+                        />
+                        <p>buddhist-year: {{ buddhistYear }}</p>
+                        <p>value: {{ selectedDate }}</p>
+                      </div>
                       <tr v-for="(item, index) in items" :key="index">
                         <td style="width: 40%">
                           <v-menu
@@ -537,7 +545,6 @@
                                 label="วันที่"
                                 readonly
                                 v-bind="attrs"
-                                @blur="date = moment(item.date)"
                                 v-on="on"
                                 outlined
                                 :rules="dateRules"
@@ -659,12 +666,7 @@
                 <v-col cols="12" class="mb-4" style="text-align: end">
                   <v-dialog v-model="dialog" persistent max-width="600px">
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        :disabled="disableDialog"
-                        color="primary"
-                        v-bind="attrs"
-                        v-on="on"
-                      >
+                      <v-btn color="primary" v-bind="attrs" v-on="on">
                         ช่วยเหลือเสร็จสิ้น
                       </v-btn>
                     </template>
@@ -694,6 +696,7 @@
                                         <template
                                           v-slot:activator="{ on, attrs }"
                                           ><v-icon
+                                            v-model="selectCheckbox"
                                             v-bind="attrs"
                                             v-on="on"
                                             class="ml-2"
@@ -926,10 +929,16 @@
 </template>
 <script>
 import moment from 'moment-timezone/builds/moment-timezone-with-data-2012-2022'
+import DatePicker from '@/components/DatePicker.vue';
 export default {
   middleware: 'auth',
+  name: "App",
+  components: {
+    DatePicker,
+  },
   data() {
     return {
+      selectCheckbox: [],
       descriptionRules: [(v) => !!v || 'กรุณากรอกรายละเอียด'],
       dateRules: [(v) => !!v || 'กรุณาเลือกวัน'],
       dialogImage: false,
@@ -946,6 +955,9 @@ export default {
       image2: '',
       imageRtpcr: '',
       imageMedicalCert: '',
+      selectedDate: this.$moment().format('DD-MM-YYYY'),
+      // selectedDate: null,
+      buddhistYear: true,
       items: [
         {
           date: '',
@@ -1129,6 +1141,9 @@ export default {
       this.isolation = this.taskData.treatment_location
     },
 
+    disableDialog() {
+      return this.is_care_until_end == '' || this.item.description == ''
+    },
     moment(date) {
       return moment(date).add('543', 'year').format('dd MM YYYY, h:mm')
     },
@@ -1488,6 +1503,17 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+body {
+  background-color: #aaaaaa;
+}
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
 .gsearch {
   border: 1px solid rgba(0, 0, 0, 0.42);
   border-radius: 4px;

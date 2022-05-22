@@ -5,7 +5,7 @@
         :value="value"
         mode="date"
         color="indigo"
-        locale="en"
+        locale="th"
         :masks="{ input: formatDisplay }"
         :model-config="modelConfig"
         :update-on-input="updateOnInput"
@@ -30,7 +30,7 @@
 export default {
   filters: {
     formatYear(year, buddhistYear) {
-      return buddhistYear ? +year + 543 : year;
+      return buddhistYear ? +year + 543 : year
     },
   },
   props: {
@@ -40,7 +40,7 @@ export default {
     },
     formatDisplay: {
       type: String,
-      default: "DD/MM/YYYY",
+      default: 'DD/MM/YYYY',
     },
     buddhistYear: {
       type: Boolean,
@@ -58,25 +58,25 @@ export default {
   data() {
     return {
       modelConfig: {
-        type: "string",
-        mask: "YYYY-MM-DDTHH:mm:ss",
-        timeAdjust: "00:00:00",
+        type: 'string',
+        mask: 'DD-MM-YY:mm:ss',
+        timeAdjust: '00:00:00',
       },
-    };
+    }
   },
   methods: {
     selectDate(event) {
-      this.$emit("input", event);
+      this.$emit('input', event)
     },
     displayInput(input) {
       return this.buddhistYear
         ? this.$moment(input, this.formatDisplay)
-            .add(543, "y")
+            .add(543, 'y')
             .format(this.formatDisplay)
-        : input;
+        : input
     },
   },
-};
+}
 </script>
 <style scope>
 .vc-day.is-not-in-month span {
