@@ -521,17 +521,13 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <div>
-                        <DatePicker
-                          v-model="selectedDate"
-                          :buddhist-year="buddhistYear"
-                        />
-                        <p>buddhist-year: {{ buddhistYear }}</p>
-                        <p>value: {{ selectedDate }}</p>
-                      </div>
                       <tr v-for="(item, index) in items" :key="index">
                         <td style="width: 40%">
-                          <v-menu
+                          <DatePicker
+                            v-model="item.date"
+                            :buddhist-year="buddhistYear"
+                          />
+                          <!-- <v-menu
                             v-model="menu2"
                             :close-on-content-click="false"
                             :nudge-right="40"
@@ -559,18 +555,13 @@
                                 "
                               ></v-text-field>
                             </template>
-                            <!-- <template v-slot:[`attrs`]="{ attrs }">
-                              <div>
-                                {{ moment(attrs.date) }}
-                              </div>
-                            </template> -->
                             <v-date-picker
                               v-model="item.date"
                               no-title
                               @input="menu2 = false"
                             >
                             </v-date-picker>
-                          </v-menu>
+                          </v-menu> -->
                         </td>
                         <td style="width: 40%">
                           <v-text-field
@@ -929,10 +920,10 @@
 </template>
 <script>
 import moment from 'moment-timezone/builds/moment-timezone-with-data-2012-2022'
-import DatePicker from '@/components/DatePicker.vue';
+import DatePicker from '@/components/DatePicker.vue'
 export default {
   middleware: 'auth',
-  name: "App",
+  name: 'App',
   components: {
     DatePicker,
   },
@@ -955,8 +946,6 @@ export default {
       image2: '',
       imageRtpcr: '',
       imageMedicalCert: '',
-      selectedDate: this.$moment().format('DD-MM-YYYY'),
-      // selectedDate: null,
       buddhistYear: true,
       items: [
         {

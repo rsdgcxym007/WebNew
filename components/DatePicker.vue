@@ -15,11 +15,18 @@
           {{ monthLabel }} {{ yearLabel | formatYear(buddhistYear) }}
         </template>
         <template v-slot="{ inputValue, togglePopover }">
-          <input
+          <v-text-field
+            label="วันที่"
+            outlined
             :value="displayInput(inputValue)"
             :readonly="inputReadonly"
             @click="togglePopover"
-          />
+          ></v-text-field>
+          <!-- <input
+            :value="displayInput(inputValue)"
+            :readonly="inputReadonly"
+            @click="togglePopover"
+          /> -->
         </template>
       </vc-date-picker>
     </client-only>
@@ -69,11 +76,15 @@ export default {
       this.$emit('input', event)
     },
     displayInput(input) {
-      return this.buddhistYear
-        ? this.$moment(input, this.formatDisplay)
-            .add(543, 'y')
-            .format(this.formatDisplay)
-        : input
+      if (input) {
+        return this.buddhistYear
+          ? this.$moment(input, this.formatDisplay)
+              .add(543, 'y')
+              .format(this.formatDisplay)
+          : input
+      } else {
+        return ''
+      }
     },
   },
 }
