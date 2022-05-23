@@ -92,7 +92,6 @@ export default {
   proxy: {
     '/api': {
       target: 'http://203.159.92.216:3000',
-      // target: 'http://localhost:3000',
       changeOrigin: true
     }
   },
