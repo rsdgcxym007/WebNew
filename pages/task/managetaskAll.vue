@@ -217,9 +217,11 @@
                       $auth.user.group_id == $constants.DATA.VOLUNTEER_GROUP ||
                       this.taskData.status_id == $constants.DATA.CANCEL_STATUS
                     "
+                    disable
                     label="โรคประจำตัวอื่นๆ"
                     :rules="rules.notNullRule"
                     no-resize
+                    
                     outlined
                     rows="2"
                     required

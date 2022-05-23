@@ -74,7 +74,7 @@
                 required
                 disabled
               ></v-textarea>
-            </v-col>
+            </v-col>disabled
             <v-col cols="12">
               <v-textarea
                 v-model="address_from_user"
@@ -104,6 +104,8 @@
                 v-model="congenital_disease"
                 label="รายละเอียดโรคประจำตัว"
                 outlined
+                disable
+                :rules="xxkRules"
                 rows="2"
                 required
               ></v-textarea>
@@ -389,6 +391,7 @@ export default {
       selectedTypesRules: [
         (v) => v.length > 0 || 'กรุณาเลือกความช่วยเหลือที่ต้องการ',
       ],
+      xxkRules: [(v) => !!v || 'กรุณาใส่ คำอธิบาย โรงประจำตัวบื้องต้น'],
     }
   },
   async mounted() {

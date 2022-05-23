@@ -118,6 +118,17 @@
                             @click:append="show1 = !show1"
                             required
                           ></v-text-field>
+                          <v-text-field
+                            v-model="conpassword"
+                            label="ยืนยันรหัสผ่าน"
+                            prepend-icon="mdi-lock"
+                            :rules="passwordRules"
+                            autocomplete="off"
+                            :type="show1 ? 'text' : 'password'"
+                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                            @click:append="show1 = !show1"
+                            required
+                          ></v-text-field>
                           <v-col cols="12" sm="6" md="12">
                             <v-autocomplete
                               v-model="group"
@@ -239,10 +250,12 @@ export default {
       groups: [],
       tabs: null,
       password: '',
+      conpassword: '',
       first_name: '',
       last_name: '',
       emailLogin: '',
-      tel: '#',
+      tel: this.tel1,
+      tel1: '#',
       email: '',
       show: false,
       show1: false,
@@ -253,14 +266,24 @@ export default {
       passwordRules: [
         (v) => !!v || 'กรุณากรอกรหัสผ่าน',
         (v) => (v && v.length >= 8) || 'กรุณากรอกรหัสผ่านมากกว่า8ตัว',
+        (v) =>
+          (v &&
+            /[A-Z]/.test(v) &&
+            /[a-z]/.test(v) &&
+            /[0-9]/.test(v) &&
+            /[#?!@$%^&*-]/.test(v)) ||
+          'รหัสผ่านต้องประกอบไปด้วย ตัวอักษรพิมพ์เล็ก ตัวอักษรพิมพ์ใหญ่ ตัวเลข และอักขระพิเศษ(#?!@$%^&*-)',
       ],
       first_nameRules: [
         (v) => !!v || 'กรุณากรอกชื่อ',
         (v) => (v && v.length <= 20) || 'กรุณากรอกชื่อไม่เกิน 20 ตัวอักษร',
+        (v) => (v && !/[0-9]/.test(v)) || 'รูปแบบการกรอกชื่อไม่ถูกต้อง',
       ],
       last_nameRules: [
         (v) => !!v || 'กรุณากรอกนามสกุล',
         (v) => (v && v.length <= 20) || 'กรุณากรอกนามสกุลไม่เกิน 20 ตัวอักษร',
+        (v) =>
+          (v && !/[0-9]/.test(v)) || 'รูปแบบการกรอกนามสกุลไม่ถูกต้องไม่ถูกต้อง',
       ],
       addressRules: [(v) => !!v || 'กรุณากรอกที่อยู่'],
       telRules: [
@@ -300,7 +323,23 @@ export default {
     },
     validate2() {
       if (this.$refs.form2.validate() === true) {
-        this.register()
+        if (this.group) {
+          if (this.conpassword === this.password) {
+            this.register()
+          } else {
+            this.$swal({
+              icon: 'warning',
+              title: 'รหัสผ่านไม่ตรงกัน',
+              timer: 3000,
+            })
+          }
+        } else {
+          this.$swal({
+            icon: 'warning',
+            title: 'กรุณาเลือกประเภท',
+            timer: 3000,
+          })
+        }
       } else {
         this.$swal({
           icon: 'warning',
