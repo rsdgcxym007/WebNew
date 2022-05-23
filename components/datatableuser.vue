@@ -43,6 +43,11 @@
           <template v-slot:[`item.remark`]="{ item }">
             <div class="a">{{ item.remark }}.</div>
           </template>
+          <template v-slot:[`item.created_at`]="{ item }">
+            <div>
+              {{ moment(item.created_at) }}
+            </div>
+          </template>
           <!-- <tamplate>
           <v-text-field>
             <v-slot>{{moment(data)}}</v-slot>
@@ -61,6 +66,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment-timezone/builds/moment-timezone-with-data-2012-2022'
 import tableadmin from './tableadmin.vue'
 export default {
   props: {
@@ -96,6 +102,9 @@ export default {
     // moment: function (date) {
     //   return moment(date).format('MMMM Do YYYY, h:mm:ss a')
     // },
+    moment(date) {
+      return moment(date).add('543', 'year').format('DD/MM/YYYY,hh:mm a')
+    },
   },
 }
 </script>

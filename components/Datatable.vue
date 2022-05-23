@@ -52,9 +52,9 @@
             <span v-if="item.status_name == 'หายป่วยแล้ว'">
               <v-icon>mdi-alert-outline</v-icon>กรุณาอัพโหลดเอกสารการรักษา</span
             >
-            <span v-else-if="item.status_name == 'ช่วยเหลือเสร็จสิ้น'"
+            <!-- <span v-else-if="item.status_name == 'ช่วยเหลือเสร็จสิ้น'"
               ><v-icon>mdi-alert-outline</v-icon>อัพโหลดเอกสารแล้ว</span
-            >
+            > -->
             <span v-else>-</span></template>
         </v-data-table>
       </v-card>
@@ -98,7 +98,7 @@ export default {
       // this.$router.push('/manage/update?id=' + data.id)
     },
     moment(date) {
-      return moment(date).add('543', 'year').format('dd MM YYYY, h:mm')
+      return moment(date).add('543', 'year').format('DD/MM/YYYY,hh:mm a')
     },
   },
 }

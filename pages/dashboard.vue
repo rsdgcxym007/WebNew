@@ -108,7 +108,7 @@
             style="font-family: Prompt !important"
             class="black--text text-left text-h5"
           >
-            จำนวนผู้ป่วยที่ขอความช่วยเหลือต่อเดือน
+            จำนวนผู้ป่วยที่ขอความช่วยเหลือต่อวัน
           </div>
           <br />
           <div class="toolbar">
@@ -309,7 +309,7 @@ export default {
       return moment(date)
         .add('543', 'year', 'Asia/Bangkok')
         .locale('Th')
-        .format('LLLL')
+        .format('DD/MM/YYYY,hh:mm a')
     },
 
     async getDataChart() {

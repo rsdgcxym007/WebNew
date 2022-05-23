@@ -25,6 +25,11 @@
               {{ item.status_name }}
             </v-chip>
           </template>
+          <template v-slot:[`item.created_at`]="{ item }">
+            <div>
+              {{ moment(item.created_at) }}
+            </div>
+          </template>
           <template v-slot:[`item.address_from_gmap`]="{ item }">
             <div class="a">{{ item.address_from_gmap }}.</div>
           </template>
@@ -77,7 +82,7 @@ export default {
     },
 
     moment(date) {
-      return moment(date).add('543', 'year').format('dd MM YYYY, h:mm')
+      return moment(date).add('543', 'year').format('DD/MM/YYYY,hh:mm a')
     },
 
     // async helper(item) {
