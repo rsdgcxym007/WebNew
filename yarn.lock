@@ -8295,6 +8295,11 @@
     "date-fns-tz" "^1.1.4"
     "lodash" "^4.17.21"
 
+"v-mask@^2.3.0":
+  "integrity" "sha512-ap7pTtCTvj25CqX4VYXqudCBd0+XvYyhiiLbzWQQR7AMQosJ2+DPu0a94P9stk0EGmGcmYxJaPkFkfjD8hquWQ=="
+  "resolved" "https://registry.npmjs.org/v-mask/-/v-mask-2.3.0.tgz"
+  "version" "2.3.0"
+
 "vary@^1.1.2", "vary@~1.1.2":
   "integrity" "sha1-IpnwLG3tMNSllhsLn3RSShj2NPw="
   "resolved" "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz"

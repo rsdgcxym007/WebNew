@@ -3,6 +3,7 @@
     <client-only>
       <vc-date-picker
         :value="value"
+        :max-date="new Date()"
         mode="date"
         color="indigo"
         locale="th"

@@ -25,6 +25,7 @@ export default {
       )
       this.details = tasks
       this.headers = headers
+      console.log('detailxx',tasks)
     },
     nex_txt(txt) {
       txt.substr(0, 15) + '...'

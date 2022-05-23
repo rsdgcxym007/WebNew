@@ -161,7 +161,6 @@
             </v-container>
           </v-card>
         </v-tab-item>
-
         <v-tab
           href="#takecareuser"
           v-if="users.group_id == $constants.DATA.VOLUNTEER_GROUP"

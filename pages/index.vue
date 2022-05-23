@@ -98,6 +98,7 @@
                             type="text"
                             :rules="telRules"
                             required
+                            v-mask="'##########'"
                           ></v-text-field>
                           <v-text-field
                             v-model="email"
@@ -241,7 +242,7 @@ export default {
       first_name: '',
       last_name: '',
       emailLogin: '',
-      tel: '',
+      tel: '#',
       email: '',
       show: false,
       show1: false,

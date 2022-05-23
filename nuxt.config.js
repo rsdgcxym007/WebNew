@@ -59,6 +59,10 @@ export default {
     src: '~/plugins/v-calendar',
     ssr: false
   },
+  {
+    src: '~/plugins/v-mask',
+    ssr: false
+  },
     '~/plugins/constants/index.js'
   ],
 
@@ -91,7 +95,8 @@ export default {
   },
   proxy: {
     '/api': {
-      target: 'http://203.159.92.216:3000',
+      // target: 'http://203.159.92.216:3000',
+      target: 'http://localhost:3000',
       changeOrigin: true
     }
   },

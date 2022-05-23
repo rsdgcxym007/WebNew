@@ -62,8 +62,8 @@ export default {
         // { userId: this.$auth.user.group_id }
       )
 
-      console.log('users', users)
       this.details = users
+      console.log('users', users)
       this.headers = headers
     },
     getStatus(value) {
